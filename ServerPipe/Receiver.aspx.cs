@@ -31,6 +31,26 @@ namespace ServerPipe
         uint _BlobHeader = 0;
 
 
+        protected void AddNotification(string notification)
+        {
+            try
+            {
+                if (null == Session["Notifications"])
+                    Session["Notifications"] = new List<string>();
+
+                List<string> notifications = Session["Notifications"] as List<string>;
+
+                //Not checking for double notifications at this time
+                //if (null != notifications.Find(delegate(string t) { return t.ToLower() == notification.ToLower(); }))
+                //return;
+
+
+                notifications.Add(notification);
+            }
+            catch { }
+
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
             BinaryReader transportBlob = new BinaryReader(Request.InputStream);
@@ -192,6 +212,9 @@ namespace ServerPipe
                         File.Delete(sNewFileName);
 
                     File.Move(sFileName, sNewFileName);
+
+                    AddNotification("Transport Receiver: New file uploaded:" + test);
+
                     return 0;
                 }
 
