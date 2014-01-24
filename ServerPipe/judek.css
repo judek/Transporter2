@@ -1,0 +1,41 @@
+BODY 		{  background-color:#BB0000 }
+
+a:link		{ color: #99CCFF; text-decoration: none }
+
+a:visited	{ color: #99CCFF; text-decoration: none }
+
+a:active	{ color: #000000; text-decoration: none }
+
+a:hover		{ color: #00FF00; text-decoration: none }
+
+
+
+TABLE 		{ COLOR: #F0F0F0; FONT: 12px arial, verdana, sans-serif; font-weight: bold }
+
+.copytext 	{ COLOR: #F0F0F0; FONT: 10px arial, verdana, sans-serif; font-weight: bold }
+
+.title 		{ color: #FFFFFF; font: 20px verdana, arial, sans-serif; letter-spacing: 5px; font-weight: bold }
+
+.subtitle 	{ color: #FFFFFF; font: 14px verdana, arial, sans-serif; letter-spacing: 5px; font-weight: bold }
+
+.smalltitle 	{ color: #FFFFFF; font: 12px verdana, arial, sans-serif; letter-spacing: 2px; font-weight: bold }
+
+.phonetitle 	{ color: #FFFFFF; font: 12px verdana, arial, sans-serif; letter-spacing: 2px; font-weight: bold }
+
+.list 		{ color: #FFFFFF; font: 11px verdana, arial, sans-serif; letter-spacing: 1px; font-weight: bold }
+
+.logo 		{ COLOR: #FFFFFF; FONT: 16px arial, verdana, sans-serif; letter-spacing: 2px; font-weight: bold }
+
+.just 		{text-align: justify;}
+
+#menu 		{ RIGHT: 15px; POSITION: absolute; TOP: 40px }
+
+
+.button 	{ background-color:#BB0000;
+		FONT-FAMILY: arial, verdana, helvetica, sans;
+		color: #FFFFFF;
+		font-size: 7pt;
+		height: 18px;
+		cursor:hand;
+		font-weight: bold;
+		text-alignop 	{ WIDTH: 60PX; HEIGHT: 20PX; FONT: 11px arial, georgia, "Times New Roman", sans-serif }

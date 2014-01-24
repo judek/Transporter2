@@ -1,0 +1,3 @@
+﻿3/19/2010 - Added token checks for specific list ID
+
+9/7/2012 - more descriptive error message on sendchunk failure

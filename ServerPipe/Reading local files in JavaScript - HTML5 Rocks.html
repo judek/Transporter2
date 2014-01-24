@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<!-- saved from url=(0053)http://www.html5rocks.com/en/tutorials/file/dndfiles/ -->
+<html lang="en" dir="ltr" itemscope="" itemtype="http://schema.org/Article" class=" js flexbox canvas canvastext webgl no-touch geolocation postmessage websqldatabase indexeddb hashchange history draganddrop websockets rgba hsla multiplebgs backgroundsize borderimage borderradius boxshadow textshadow opacity cssanimations csscolumns cssgradients cssreflections csstransforms csstransforms3d csstransitions fontface generatedcontent video audio localstorage sessionstorage webworkers applicationcache svg inlinesvg smil svgclippaths adownload webaudio blobconstructor no-battery contenteditable cors csscalc mediaqueries no-regions cssfilters classlist details datalistelem no-track filesystem filereader fullscreen no-gamepads no-getusermedia xhr2 performance raf quotamanagement no-stylescoped webintents websocketsbinary todataurljpeg todataurlwebp webp"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><script type="text/javascript" src="./Reading local files in JavaScript - HTML5 Rocks_files/count.js"></script><script type="text/javascript" src="./Reading local files in JavaScript - HTML5 Rocks_files/embed.js"></script><script src="./Reading local files in JavaScript - HTML5 Rocks_files/cb=gapi.loaded_0" async=""></script><script type="text/javascript" async="" src="./Reading local files in JavaScript - HTML5 Rocks_files/ga.js"></script><script type="text/javascript">window.mod_pagespeed_start = Number(new Date());</script>
+<meta charset="utf-8">
+<meta name="description" content="A resource for developers looking to put HTML5 to use today, including information on specific features and when to use them in your apps.">
+<meta name="keywords" content="html5,html 5,html5 demos,html5 examples,javascript,css3,notifications,geolocation,web workers,apppcache,file api,filereader,indexeddb,offline,audio,video,drag and drop,chrome,sse,mobile">
+<meta itemprop="name" content="HTML5 Rocks - Reading files in JavaScript using the File APIs">
+<meta itemprop="description" content="Starter guide for using the File/FileList/FileReader APIs to process and read binary files in JavaScript.">
+<meta itemprop="image" content="/static/images/html5rocks-logo-wings.png">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+<title>Reading local files in JavaScript - HTML5 Rocks</title>
+<link rel="shortcut icon" href="http://www.html5rocks.com/favicon.ico">
+<link rel="alternate" type="application/rss+xml" title="HTML5 Rocks RSS" href="http://feeds.feedburner.com/html5rocks">
+<link rel="publisher" href="https://plus.google.com/111395306401981598462">
+<link rel="stylesheet" media="all" href="http://1-ps.googleusercontent.com/x/s.html5rocks-hrd.appspot.com/www.html5rocks.com/static/css/W.base.min.css.pagespeed.cf.1PjgdMKa8Z.css">
+<link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,400italic,600,800|Source+Code+Pro" rel="stylesheet">
+<link rel="apple-touch-icon" href="http://1-ps.googleusercontent.com/x/s.html5rocks-hrd.appspot.com/www.html5rocks.com/static/images/identity/HTML5_Badge_64.png.pagespeed.ce.S0LMUsq9YG.png" width="64" height="64">
+<link rel="apple-touch-icon-precomposed" href="http://1-ps.googleusercontent.com/x/s.html5rocks-hrd.appspot.com/www.html5rocks.com/static/images/identity/HTML5_Badge_64.png.pagespeed.ce.S0LMUsq9YG.png" width="64" height="64">
+<script src="./Reading local files in JavaScript - HTML5 Rocks_files/modernizr.custom.82437.js.pagespeed.jm.H7yOhhnYd0.js"></script>
+<script src="./Reading local files in JavaScript - HTML5 Rocks_files/jquery.min.js"></script>
+<script defer="" src="./Reading local files in JavaScript - HTML5 Rocks_files/jquery.scrollTo-min.js.pagespeed.jm.Hz5PYAgnCz.js"></script>
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5-els.js"></script>
+  <![endif]-->
+<style>.example{padding:10px;border:1px solid #ccc}#drop_zone{border:2px dashed #bbb;-moz-border-radius:5px;-webkit-border-radius:5px;border-radius:5px;padding:25px;text-align:center;font:20pt bold,"Vollkorn";color:#bbb}.thumb{height:75px;border:1px solid #000;margin:10px 5px 0 0}#progress_bar{margin:10px 0;padding:3px;border:1px solid #000;font-size:14px;clear:both;opacity:0;-o-transition:opacity 1s linear;-moz-transition:opacity 1s linear;-webkit-transition:opacity 1s linear;-ms-transition:opacity 1s linear}#progress_bar.loading{opacity:1}#progress_bar .percent{background-color:#9cf;height:auto;width:0}#byte_content{margin:5px 0;max-height:100px;overflow-y:auto;overflow-x:hidden}#byte_range{margin-top:5px}</style>
+<script type="text/javascript" async="" src="./Reading local files in JavaScript - HTML5 Rocks_files/count(1).js"></script></head>
+<body data-href="tutorials-file-dndfiles" onload="" class="pattern-bg" data-twttr-rendered="true"><noscript>&lt;meta HTTP-EQUIV="refresh" content="0;url='http://www.html5rocks.com/en/tutorials/file/dndfiles/?ModPagespeed=noscript'" /&gt;&lt;style&gt;&lt;!--table,div,span,font,p{display:none} --&gt;&lt;/style&gt;&lt;div style="display:block"&gt;Please click &lt;a href="http://www.html5rocks.com/en/tutorials/file/dndfiles/?ModPagespeed=noscript"&gt;here&lt;/a&gt; if you are not redirected within a few seconds.&lt;/div&gt;</noscript>
+<header class="main">
+<a id="home_horns" href="http://www.html5rocks.com/en/"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAyCAYAAABGQBuoAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6NEU2NTFGRTQwNjE0MTFFMTg0RjdERTE0MzFDQTlGQjQiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6NEU2NTFGRTUwNjE0MTFFMTg0RjdERTE0MzFDQTlGQjQiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo4MUQyMTY2QjA2MTMxMUUxODRGN0RFMTQzMUNBOUZCNCIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo4MUQyMTY2QzA2MTMxMUUxODRGN0RFMTQzMUNBOUZCNCIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PgNr19cAAAJFSURBVHja7FfrUcMwDE56/U/YIGxQJsBMQJmg6QTQCRomKBukGzBCywTpBikTpEwQJE4CxbFTOzF3cIfudM7Jsb5I1itRJKhpmhlw1XzTDjiJQhAqAq6JM+CcQUIBzEmhErJPkFAAHWUIpoOe0aFIT85nplEgQrfCUgjRGmTLIBbQ/X0FBTE+N5NABsxofYrj+ISMzygIBWClXwOwpvyo6K7QxwXLcN920DWK8JK3wCkpewBOSIaUeecBPKb0la2SIWSP+lktSVUrKiUA1aSaDpViTUyh2yebGCzBkMP6cwS+gpC7hnVJoZiFuGRWfgvKcY1gRV+fyO+DAS5oZeUnzapkVB2Rfjb0CC7j/ndAQixSB8uXcz9o7bnSlJQfe5SjRfewdxjinSklz7JHOdJ+bKm40eRzWleGTF1oFZQznQOkc8GcmZklADjRCq7xIgml7MVYGSgyShuIKGwVvZfbZIYPK6WSss8Sz7BXer0KCkJ66s5MFQLEVG37QPKByguXKU/2AuXg88oUTeeAJKGCVNtPheLKZLVLy3wGfgO+s+xjlr9iSfceM33vwfT+j48tsenCRIkepxzo7092LlG050HWgXY+harx+YWinGiR1w8IvL/RmoyklW3qcAEwdS6dkjGXzIffab2Mu7S3WTfkH63WKwIijHERTxlbw9aCppJB7U6SEvJMvLvjKBPNvxVFPonGc9MGaz41dOXtYIsFuRhF5OiCTWneZ4EXgEdz8gbgyXvD7ZMyNxM/g0aA/3J9lj4EGABt/PzEJtkxBQAAAABJRU5ErkJggg==" alt="HTML5 Rocks" width="24" height="50"></a>
+<h1 id="title">
+<a href="http://www.html5rocks.com/en/" title="HTML5 Rocks">HTML5 Rocks</a>
+</h1>
+<nav>
+<ul>
+<li><a class="home" href="http://www.html5rocks.com/en/" rel="home">Home</a></li>
+<li><a href="http://www.html5rocks.com/en/tutorials/" class="tutorials">Posts &amp; Tutorials</a></li>
+<li id="features_show"><a href="http://www.html5rocks.com/en/tutorials/file/dndfiles/#features">HTML5 Features</a></li>
+<li><a href="http://www.html5rocks.com/en/slides" class="slides">Slides</a></li>
+<li><a href="http://www.html5rocks.com/en/resources" class="resources">Resources</a></li>
+<li><a class="why" href="http://www.html5rocks.com/en/why">Why HTML5?</a></li>
+<li><a href="http://www.html5rocks.com/en/profiles" class="profiles">Who We Are</a></li>
+<li><a href="https://github.com/html5rocks/www.html5rocks.com/blob/master/CONTRIBUTING.md" target="_blank">Contribute</a></li>
+<li id="search_show">
+<a href="http://www.html5rocks.com/en/tutorials/file/dndfiles/#search_form">
+Search
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAYAAAAfSC3RAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6RjM0OTMyOUNEN0FEMTFFMEJDMEZDMjAwMjNDNjc0MDciIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6RjM0OTMyOUREN0FEMTFFMEJDMEZDMjAwMjNDNjc0MDciPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDpFNzMzOTM2MUQ3OTkxMUUwQkMwRkMyMDAyM0M2NzQwNyIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDpFNzMzOTM2MkQ3OTkxMUUwQkMwRkMyMDAyM0M2NzQwNyIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/Pj/umaQAAACdSURBVHjanFLbDQMhDAtMwAiM0lFuBEa4DW4ERmk7ASPQDRghTSSfRKvAPSz5J45D5ODJADM/hE/+RRUuNIKKaGzCDUNSNyhbpgixCIOhZ+jrSIiTjfTl5v/qang55z40xlsYvCEEugqEcbSqplutcBrCiZNw0ugU+zm0cQWreY7OVHC7DDN39WVmCmcDyZdNMBbzGx3AiYnu4CvAALKABcbyDrXxAAAAAElFTkSuQmCC" width="14" height="14" alt="">
+</a>
+</li>
+</ul>
+</nav>
+<div class="subheader search" style="display: none;" id="search_form">
+<div class="search">
+<form action="http://www.html5rocks.com/en/search" id="cse-search-box" role="search">
+<img id="search_hide" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB0AAAAdCAYAAABWk2cPAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6RjM0OTMyQTREN0FEMTFFMEJDMEZDMjAwMjNDNjc0MDciIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6RjM0OTMyQTVEN0FEMTFFMEJDMEZDMjAwMjNDNjc0MDciPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDpGMzQ5MzJBMkQ3QUQxMUUwQkMwRkMyMDAyM0M2NzQwNyIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDpGMzQ5MzJBM0Q3QUQxMUUwQkMwRkMyMDAyM0M2NzQwNyIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/Ps3igWgAAAFzSURBVHjazJfPSsNAEMZ3EygoBAoepD0VBA+Cp76AvoCvkWfK0+gLeBI8FISc2lMhsFBBCPGbMKGrZP/qNh342LKdzI/Z7OxOpPCwruvmGEgX0OWIywH6hBopZeOKJx2wJYYraCb87QvaA74NggJG2dwEwsbgH4AfnFAAKbOV+D+rAd4boQmAo+BMAxaJgGQrjn+EYiJPCNTBuZ7ptWXTrKHCM3DB/mM2Y46QTL+HcoPzM7SDSkg5gBW0gB4NPi30lnHR55ZgJQeqLBnrwNISizjzAWqzjQP8G7hxxOuhPu/LBA4F9s9kjqW1gZcRwH6JaSOtA7f+rZatCgT+PBxOaVlkllRCTzxWPB8EbSOAtKRbHkPBbeYoeBNweEZFgBVBm0igiAQ3kxyDUmtLFgbHB+jV8zUMB/6L4f8dtTFSu9ru/tie+LQv74D2G0nQD7rdE5dnzZxjnWJCJQTXHP9MGrPJWtDJmu3knxUIePJb5luAAQDWPZwf40bkcAAAAABJRU5ErkJggg==" width="29" height="29" alt="">
+<label><span>Search:</span><input type="search" name="q" id="q" autocomplete="off" placeholder="HTML5 Rocks"></label>
+</form>
+</div>
+</div>
+<div class="subheader features" style="display: none;" id="features" tabindex="0">
+<div class="features">
+<img id="features_hide" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB0AAAAdCAYAAABWk2cPAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6RjM0OTMyQTREN0FEMTFFMEJDMEZDMjAwMjNDNjc0MDciIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6RjM0OTMyQTVEN0FEMTFFMEJDMEZDMjAwMjNDNjc0MDciPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDpGMzQ5MzJBMkQ3QUQxMUUwQkMwRkMyMDAyM0M2NzQwNyIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDpGMzQ5MzJBM0Q3QUQxMUUwQkMwRkMyMDAyM0M2NzQwNyIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/Ps3igWgAAAFzSURBVHjazJfPSsNAEMZ3EygoBAoepD0VBA+Cp76AvoCvkWfK0+gLeBI8FISc2lMhsFBBCPGbMKGrZP/qNh342LKdzI/Z7OxOpPCwruvmGEgX0OWIywH6hBopZeOKJx2wJYYraCb87QvaA74NggJG2dwEwsbgH4AfnFAAKbOV+D+rAd4boQmAo+BMAxaJgGQrjn+EYiJPCNTBuZ7ptWXTrKHCM3DB/mM2Y46QTL+HcoPzM7SDSkg5gBW0gB4NPi30lnHR55ZgJQeqLBnrwNISizjzAWqzjQP8G7hxxOuhPu/LBA4F9s9kjqW1gZcRwH6JaSOtA7f+rZatCgT+PBxOaVlkllRCTzxWPB8EbSOAtKRbHkPBbeYoeBNweEZFgBVBm0igiAQ3kxyDUmtLFgbHB+jV8zUMB/6L4f8dtTFSu9ru/tie+LQv74D2G0nQD7rdE5dnzZxjnWJCJQTXHP9MGrPJWtDJmu3knxUIePJb5luAAQDWPZwf40bkcAAAAABJRU5ErkJggg==" width="29" height="29" alt="">
+<h2>Features</h2>
+<ul>
+<li>
+<a href="http://www.html5rocks.com/en/features/offline" class="offline">
+<h3>Offline</h3>
+</a>
+</li>
+<li>
+<a href="http://www.html5rocks.com/en/features/storage" class="storage">
+<h3>Storage</h3>
+</a>
+</li>
+<li>
+<a href="http://www.html5rocks.com/en/features/connectivity" class="connectivity">
+<h3>Connectivity</h3>
+</a>
+</li>
+<li>
+<a href="http://www.html5rocks.com/en/features/file_access" class="file_access">
+<h3>File Access</h3>
+</a>
+</li>
+<li>
+<a href="http://www.html5rocks.com/en/features/semantics" class="semantics">
+<h3>Semantics</h3>
+</a>
+</li>
+<li>
+<a href="http://www.html5rocks.com/en/features/multimedia" class="multimedia">
+<h3>Audio/Video</h3>
+</a>
+</li>
+<li>
+<a href="http://www.html5rocks.com/en/features/graphics" class="graphics">
+<h3>3D/Graphics</h3>
+</a>
+</li>
+<li>
+<a href="http://www.html5rocks.com/en/features/presentation" class="presentation">
+<h3>Presentation</h3>
+</a>
+</li>
+<li>
+<a href="http://www.html5rocks.com/en/features/performance" class="performance">
+<h3>Performance</h3>
+</a>
+</li>
+<li>
+<a href="http://www.html5rocks.com/en/features/nuts_and_bolts" class="nuts_and_bolts">
+<h3>Nuts &amp; Bolts</h3>
+</a>
+</li>
+</ul>
+</div>
+</div>
+</header>
+<a class="watermark" href="http://www.html5rocks.com/"></a>
+<nav class="paginator home">
+<ul class="home">
+<li><a class="next" href="http://www.html5rocks.com/en/mobile">Mobile</a></li>
+</ul>
+<ul class="mobile">
+<li><a class="previous" href="http://www.html5rocks.com/en/">Home</a></li>
+<li><a class="next" href="http://www.html5rocks.com/en/gaming">Gaming</a></li>
+</ul>
+<ul class="gaming">
+<li><a class="previous" href="http://www.html5rocks.com/en/mobile">Mobile</a></li>
+<li><a class="next" href="http://www.html5rocks.com/en/business">Business</a></li>
+</ul>
+<ul class="business">
+<li><a class="previous" href="http://www.html5rocks.com/en/gaming">Gaming</a></li>
+</ul>
+</nav>
+<nav class="paginator features">
+<ul class="offline">
+<li><a class="next" href="http://www.html5rocks.com/en/features/storage">Storage</a></li>
+</ul>
+<ul class="storage">
+<li><a class="previous" href="http://www.html5rocks.com/en/features/offline">Offline</a></li>
+<li><a class="next" href="http://www.html5rocks.com/en/features/connectivity">Connectivity</a></li>
+</ul>
+<ul class="connectivity">
+<li><a class="previous" href="http://www.html5rocks.com/en/features/storage">Storage</a></li>
+<li><a class="next" href="http://www.html5rocks.com/en/features/file_access">File Access</a></li>
+</ul>
+<ul class="file_access">
+<li><a class="previous" href="http://www.html5rocks.com/en/features/connectivity">Connectivity</a></li>
+<li><a class="next" href="http://www.html5rocks.com/en/features/semantics">Semantics</a></li>
+</ul>
+<ul class="semantics">
+<li><a class="previous" href="http://www.html5rocks.com/en/features/file_access">File Access</a></li>
+<li><a class="next" href="http://www.html5rocks.com/en/features/multimedia">Audio/Video</a></li>
+</ul>
+<ul class="multimedia">
+<li><a class="previous" href="http://www.html5rocks.com/en/features/semantics">Semantics</a></li>
+<li><a class="next" href="http://www.html5rocks.com/en/features/graphics">3D/Graphics</a></li>
+</ul>
+<ul class="graphics">
+<li><a class="previous" href="http://www.html5rocks.com/en/features/multimedia">Audio/Video</a></li>
+<li><a class="next" href="http://www.html5rocks.com/en/features/presentation">Presentation</a></li>
+</ul>
+<ul class="presentation">
+<li><a class="previous" href="http://www.html5rocks.com/en/features/graphics">3D/Graphics</a></li>
+<li><a class="next" href="http://www.html5rocks.com/en/features/performance">Performance</a></li>
+</ul>
+<ul class="performance">
+<li><a class="previous" href="http://www.html5rocks.com/en/features/presentation">Presentation</a></li>
+<li><a class="next" href="http://www.html5rocks.com/en/features/nuts_and_bolts">Nuts &amp; Bolts</a></li>
+</ul>
+<ul class="nuts_and_bolts">
+<li><a class="previous" href="http://www.html5rocks.com/en/features/performance">Performance</a></li>
+</ul>
+</nav>
+<div class="outline_nav_toggle deactivated">
+<img class="show" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB8AAAAeCAYAAADU8sWcAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6OTAyRDZFQUJFOEVFMTFFMDg2NkJGNDlCNjE5NENEMzIiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6OTAyRDZFQUNFOEVFMTFFMDg2NkJGNDlCNjE5NENEMzIiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo5MDJENkVBOUU4RUUxMUUwODY2QkY0OUI2MTk0Q0QzMiIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo5MDJENkVBQUU4RUUxMUUwODY2QkY0OUI2MTk0Q0QzMiIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/Pprl4SwAAAIcSURBVHjazFfNasJAEI6ptiIGBCUQbfAWxWu96EUfwAY8tg+gD1A8F+99gfoA9ijoA9he9GKvIt5EMRJyEFKKDQidlaSIyW5iYkgHhiyZzX4zk/nbEOWAJpNJGh4V4DudGYttn8Bz4EGxWJw7OTfkALQBXKPOIwTeASXeXYEDcEMH9kLIG21QYu0IHECRS1+BBeoypAI3rX4F7TMwpcdHF86uEsF9AD6mZ1BAsHQ7CJ7g8WB3wmazia1Wq7imaWHjXSaTUbPZrOpAAQn4EX6B+geuR3Wf9NVisWBGo9HtdruNWckjkci+UCjI5XJ5baMAyoLOMfgLPKq43cPhkJ/NZqwT3yYSie96vT6PRqN7QgCKyHpat/ps4FwuR7VaLdN+5JleryfsdrsrQgDWjICrkFzt1OJTBcbjcZqw5d4ArxIKDec2tJHSoMQ1RiygtKZxqYU+lGWZ8ZJb0+k0RRALNKZJUMvlkvGa2JIkxUngYWxNVNUbYy2KokmeSqUObCWDlKQURbGtfDQVIGEtZxjmx1j3++b6g1ItmUxaypw2HFpPehPxPK96tYzjuC9Sz6f1xm9VqTSWZT0pAOVWsQPHThtQAiW3wPl8XkYG4IAP5RUWH7gDUKdCh5wLjOp7qVQiNZhB4I3FAEdVrhtISw10mDhSoOvjGGUaJE8rXBOXeheg9ukEG+jo/L8uDRe8Lr0B6MD1Xc3vi+KvAAMAMUEG36eXLzcAAAAASUVORK5CYII=" alt="">
+<img class="hide" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB8AAAAeCAYAAADU8sWcAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6OTAyRDZFQUZFOEVFMTFFMDg2NkJGNDlCNjE5NENEMzIiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6OTAyRDZFQjBFOEVFMTFFMDg2NkJGNDlCNjE5NENEMzIiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo5MDJENkVBREU4RUUxMUUwODY2QkY0OUI2MTk0Q0QzMiIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo5MDJENkVBRUU4RUUxMUUwODY2QkY0OUI2MTk0Q0QzMiIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PlXiDkoAAAIdSURBVHjaxFfNasJAEN6sSkUIBOLBFktF0Junek+96wOU3tt76716tw/Q3msfQO8a8GhP3iKIpdJ6MBAIiEWE7shaos1m18SfD4ZFd2a/mc3szqyEBNHtdq/IAJKlsgmDSjufz7dF1pQESG/JcE1ERuL4JtIgTrz4IiekEN0TkVPkH+BEhTjx7jaJGcQlMtQDEiNq/0zX40dOFR/R7lElO9Bgku+ReIWyMxklB/EZGV55iTWbzUL9fl+xbftk9Z8syz+ZTMaKRqMLDrlN5IY48AU/wo6Jey9iINV1/XwwGKhu851OB6XTaVPTtE8PJ2TKU/6LnER9CYnBIh6Px7Fms5mdz+ch3r5GIpFFsVg0EonE1EPtDk7AKttLuyAGgB7og52HWsl51DSWVqvVuhAldjoAdh4qSz5Mt9z1W/d6PdWyrJiftAY7sGd9e+DFjHt6ieFwqAQ5Vxz7LPbK8NFoFIicYy+HRRaJx+NIVVVhUtM00WQy4ephdEQIRQ5RiESyLTC98lyRTCatIItz7G1Muw9XpFKpQOQcewPTQu8afS6XMxVFmfohBjuwZ0XtvF511iKFQuED7uttiEEf7DxUdGe2N1haUCCgUIg6IFhY6pv1vEa7U18lFSBQUhHtbstHbyYkl968tsd7Za2PW7vhaH9VPQQxs2/fQyP5j5j3aIA6X9nBo+GBEBtBnkulLZ2AxHrz/Vw6xEPxV4ABAB9p/+75XTbuAAAAAElFTkSuQmCC" alt="">
+<nav class="outline features">
+<h3>HTML5 Features</h3>
+<ul>
+<li class="offline">
+<a href="http://www.html5rocks.com/en/features/offline" class="section_title offline">Offline</a>
+<ul>
+<li><a href="http://www.html5rocks.com/en/features/offline#intro">Intro</a></li>
+<li><a href="http://www.html5rocks.com/en/features/offline#support">Browser Support</a></li>
+<li><a href="http://www.html5rocks.com/en/features/offline#updates">What’s New</a></li>
+<li><a href="http://www.html5rocks.com/en/features/offline#demos">Demos</a></li>
+<li><a href="http://www.html5rocks.com/en/features/offline#in_the_wild">In the Wild</a></li>
+<li><a href="http://www.html5rocks.com/en/features/offline#resources">Resources</a></li>
+</ul>
+</li>
+<li class="storage">
+<a href="http://www.html5rocks.com/en/features/storage" class="section_title storage">Storage</a>
+<ul>
+<li><a href="http://www.html5rocks.com/en/features/storage#intro">Intro</a></li>
+<li><a href="http://www.html5rocks.com/en/features/storage#support">Browser Support</a></li>
+<li><a href="http://www.html5rocks.com/en/features/storage#updates">What’s New</a></li>
+<li><a href="http://www.html5rocks.com/en/features/storage#demos">Demos</a></li>
+<li><a href="http://www.html5rocks.com/en/features/storage#in_the_wild">In the Wild</a></li>
+<li><a href="http://www.html5rocks.com/en/features/storage#resources">Resources</a></li>
+</ul>
+</li>
+<li class="connectivity">
+<a href="http://www.html5rocks.com/en/features/connectivity" class="section_title connectivity">Connectivity</a>
+<ul>
+<li><a href="http://www.html5rocks.com/en/features/connectivity#intro">Intro</a></li>
+<li><a href="http://www.html5rocks.com/en/features/connectivity#support">Browser Support</a></li>
+<li><a href="http://www.html5rocks.com/en/features/connectivity#updates">What’s New</a></li>
+<li><a href="http://www.html5rocks.com/en/features/connectivity#demos">Demos</a></li>
+<li><a href="http://www.html5rocks.com/en/features/connectivity#in_the_wild">In the Wild</a></li>
+<li><a href="http://www.html5rocks.com/en/features/connectivity#resources">Resources</a></li>
+</ul>
+</li>
+<li class="file_access">
+<a href="http://www.html5rocks.com/en/features/file_access" class="section_title file_access">File Access</a>
+<ul>
+<li><a href="http://www.html5rocks.com/en/features/file_access#intro">Intro</a></li>
+<li><a href="http://www.html5rocks.com/en/features/file_access#support">Browser Support</a></li>
+<li><a href="http://www.html5rocks.com/en/features/file_access#updates">What’s New</a></li>
+<li><a href="http://www.html5rocks.com/en/features/file_access#demos">Demos</a></li>
+<li><a href="http://www.html5rocks.com/en/features/file_access#in_the_wild">In the Wild</a></li>
+<li><a href="http://www.html5rocks.com/en/features/file_access#resources">Resources</a></li>
+</ul>
+</li>
+<li class="semantics">
+<a href="http://www.html5rocks.com/en/features/semantics" class="section_title semantics">Semantics</a>
+<ul>
+<li><a href="http://www.html5rocks.com/en/features/semantics#intro">Intro</a></li>
+<li><a href="http://www.html5rocks.com/en/features/semantics#support">Browser Support</a></li>
+<li><a href="http://www.html5rocks.com/en/features/semantics#updates">What’s New</a></li>
+<li><a href="http://www.html5rocks.com/en/features/semantics#demos">Demos</a></li>
+<li><a href="http://www.html5rocks.com/en/features/semantics#in_the_wild">In the Wild</a></li>
+<li><a href="http://www.html5rocks.com/en/features/semantics#resources">Resources</a></li>
+</ul>
+</li>
+<li class="multimedia">
+<a href="http://www.html5rocks.com/en/features/multimedia" class="section_title multimedia">Audio/Video</a>
+<ul>
+<li><a href="http://www.html5rocks.com/en/features/multimedia#intro">Intro</a></li>
+<li><a href="http://www.html5rocks.com/en/features/multimedia#support">Browser Support</a></li>
+<li><a href="http://www.html5rocks.com/en/features/multimedia#updates">What’s New</a></li>
+<li><a href="http://www.html5rocks.com/en/features/multimedia#demos">Demos</a></li>
+<li><a href="http://www.html5rocks.com/en/features/multimedia#in_the_wild">In the Wild</a></li>
+<li><a href="http://www.html5rocks.com/en/features/multimedia#resources">Resources</a></li>
+</ul>
+</li>
+<li class="graphics">
+<a href="http://www.html5rocks.com/en/features/graphics" class="section_title graphics">3D/Graphics</a>
+<ul>
+<li><a href="http://www.html5rocks.com/en/features/graphics#intro">Intro</a></li>
+<li><a href="http://www.html5rocks.com/en/features/graphics#support">Browser Support</a></li>
+<li><a href="http://www.html5rocks.com/en/features/graphics#updates">What’s New</a></li>
+<li><a href="http://www.html5rocks.com/en/features/graphics#demos">Demos</a></li>
+<li><a href="http://www.html5rocks.com/en/features/graphics#in_the_wild">In the Wild</a></li>
+<li><a href="http://www.html5rocks.com/en/features/graphics#resources">Resources</a></li>
+</ul>
+</li>
+<li class="presentation">
+<a href="http://www.html5rocks.com/en/features/presentation" class="section_title presentation">Presentation</a>
+<ul>
+<li><a href="http://www.html5rocks.com/en/features/presentation#intro">Intro</a></li>
+<li><a href="http://www.html5rocks.com/en/features/presentation#support">Browser Support</a></li>
+<li><a href="http://www.html5rocks.com/en/features/presentation#updates">What’s New</a></li>
+<li><a href="http://www.html5rocks.com/en/features/presentation#demos">Demos</a></li>
+<li><a href="http://www.html5rocks.com/en/features/presentation#in_the_wild">In the Wild</a></li>
+<li><a href="http://www.html5rocks.com/en/features/presentation#resources">Resources</a></li>
+</ul>
+</li>
+<li class="performance">
+<a href="http://www.html5rocks.com/en/features/performance" class="section_title performance">Performance</a>
+<ul>
+<li><a href="http://www.html5rocks.com/en/features/performance#intro">Intro</a></li>
+<li><a href="http://www.html5rocks.com/en/features/performance#updates">What’s New</a></li>
+<li><a href="http://www.html5rocks.com/en/features/performance#themes">Themes</a></li>
+<li><a href="http://www.html5rocks.com/en/features/performance#technologies">Technologies</a></li>
+<li><a href="http://www.html5rocks.com/en/features/performance#techniques">Techniques</a></li>
+<li><a href="http://www.html5rocks.com/en/features/performance#tools">Tools</a></li>
+<li><a href="http://www.html5rocks.com/en/features/performance#further_reading">Further Reading</a></li>
+</ul>
+</li>
+<li class="nuts_and_bolts">
+<a href="http://www.html5rocks.com/en/features/nuts_and_bolts" class="section_title nuts_and_bolts">Nuts &amp; Bolts</a>
+<ul>
+<li><a href="http://www.html5rocks.com/en/features/nuts_and_bolts#intro">Intro</a></li>
+<li><a href="http://www.html5rocks.com/en/features/nuts_and_bolts#support">Browser Support</a></li>
+<li><a href="http://www.html5rocks.com/en/features/nuts_and_bolts#updates">What’s New</a></li>
+<li><a href="http://www.html5rocks.com/en/features/nuts_and_bolts#demos">Demos</a></li>
+<li><a href="http://www.html5rocks.com/en/features/nuts_and_bolts#in_the_wild">In the Wild</a></li>
+<li><a href="http://www.html5rocks.com/en/features/nuts_and_bolts#resources">Resources</a></li>
+</ul>
+</li>
+</ul>
+</nav>
+</div>
+<div class="page current loaded" id="tutorials-file-dndfiles">
+<header class="tutorial clearfix pattern-bg-lighter">
+<hgroup>
+<h1>HTML5 Rocks</h1>
+<h2><a href="http://www.html5rocks.com/en/tutorials/">Tutorials</a></h2>
+</hgroup>
+<section>
+<h1>Reading files in JavaScript using the File APIs</h1>
+<section class="byline">
+<a href="http://www.html5rocks.com/profiles/#ericbidelman"><img src="data:image/jpeg;base64,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" itemprop="photo" alt="Eric Bidelman" title="Eric Bidelman"></a>
+<hgroup>
+<h2>
+By <strong><a href="http://www.html5rocks.com/profiles/#ericbidelman">Eric Bidelman</a></strong>
+</h2>
+</hgroup>
+<div class="date">
+<time pubdate="">Published <strong>June 18, 2010</strong></time>
+</div>
+</section>
+<aside id="html5badge">
+<a href="http://www.w3.org/html/logo/">
+<img src="data:image/png;base64,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" alt="This article is powered by HTML5 Performance &amp; Integration" title="This article is powered by HTML5 Performance &amp; Integration">
+</a>
+</aside>
+<section class="browser_support">
+<h2>Supported browsers:</h2>
+<span class="browsers">
+<span class="browser opera supported">
+<span class="browser_name">Opera</span>
+<span class="support">
+supported
+</span>
+</span>
+<span class="browser ie supported">
+<span class="browser_name">IE</span>
+<span class="support">
+supported
+</span>
+</span>
+<span class="browser safari supported">
+<span class="browser_name">Safari</span>
+<span class="support">
+supported
+</span>
+</span>
+<span class="browser ff supported">
+<span class="browser_name">Firefox</span>
+<span class="support">
+supported
+</span>
+</span>
+<span class="browser chrome supported">
+<span class="browser_name">Chrome</span>
+<span class="support">
+supported
+</span>
+</span>
+</span>
+<div class="compatible-block">
+<p id="notcompatible" class="hidden">
+Your browser may not support all of the functionality in this article.
+</p>
+<p id="compatible" class="">
+Your browser appears to support all of the functionality in this article.
+</p>
+</div>
+</section>
+<a href="http://www.html5rocks.com/en/tutorials/file/dndfiles/#disqus_thread" data-disqus-identifier="http://www.html5rocks.com/tutorials/file/dndfiles/" class="disqus_comments">140 Comments and 43 Reactions</a>
+</section>
+<span class="share preview" onmouseover="thirdParty.load(this);"><img src="./Reading local files in JavaScript - HTML5 Rocks_files/share.png"></span><span class="share">
+<ul>
+<li class="googleplus"><div style="height: 20px; width: 90px; display: inline-block; text-indent: 0px; margin: 0px; padding: 0px; background-color: transparent; border-style: none; float: none; line-height: normal; font-size: 1px; vertical-align: baseline; background-position: initial initial; background-repeat: initial initial; " id="___plusone_0"><iframe allowtransparency="true" frameborder="0" hspace="0" marginheight="0" marginwidth="0" scrolling="no" style="position: static; top: 0px; width: 90px; margin: 0px; border-style: none; left: 0px; visibility: visible; height: 20px; " tabindex="0" vspace="0" width="100%" id="I0_1351892113214" name="I0_1351892113214" src="./Reading local files in JavaScript - HTML5 Rocks_files/fastbutton.html" title="+1"></iframe></div></li>
+<li class="facebook" data-url="http://www.html5rocks.com/tutorials/file/dndfiles/"></li>
+<li class="twitter"><iframe allowtransparency="true" frameborder="0" scrolling="no" src="./Reading local files in JavaScript - HTML5 Rocks_files/tweet_button.1351848862.html" class="twitter-share-button twitter-count-horizontal" style="width: 107px; height: 20px; " title="Twitter Tweet Button" data-twttr-rendered="true"></iframe></li>
+</ul>
+</span>
+</header>
+<article class="tutorial pattern-bg-lighter">
+<div class="outline_nav_toggle">
+<img class="show" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB8AAAAeCAYAAADU8sWcAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6OTAyRDZFQUJFOEVFMTFFMDg2NkJGNDlCNjE5NENEMzIiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6OTAyRDZFQUNFOEVFMTFFMDg2NkJGNDlCNjE5NENEMzIiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo5MDJENkVBOUU4RUUxMUUwODY2QkY0OUI2MTk0Q0QzMiIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo5MDJENkVBQUU4RUUxMUUwODY2QkY0OUI2MTk0Q0QzMiIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/Pprl4SwAAAIcSURBVHjazFfNasJAEI6ptiIGBCUQbfAWxWu96EUfwAY8tg+gD1A8F+99gfoA9ijoA9he9GKvIt5EMRJyEFKKDQidlaSIyW5iYkgHhiyZzX4zk/nbEOWAJpNJGh4V4DudGYttn8Bz4EGxWJw7OTfkALQBXKPOIwTeASXeXYEDcEMH9kLIG21QYu0IHECRS1+BBeoypAI3rX4F7TMwpcdHF86uEsF9AD6mZ1BAsHQ7CJ7g8WB3wmazia1Wq7imaWHjXSaTUbPZrOpAAQn4EX6B+geuR3Wf9NVisWBGo9HtdruNWckjkci+UCjI5XJ5baMAyoLOMfgLPKq43cPhkJ/NZqwT3yYSie96vT6PRqN7QgCKyHpat/ps4FwuR7VaLdN+5JleryfsdrsrQgDWjICrkFzt1OJTBcbjcZqw5d4ArxIKDec2tJHSoMQ1RiygtKZxqYU+lGWZ8ZJb0+k0RRALNKZJUMvlkvGa2JIkxUngYWxNVNUbYy2KokmeSqUObCWDlKQURbGtfDQVIGEtZxjmx1j3++b6g1ItmUxaypw2HFpPehPxPK96tYzjuC9Sz6f1xm9VqTSWZT0pAOVWsQPHThtQAiW3wPl8XkYG4IAP5RUWH7gDUKdCh5wLjOp7qVQiNZhB4I3FAEdVrhtISw10mDhSoOvjGGUaJE8rXBOXeheg9ukEG+jo/L8uDRe8Lr0B6MD1Xc3vi+KvAAMAMUEG36eXLzcAAAAASUVORK5CYII=">
+<img class="hide" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB8AAAAeCAYAAADU8sWcAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6OTAyRDZFQUZFOEVFMTFFMDg2NkJGNDlCNjE5NENEMzIiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6OTAyRDZFQjBFOEVFMTFFMDg2NkJGNDlCNjE5NENEMzIiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo5MDJENkVBREU4RUUxMUUwODY2QkY0OUI2MTk0Q0QzMiIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo5MDJENkVBRUU4RUUxMUUwODY2QkY0OUI2MTk0Q0QzMiIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PlXiDkoAAAIdSURBVHjaxFfNasJAEN6sSkUIBOLBFktF0Junek+96wOU3tt76716tw/Q3msfQO8a8GhP3iKIpdJ6MBAIiEWE7shaos1m18SfD4ZFd2a/mc3szqyEBNHtdq/IAJKlsgmDSjufz7dF1pQESG/JcE1ERuL4JtIgTrz4IiekEN0TkVPkH+BEhTjx7jaJGcQlMtQDEiNq/0zX40dOFR/R7lElO9Bgku+ReIWyMxklB/EZGV55iTWbzUL9fl+xbftk9Z8syz+ZTMaKRqMLDrlN5IY48AU/wo6Jey9iINV1/XwwGKhu851OB6XTaVPTtE8PJ2TKU/6LnER9CYnBIh6Px7Fms5mdz+ch3r5GIpFFsVg0EonE1EPtDk7AKttLuyAGgB7og52HWsl51DSWVqvVuhAldjoAdh4qSz5Mt9z1W/d6PdWyrJiftAY7sGd9e+DFjHt6ieFwqAQ5Vxz7LPbK8NFoFIicYy+HRRaJx+NIVVVhUtM00WQy4ephdEQIRQ5RiESyLTC98lyRTCatIItz7G1Muw9XpFKpQOQcewPTQu8afS6XMxVFmfohBjuwZ0XtvF511iKFQuED7uttiEEf7DxUdGe2N1haUCCgUIg6IFhY6pv1vEa7U18lFSBQUhHtbstHbyYkl968tsd7Za2PW7vhaH9VPQQxs2/fQyP5j5j3aIA6X9nBo+GBEBtBnkulLZ2AxHrz/Vw6xEPxV4ABAB9p/+75XTbuAAAAAElFTkSuQmCC">
+<nav class="outline toc pattern-bg-lighter">
+<h3>Table of Contents</h3>
+<ul><li><a href="http://www.html5rocks.com/en/tutorials/file/dndfiles/#toc-introduction" onclick="$.scrollTo(&quot;#toc-introduction&quot;, 800, {offset: {top: -35}})">Introduction</a></li><li><a href="http://www.html5rocks.com/en/tutorials/file/dndfiles/#toc-selecting-files" onclick="$.scrollTo(&quot;#toc-selecting-files&quot;, 800, {offset: {top: -35}})">Selecting files</a><ul><li><a href="http://www.html5rocks.com/en/tutorials/file/dndfiles/#toc-selecting-files-input" onclick="$.scrollTo(&quot;#toc-selecting-files-input&quot;, 800, {offset: {top: -35}})">Using form input for selecting</a></li><li><a href="http://www.html5rocks.com/en/tutorials/file/dndfiles/#toc-selecting-files-dnd" onclick="$.scrollTo(&quot;#toc-selecting-files-dnd&quot;, 800, {offset: {top: -35}})">Using drag and drop for selecting</a></li></ul></li><li><a href="http://www.html5rocks.com/en/tutorials/file/dndfiles/#toc-reading-files" onclick="$.scrollTo(&quot;#toc-reading-files&quot;, 800, {offset: {top: -35}})">Reading files</a><ul><li><a href="http://www.html5rocks.com/en/tutorials/file/dndfiles/#toc-slicing-files" onclick="$.scrollTo(&quot;#toc-slicing-files&quot;, 800, {offset: {top: -35}})">Slicing a file</a></li><li><a href="http://www.html5rocks.com/en/tutorials/file/dndfiles/#toc-monitoring-progress" onclick="$.scrollTo(&quot;#toc-monitoring-progress&quot;, 800, {offset: {top: -35}})">Monitoring the progress of a read</a></li></ul></li><li><a href="http://www.html5rocks.com/en/tutorials/file/dndfiles/#toc-references" onclick="$.scrollTo(&quot;#toc-references&quot;, 800, {offset: {top: -35}})">References</a></li></ul>
+<h3>Localizations</h3>
+<p>This article is additionally available in the following languages:</p>
+<ul>
+<li><a href="http://www.html5rocks.com/zh/tutorials/file/dndfiles/">中文 (简体)</a></li>
+<li><a href="http://www.html5rocks.com/de/tutorials/file/dndfiles/">Deutsch</a></li>
+<li><a href="http://www.html5rocks.com/pt/tutorials/file/dndfiles/">Português (Brasil)</a></li>
+<li><a href="http://www.html5rocks.com/es/tutorials/file/dndfiles/">Español</a></li>
+<li><a href="http://www.html5rocks.com/ru/tutorials/file/dndfiles/">Pусский</a></li>
+<li><a href="http://www.html5rocks.com/ja/tutorials/file/dndfiles/">日本語</a></li>
+</ul>
+</nav>
+</div>
+<section>
+<h2 id="toc-introduction">Introduction</h2>
+<p>HTML5 finally provides a standard way to interact with local files, via the <a href="http://www.w3.org/TR/file-upload/" target="_blank">File API</a> specification.
+As example of its capabilities, the File API could be used to create a thumbnail preview of images as they're being sent to the server,
+or allow an app to save a file reference while the user is offline. Additionally, you could use client-side logic to verify an upload's mimetype matches
+its file extension or restrict the size of an upload.</p>
+<p>The spec provides several interfaces for accessing files from a 'local' filesystem:</p>
+<ol>
+<li><code>File</code> - an individual file; provides readonly information such as name, file size, mimetype, and a reference to the file handle.</li>
+<li><code>FileList</code> - an array-like sequence of <code>File</code> objects. (Think <code>&lt;input type="file" multiple&gt;</code> or dragging a directory of files from the desktop).</li>
+<li><code>Blob</code> - Allows for slicing a file into byte ranges.</li>
+</ol>
+<p>When used in conjunction with the above data structures, the <a href="http://dev.w3.org/2006/webapi/FileAPI/#filereader-interface" target="_blank"><code>FileReader</code></a> interface
+can be used to asynchronously read a file through familiar JavaScript event handling. Thus, it is possible to monitor the progress of a read, catch errors,
+and determine when a load is complete. In many ways the APIs resemble <code>XMLHttpRequest</code>'s event model.</p>
+<h2 id="toc-selecting-files">Selecting files</h2>
+<p>The first thing to do is check that your browser fully supports the File API:</p>
+<pre class="prettyprint"><span class="com">// Check for the various File API support.</span><span class="pln">
+</span><span class="kwd">if</span><span class="pln"> </span><span class="pun">(</span><span class="pln">window</span><span class="pun">.</span><span class="typ">File</span><span class="pln"> </span><span class="pun">&amp;&amp;</span><span class="pln"> window</span><span class="pun">.</span><span class="typ">FileReader</span><span class="pln"> </span><span class="pun">&amp;&amp;</span><span class="pln"> window</span><span class="pun">.</span><span class="typ">FileList</span><span class="pln"> </span><span class="pun">&amp;&amp;</span><span class="pln"> window</span><span class="pun">.</span><span class="typ">Blob</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+  </span><span class="com">// Great success! All the File APIs are supported.</span><span class="pln">
+</span><span class="pun">}</span><span class="pln"> </span><span class="kwd">else</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+  alert</span><span class="pun">(</span><span class="str">'The File APIs are not fully supported in this browser.'</span><span class="pun">);</span><span class="pln">
+</span><span class="pun">}</span></pre>
+<p>Of course, if your app will only use a few of these APIs, modify this snippet accordingly.</p>
+<h3 id="toc-selecting-files-input">Using form input for selecting</h3>
+<p>The most straightforward way to load a file is to use a standard <code>&lt;input type="file"&gt;</code> element.
+JavaScript returns the list of selected <code>File</code> objects as a <code>FileList</code>.
+Here's an example that uses the 'multiple' attribute to allow selecting several files at once:</p>
+<pre class="prettyprint"><span class="tag">&lt;input</span><span class="pln"> </span><span class="atn">type</span><span class="pun">=</span><span class="atv">"file"</span><span class="pln"> </span><span class="atn">id</span><span class="pun">=</span><span class="atv">"files"</span><span class="pln"> </span><span class="atn">name</span><span class="pun">=</span><span class="atv">"files[]"</span><span class="pln"> </span><span class="atn">multiple</span><span class="pln"> </span><span class="tag">/&gt;</span><span class="pln">
+</span><span class="tag">&lt;output</span><span class="pln"> </span><span class="atn">id</span><span class="pun">=</span><span class="atv">"list"</span><span class="tag">&gt;&lt;/output&gt;</span><span class="pln">
+
+</span><span class="tag">&lt;script&gt;</span><span class="pln">
+  </span><span class="kwd">function</span><span class="pln"> handleFileSelect</span><span class="pun">(</span><span class="pln">evt</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+    </span><span class="kwd">var</span><span class="pln"> files </span><span class="pun">=</span><span class="pln"> evt</span><span class="pun">.</span><span class="pln">target</span><span class="pun">.</span><span class="pln">files</span><span class="pun">;</span><span class="pln"> </span><span class="com">// FileList object</span><span class="pln">
+
+    </span><span class="com">// files is a FileList of File objects. List some properties.</span><span class="pln">
+    </span><span class="kwd">var</span><span class="pln"> output </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[];</span><span class="pln">
+    </span><span class="kwd">for</span><span class="pln"> </span><span class="pun">(</span><span class="kwd">var</span><span class="pln"> i </span><span class="pun">=</span><span class="pln"> </span><span class="lit">0</span><span class="pun">,</span><span class="pln"> f</span><span class="pun">;</span><span class="pln"> f </span><span class="pun">=</span><span class="pln"> files</span><span class="pun">[</span><span class="pln">i</span><span class="pun">];</span><span class="pln"> i</span><span class="pun">++)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+      output</span><span class="pun">.</span><span class="pln">push</span><span class="pun">(</span><span class="str">'&lt;li&gt;&lt;strong&gt;'</span><span class="pun">,</span><span class="pln"> escape</span><span class="pun">(</span><span class="pln">f</span><span class="pun">.</span><span class="pln">name</span><span class="pun">),</span><span class="pln"> </span><span class="str">'&lt;/strong&gt; ('</span><span class="pun">,</span><span class="pln"> f</span><span class="pun">.</span><span class="pln">type </span><span class="pun">||</span><span class="pln"> </span><span class="str">'n/a'</span><span class="pun">,</span><span class="pln"> </span><span class="str">') - '</span><span class="pun">,</span><span class="pln">
+                  f</span><span class="pun">.</span><span class="pln">size</span><span class="pun">,</span><span class="pln"> </span><span class="str">' bytes, last modified: '</span><span class="pun">,</span><span class="pln">
+                  f</span><span class="pun">.</span><span class="pln">lastModifiedDate </span><span class="pun">?</span><span class="pln"> f</span><span class="pun">.</span><span class="pln">lastModifiedDate</span><span class="pun">.</span><span class="pln">toLocaleDateString</span><span class="pun">()</span><span class="pln"> </span><span class="pun">:</span><span class="pln"> </span><span class="str">'n/a'</span><span class="pun">,</span><span class="pln">
+                  </span><span class="str">'&lt;/li&gt;'</span><span class="pun">);</span><span class="pln">
+    </span><span class="pun">}</span><span class="pln">
+    document</span><span class="pun">.</span><span class="pln">getElementById</span><span class="pun">(</span><span class="str">'list'</span><span class="pun">).</span><span class="pln">innerHTML </span><span class="pun">=</span><span class="pln"> </span><span class="str">'&lt;ul&gt;'</span><span class="pln"> </span><span class="pun">+</span><span class="pln"> output</span><span class="pun">.</span><span class="pln">join</span><span class="pun">(</span><span class="str">''</span><span class="pun">)</span><span class="pln"> </span><span class="pun">+</span><span class="pln"> </span><span class="str">'&lt;/ul&gt;'</span><span class="pun">;</span><span class="pln">
+  </span><span class="pun">}</span><span class="pln">
+
+  document</span><span class="pun">.</span><span class="pln">getElementById</span><span class="pun">(</span><span class="str">'files'</span><span class="pun">).</span><span class="pln">addEventListener</span><span class="pun">(</span><span class="str">'change'</span><span class="pun">,</span><span class="pln"> handleFileSelect</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">false</span><span class="pun">);</span><span class="pln">
+</span><span class="tag">&lt;/script&gt;</span></pre>
+<p><strong>Example</strong>: Using form input for selecting. Try it!</p>
+<div class="example">
+<input type="file" id="files1" name="files1[]" multiple="">
+<output id="file_list"></output>
+</div>
+<h3 id="toc-selecting-files-dnd">Using drag and drop for selecting</h3>
+<p>Another technique for loading files is native drag and drop from the desktop
+to the browser. We can modify the previous example slightly to include drag and drop support.</p>
+<pre class="prettyprint"><span class="tag">&lt;div</span><span class="pln"> </span><span class="atn">id</span><span class="pun">=</span><span class="atv">"drop_zone"</span><span class="tag">&gt;</span><span class="pln">Drop files here</span><span class="tag">&lt;/div&gt;</span><span class="pln">
+</span><span class="tag">&lt;output</span><span class="pln"> </span><span class="atn">id</span><span class="pun">=</span><span class="atv">"list"</span><span class="tag">&gt;&lt;/output&gt;</span><span class="pln">
+
+</span><span class="tag">&lt;script&gt;</span><span class="pln">
+  </span><span class="kwd">function</span><span class="pln"> handleFileSelect</span><span class="pun">(</span><span class="pln">evt</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+    evt</span><span class="pun">.</span><span class="pln">stopPropagation</span><span class="pun">();</span><span class="pln">
+    evt</span><span class="pun">.</span><span class="pln">preventDefault</span><span class="pun">();</span><span class="pln">
+
+    </span><span class="kwd">var</span><span class="pln"> files </span><span class="pun">=</span><span class="pln"> evt</span><span class="pun">.</span><span class="pln">dataTransfer</span><span class="pun">.</span><span class="pln">files</span><span class="pun">;</span><span class="pln"> </span><span class="com">// FileList object.</span><span class="pln">
+
+    </span><span class="com">// files is a FileList of File objects. List some properties.</span><span class="pln">
+    </span><span class="kwd">var</span><span class="pln"> output </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[];</span><span class="pln">
+    </span><span class="kwd">for</span><span class="pln"> </span><span class="pun">(</span><span class="kwd">var</span><span class="pln"> i </span><span class="pun">=</span><span class="pln"> </span><span class="lit">0</span><span class="pun">,</span><span class="pln"> f</span><span class="pun">;</span><span class="pln"> f </span><span class="pun">=</span><span class="pln"> files</span><span class="pun">[</span><span class="pln">i</span><span class="pun">];</span><span class="pln"> i</span><span class="pun">++)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+      output</span><span class="pun">.</span><span class="pln">push</span><span class="pun">(</span><span class="str">'&lt;li&gt;&lt;strong&gt;'</span><span class="pun">,</span><span class="pln"> escape</span><span class="pun">(</span><span class="pln">f</span><span class="pun">.</span><span class="pln">name</span><span class="pun">),</span><span class="pln"> </span><span class="str">'&lt;/strong&gt; ('</span><span class="pun">,</span><span class="pln"> f</span><span class="pun">.</span><span class="pln">type </span><span class="pun">||</span><span class="pln"> </span><span class="str">'n/a'</span><span class="pun">,</span><span class="pln"> </span><span class="str">') - '</span><span class="pun">,</span><span class="pln">
+                  f</span><span class="pun">.</span><span class="pln">size</span><span class="pun">,</span><span class="pln"> </span><span class="str">' bytes, last modified: '</span><span class="pun">,</span><span class="pln">
+                  f</span><span class="pun">.</span><span class="pln">lastModifiedDate </span><span class="pun">?</span><span class="pln"> f</span><span class="pun">.</span><span class="pln">lastModifiedDate</span><span class="pun">.</span><span class="pln">toLocaleDateString</span><span class="pun">()</span><span class="pln"> </span><span class="pun">:</span><span class="pln"> </span><span class="str">'n/a'</span><span class="pun">,</span><span class="pln">
+                  </span><span class="str">'&lt;/li&gt;'</span><span class="pun">);</span><span class="pln">
+    </span><span class="pun">}</span><span class="pln">
+    document</span><span class="pun">.</span><span class="pln">getElementById</span><span class="pun">(</span><span class="str">'list'</span><span class="pun">).</span><span class="pln">innerHTML </span><span class="pun">=</span><span class="pln"> </span><span class="str">'&lt;ul&gt;'</span><span class="pln"> </span><span class="pun">+</span><span class="pln"> output</span><span class="pun">.</span><span class="pln">join</span><span class="pun">(</span><span class="str">''</span><span class="pun">)</span><span class="pln"> </span><span class="pun">+</span><span class="pln"> </span><span class="str">'&lt;/ul&gt;'</span><span class="pun">;</span><span class="pln">
+  </span><span class="pun">}</span><span class="pln">
+
+  </span><span class="kwd">function</span><span class="pln"> handleDragOver</span><span class="pun">(</span><span class="pln">evt</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+    evt</span><span class="pun">.</span><span class="pln">stopPropagation</span><span class="pun">();</span><span class="pln">
+    evt</span><span class="pun">.</span><span class="pln">preventDefault</span><span class="pun">();</span><span class="pln">
+    evt</span><span class="pun">.</span><span class="pln">dataTransfer</span><span class="pun">.</span><span class="pln">dropEffect </span><span class="pun">=</span><span class="pln"> </span><span class="str">'copy'</span><span class="pun">;</span><span class="pln"> </span><span class="com">// Explicitly show this is a copy.</span><span class="pln">
+  </span><span class="pun">}</span><span class="pln">
+
+  </span><span class="com">// Setup the dnd listeners.</span><span class="pln">
+  </span><span class="kwd">var</span><span class="pln"> dropZone </span><span class="pun">=</span><span class="pln"> document</span><span class="pun">.</span><span class="pln">getElementById</span><span class="pun">(</span><span class="str">'drop_zone'</span><span class="pun">);</span><span class="pln">
+  dropZone</span><span class="pun">.</span><span class="pln">addEventListener</span><span class="pun">(</span><span class="str">'dragover'</span><span class="pun">,</span><span class="pln"> handleDragOver</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">false</span><span class="pun">);</span><span class="pln">
+  dropZone</span><span class="pun">.</span><span class="pln">addEventListener</span><span class="pun">(</span><span class="str">'drop'</span><span class="pun">,</span><span class="pln"> handleFileSelect</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">false</span><span class="pun">);</span><span class="pln">
+</span><span class="tag">&lt;/script&gt;</span></pre>
+<p><strong>Example</strong>: Using drag and drop for selecting. Try it!</p>
+<div class="example">
+<div id="drop_zone">Drop files here</div>
+<output id="file_list2"></output>
+</div>
+<p>Note: Some browsers treat <code>&lt;input type="file"&gt;</code> elements as native drop targets.
+Try dragging files onto the input field in the previous example.</p>
+<h2 id="toc-reading-files">Reading files</h2>
+<p>Now comes the fun part!</p>
+<p>After you've obtained a <code>File</code> reference, instantiate a <a href="http://dev.w3.org/2006/webapi/FileAPI/#filereader-interface" target="_blank"><code>FileReader</code></a> object
+to read its contents into memory. When the load finishes, the reader's <code>onload</code> event is fired
+and its <code>result</code> attribute can be used to access the file data.</p>
+<p><code>FileReader</code> includes four options for reading a file, asynchronously:</p>
+<ul>
+<li><code>FileReader.readAsBinaryString(Blob|File)</code> - The <code>result</code> property will contain the file/blob's data
+as a binary string. Every byte is represented by an integer in the range [0..255].</li>
+<li><code>FileReader.readAsText(Blob|File, opt_encoding)</code> - The <code>result</code> property will contain the
+file/blob's data as a text string. By default the string is decoded as 'UTF-8'. Use the optional encoding parameter
+can specify a different format.</li>
+<li><code>FileReader.readAsDataURL(Blob|File)</code> - The <code>result</code> property will contain the file/blob's
+data encoded as a <a href="http://en.wikipedia.org/wiki/Data_URI_scheme" target="_blank">data URL</a>.</li>
+<li><code>FileReader.readAsArrayBuffer(Blob|File)</code> - The <code>result</code> property will contain the file/blob's
+data as an <a href="https://cvs.khronos.org/svn/repos/registry/trunk/public/webgl/doc/spec/TypedArray-spec.html" target="_blank">ArrayBuffer</a> object.</li>
+</ul>
+<p>Once one of these read methods is called on your <code>FileReader</code> object, the <code>onloadstart</code>,
+<code>onprogress</code>, <code>onload</code>, <code>onabort</code>, <code>onerror</code>, and <code>onloadend</code>
+can be used to track its progress.</p>
+<p>The example below filters out images from the user's selection, calls <code>reader.readAsDataURL()</code>
+on the file, and renders a thumbnail by setting the 'src' attribute to a data URL.</p>
+<pre class="prettyprint"><span class="tag">&lt;style&gt;</span><span class="pln">
+  </span><span class="pun">.</span><span class="pln">thumb </span><span class="pun">{</span><span class="pln">
+    </span><span class="kwd">height</span><span class="pun">:</span><span class="pln"> </span><span class="lit">75px</span><span class="pun">;</span><span class="pln">
+    </span><span class="kwd">border</span><span class="pun">:</span><span class="pln"> </span><span class="lit">1px</span><span class="pln"> solid </span><span class="lit">#000</span><span class="pun">;</span><span class="pln">
+    </span><span class="kwd">margin</span><span class="pun">:</span><span class="pln"> </span><span class="lit">10px</span><span class="pln"> </span><span class="lit">5px</span><span class="pln"> </span><span class="lit">0</span><span class="pln"> </span><span class="lit">0</span><span class="pun">;</span><span class="pln">
+  </span><span class="pun">}</span><span class="pln">
+</span><span class="tag">&lt;/style&gt;</span><span class="pln">
+
+</span><span class="tag">&lt;input</span><span class="pln"> </span><span class="atn">type</span><span class="pun">=</span><span class="atv">"file"</span><span class="pln"> </span><span class="atn">id</span><span class="pun">=</span><span class="atv">"files"</span><span class="pln"> </span><span class="atn">name</span><span class="pun">=</span><span class="atv">"files[]"</span><span class="pln"> </span><span class="atn">multiple</span><span class="pln"> </span><span class="tag">/&gt;</span><span class="pln">
+</span><span class="tag">&lt;output</span><span class="pln"> </span><span class="atn">id</span><span class="pun">=</span><span class="atv">"list"</span><span class="tag">&gt;&lt;/output&gt;</span><span class="pln">
+
+</span><span class="tag">&lt;script&gt;</span><span class="pln">
+  </span><span class="kwd">function</span><span class="pln"> handleFileSelect</span><span class="pun">(</span><span class="pln">evt</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+    </span><span class="kwd">var</span><span class="pln"> files </span><span class="pun">=</span><span class="pln"> evt</span><span class="pun">.</span><span class="pln">target</span><span class="pun">.</span><span class="pln">files</span><span class="pun">;</span><span class="pln"> </span><span class="com">// FileList object</span><span class="pln">
+
+    </span><span class="com">// Loop through the FileList and render image files as thumbnails.</span><span class="pln">
+    </span><span class="kwd">for</span><span class="pln"> </span><span class="pun">(</span><span class="kwd">var</span><span class="pln"> i </span><span class="pun">=</span><span class="pln"> </span><span class="lit">0</span><span class="pun">,</span><span class="pln"> f</span><span class="pun">;</span><span class="pln"> f </span><span class="pun">=</span><span class="pln"> files</span><span class="pun">[</span><span class="pln">i</span><span class="pun">];</span><span class="pln"> i</span><span class="pun">++)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+
+      </span><span class="com">// Only process image files.</span><span class="pln">
+      </span><span class="kwd">if</span><span class="pln"> </span><span class="pun">(!</span><span class="pln">f</span><span class="pun">.</span><span class="pln">type</span><span class="pun">.</span><span class="pln">match</span><span class="pun">(</span><span class="str">'image.*'</span><span class="pun">))</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+        </span><span class="kwd">continue</span><span class="pun">;</span><span class="pln">
+      </span><span class="pun">}</span><span class="pln">
+
+      </span><span class="kwd">var</span><span class="pln"> reader </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">new</span><span class="pln"> </span><span class="typ">FileReader</span><span class="pun">();</span><span class="pln">
+
+      </span><span class="com">// Closure to capture the file information.</span><span class="pln">
+      reader</span><span class="pun">.</span><span class="pln">onload </span><span class="pun">=</span><span class="pln"> </span><span class="pun">(</span><span class="kwd">function</span><span class="pun">(</span><span class="pln">theFile</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+        </span><span class="kwd">return</span><span class="pln"> </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">e</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+          </span><span class="com">// Render thumbnail.</span><span class="pln">
+          </span><span class="kwd">var</span><span class="pln"> span </span><span class="pun">=</span><span class="pln"> document</span><span class="pun">.</span><span class="pln">createElement</span><span class="pun">(</span><span class="str">'span'</span><span class="pun">);</span><span class="pln">
+          span</span><span class="pun">.</span><span class="pln">innerHTML </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[</span><span class="str">'&lt;img class="thumb" src="'</span><span class="pun">,</span><span class="pln"> e</span><span class="pun">.</span><span class="pln">target</span><span class="pun">.</span><span class="pln">result</span><span class="pun">,</span><span class="pln">
+                            </span><span class="str">'" title="'</span><span class="pun">,</span><span class="pln"> escape</span><span class="pun">(</span><span class="pln">theFile</span><span class="pun">.</span><span class="pln">name</span><span class="pun">),</span><span class="pln"> </span><span class="str">'"/&gt;'</span><span class="pun">].</span><span class="pln">join</span><span class="pun">(</span><span class="str">''</span><span class="pun">);</span><span class="pln">
+          document</span><span class="pun">.</span><span class="pln">getElementById</span><span class="pun">(</span><span class="str">'list'</span><span class="pun">).</span><span class="pln">insertBefore</span><span class="pun">(</span><span class="pln">span</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">null</span><span class="pun">);</span><span class="pln">
+        </span><span class="pun">};</span><span class="pln">
+      </span><span class="pun">})(</span><span class="pln">f</span><span class="pun">);</span><span class="pln">
+
+      </span><span class="com">// Read in the image file as a data URL.</span><span class="pln">
+      reader</span><span class="pun">.</span><span class="pln">readAsDataURL</span><span class="pun">(</span><span class="pln">f</span><span class="pun">);</span><span class="pln">
+    </span><span class="pun">}</span><span class="pln">
+  </span><span class="pun">}</span><span class="pln">
+
+  document</span><span class="pun">.</span><span class="pln">getElementById</span><span class="pun">(</span><span class="str">'files'</span><span class="pun">).</span><span class="pln">addEventListener</span><span class="pun">(</span><span class="str">'change'</span><span class="pun">,</span><span class="pln"> handleFileSelect</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">false</span><span class="pun">);</span><span class="pln">
+</span><span class="tag">&lt;/script&gt;</span></pre>
+<p><strong>Example</strong>: Reading files. Try it!</p>
+<div class="example">
+<p>Try this example with a directory of images!</p>
+<input type="file" id="files3" name="files3[]" multiple=""><br>
+<output id="thumbnails"></output>
+</div>
+<h3 id="toc-slicing-files">Slicing a file</h3>
+<p>In some cases reading the entire file into memory isn't the best option.
+For example, say you wanted to write an async file uploader. One possible way to speed up the upload
+would be to read and send the file in separate byte range chunks. The server component would then be responsible
+for reconstructing the file content in the correct order.</p>
+<p>Lucky for us, the <code>File</code> interface supports a slice method to support this use case.
+The method takes a starting byte as its first argument, ending byte as its second, and
+an option content type string as a third.</p>
+<pre class="prettyprint"><span class="kwd">var</span><span class="pln"> blob </span><span class="pun">=</span><span class="pln"> file</span><span class="pun">.</span><span class="pln">slice</span><span class="pun">(</span><var><span class="pln">startingByte</span></var><span class="pun">,</span><span class="pln"> </span><var><span class="pln">endindByte</span></var><span class="pun">);</span><span class="pln">
+reader</span><span class="pun">.</span><span class="pln">readAsBinaryString</span><span class="pun">(</span><span class="pln">blob</span><span class="pun">);</span></pre>
+<p>The following example demonstrates reading chunks of a file. Something worth noting is that it uses the
+<code>onloadend</code> and checks the <code>evt.target.readyState</code> instead of using the
+<code>onload</code> event.</p>
+<pre class="prettyprint"><span class="tag">&lt;style&gt;</span><span class="pln">
+  </span><span class="pun">#</span><span class="pln">byte_content </span><span class="pun">{</span><span class="pln">
+    </span><span class="kwd">margin</span><span class="pun">:</span><span class="pln"> </span><span class="lit">5px</span><span class="pln"> </span><span class="lit">0</span><span class="pun">;</span><span class="pln">
+    </span><span class="kwd">max-height</span><span class="pun">:</span><span class="pln"> </span><span class="lit">100px</span><span class="pun">;</span><span class="pln">
+    </span><span class="kwd">overflow-y</span><span class="pun">:</span><span class="pln"> auto</span><span class="pun">;</span><span class="pln">
+    </span><span class="kwd">overflow-x</span><span class="pun">:</span><span class="pln"> hidden</span><span class="pun">;</span><span class="pln">
+  </span><span class="pun">}</span><span class="pln">
+  </span><span class="pun">#</span><span class="pln">byte_range </span><span class="pun">{</span><span class="pln"> </span><span class="kwd">margin-top</span><span class="pun">:</span><span class="pln"> </span><span class="lit">5px</span><span class="pun">;</span><span class="pln"> </span><span class="pun">}</span><span class="pln">
+</span><span class="tag">&lt;/style&gt;</span><span class="pln">
+
+</span><span class="tag">&lt;input</span><span class="pln"> </span><span class="atn">type</span><span class="pun">=</span><span class="atv">"file"</span><span class="pln"> </span><span class="atn">id</span><span class="pun">=</span><span class="atv">"files"</span><span class="pln"> </span><span class="atn">name</span><span class="pun">=</span><span class="atv">"file"</span><span class="pln"> </span><span class="tag">/&gt;</span><span class="pln"> Read bytes: 
+</span><span class="tag">&lt;span</span><span class="pln"> </span><span class="atn">class</span><span class="pun">=</span><span class="atv">"readBytesButtons"</span><span class="tag">&gt;</span><span class="pln">
+  </span><span class="tag">&lt;button</span><span class="pln"> </span><span class="atn">data-startbyte</span><span class="pun">=</span><span class="atv">"0"</span><span class="pln"> </span><span class="atn">data-endbyte</span><span class="pun">=</span><span class="atv">"4"</span><span class="tag">&gt;</span><span class="pln">1-5</span><span class="tag">&lt;/button&gt;</span><span class="pln">
+  </span><span class="tag">&lt;button</span><span class="pln"> </span><span class="atn">data-startbyte</span><span class="pun">=</span><span class="atv">"5"</span><span class="pln"> </span><span class="atn">data-endbyte</span><span class="pun">=</span><span class="atv">"14"</span><span class="tag">&gt;</span><span class="pln">6-15</span><span class="tag">&lt;/button&gt;</span><span class="pln">
+  </span><span class="tag">&lt;button</span><span class="pln"> </span><span class="atn">data-startbyte</span><span class="pun">=</span><span class="atv">"6"</span><span class="pln"> </span><span class="atn">data-endbyte</span><span class="pun">=</span><span class="atv">"7"</span><span class="tag">&gt;</span><span class="pln">7-8</span><span class="tag">&lt;/button&gt;</span><span class="pln">
+  </span><span class="tag">&lt;button&gt;</span><span class="pln">entire file</span><span class="tag">&lt;/button&gt;</span><span class="pln">
+</span><span class="tag">&lt;/span&gt;</span><span class="pln">
+</span><span class="tag">&lt;div</span><span class="pln"> </span><span class="atn">id</span><span class="pun">=</span><span class="atv">"byte_range"</span><span class="tag">&gt;&lt;/div&gt;</span><span class="pln">
+</span><span class="tag">&lt;div</span><span class="pln"> </span><span class="atn">id</span><span class="pun">=</span><span class="atv">"byte_content"</span><span class="tag">&gt;&lt;/div&gt;</span><span class="pln">
+
+</span><span class="tag">&lt;script&gt;</span><span class="pln">
+  </span><span class="kwd">function</span><span class="pln"> readBlob</span><span class="pun">(</span><span class="pln">opt_startByte</span><span class="pun">,</span><span class="pln"> opt_stopByte</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+
+    </span><span class="kwd">var</span><span class="pln"> files </span><span class="pun">=</span><span class="pln"> document</span><span class="pun">.</span><span class="pln">getElementById</span><span class="pun">(</span><span class="str">'files'</span><span class="pun">).</span><span class="pln">files</span><span class="pun">;</span><span class="pln">
+    </span><span class="kwd">if</span><span class="pln"> </span><span class="pun">(!</span><span class="pln">files</span><span class="pun">.</span><span class="pln">length</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+      alert</span><span class="pun">(</span><span class="str">'Please select a file!'</span><span class="pun">);</span><span class="pln">
+      </span><span class="kwd">return</span><span class="pun">;</span><span class="pln">
+    </span><span class="pun">}</span><span class="pln">
+
+    </span><span class="kwd">var</span><span class="pln"> file </span><span class="pun">=</span><span class="pln"> files</span><span class="pun">[</span><span class="lit">0</span><span class="pun">];</span><span class="pln">
+    </span><span class="kwd">var</span><span class="pln"> start </span><span class="pun">=</span><span class="pln"> parseInt</span><span class="pun">(</span><span class="pln">opt_startByte</span><span class="pun">)</span><span class="pln"> </span><span class="pun">||</span><span class="pln"> </span><span class="lit">0</span><span class="pun">;</span><span class="pln">
+    </span><span class="kwd">var</span><span class="pln"> stop </span><span class="pun">=</span><span class="pln"> parseInt</span><span class="pun">(</span><span class="pln">opt_stopByte</span><span class="pun">)</span><span class="pln"> </span><span class="pun">||</span><span class="pln"> file</span><span class="pun">.</span><span class="pln">size </span><span class="pun">-</span><span class="pln"> </span><span class="lit">1</span><span class="pun">;</span><span class="pln">
+
+    </span><span class="kwd">var</span><span class="pln"> reader </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">new</span><span class="pln"> </span><span class="typ">FileReader</span><span class="pun">();</span><span class="pln">
+
+    </span><span class="com">// If we use onloadend, we need to check the readyState.</span><span class="pln">
+    reader</span><span class="pun">.</span><span class="pln">onloadend </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">evt</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+      </span><span class="kwd">if</span><span class="pln"> </span><span class="pun">(</span><span class="pln">evt</span><span class="pun">.</span><span class="pln">target</span><span class="pun">.</span><span class="pln">readyState </span><span class="pun">==</span><span class="pln"> </span><span class="typ">FileReader</span><span class="pun">.</span><span class="pln">DONE</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln"> </span><span class="com">// DONE == 2</span><span class="pln">
+        document</span><span class="pun">.</span><span class="pln">getElementById</span><span class="pun">(</span><span class="str">'byte_content'</span><span class="pun">).</span><span class="pln">textContent </span><span class="pun">=</span><span class="pln"> evt</span><span class="pun">.</span><span class="pln">target</span><span class="pun">.</span><span class="pln">result</span><span class="pun">;</span><span class="pln">
+        document</span><span class="pun">.</span><span class="pln">getElementById</span><span class="pun">(</span><span class="str">'byte_range'</span><span class="pun">).</span><span class="pln">textContent </span><span class="pun">=</span><span class="pln"> 
+            </span><span class="pun">[</span><span class="str">'Read bytes: '</span><span class="pun">,</span><span class="pln"> start </span><span class="pun">+</span><span class="pln"> </span><span class="lit">1</span><span class="pun">,</span><span class="pln"> </span><span class="str">' - '</span><span class="pun">,</span><span class="pln"> stop </span><span class="pun">+</span><span class="pln"> </span><span class="lit">1</span><span class="pun">,</span><span class="pln">
+             </span><span class="str">' of '</span><span class="pun">,</span><span class="pln"> file</span><span class="pun">.</span><span class="pln">size</span><span class="pun">,</span><span class="pln"> </span><span class="str">' byte file'</span><span class="pun">].</span><span class="pln">join</span><span class="pun">(</span><span class="str">''</span><span class="pun">);</span><span class="pln">
+      </span><span class="pun">}</span><span class="pln">
+    </span><span class="pun">};</span><span class="pln">
+
+    </span><span class="kwd">var</span><span class="pln"> blob </span><span class="pun">=</span><span class="pln"> file</span><span class="pun">.</span><span class="pln">slice</span><span class="pun">(</span><span class="pln">start</span><span class="pun">,</span><span class="pln"> stop </span><span class="pun">+</span><span class="pln"> </span><span class="lit">1</span><span class="pun">);</span><span class="pln">
+    reader</span><span class="pun">.</span><span class="pln">readAsBinaryString</span><span class="pun">(</span><span class="pln">blob</span><span class="pun">);</span><span class="pln">
+  </span><span class="pun">}</span><span class="pln">
+  
+  document</span><span class="pun">.</span><span class="pln">querySelector</span><span class="pun">(</span><span class="str">'.readBytesButtons'</span><span class="pun">).</span><span class="pln">addEventListener</span><span class="pun">(</span><span class="str">'click'</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">evt</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+    </span><span class="kwd">if</span><span class="pln"> </span><span class="pun">(</span><span class="pln">evt</span><span class="pun">.</span><span class="pln">target</span><span class="pun">.</span><span class="pln">tagName</span><span class="pun">.</span><span class="pln">toLowerCase</span><span class="pun">()</span><span class="pln"> </span><span class="pun">==</span><span class="pln"> </span><span class="str">'button'</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+      </span><span class="kwd">var</span><span class="pln"> startByte </span><span class="pun">=</span><span class="pln"> evt</span><span class="pun">.</span><span class="pln">target</span><span class="pun">.</span><span class="pln">getAttribute</span><span class="pun">(</span><span class="str">'data-startbyte'</span><span class="pun">);</span><span class="pln">
+      </span><span class="kwd">var</span><span class="pln"> endByte </span><span class="pun">=</span><span class="pln"> evt</span><span class="pun">.</span><span class="pln">target</span><span class="pun">.</span><span class="pln">getAttribute</span><span class="pun">(</span><span class="str">'data-endbyte'</span><span class="pun">);</span><span class="pln">
+      readBlob</span><span class="pun">(</span><span class="pln">startByte</span><span class="pun">,</span><span class="pln"> endByte</span><span class="pun">);</span><span class="pln">
+    </span><span class="pun">}</span><span class="pln">
+  </span><span class="pun">},</span><span class="pln"> </span><span class="kwd">false</span><span class="pun">);</span><span class="pln">
+</span><span class="tag">&lt;/script&gt;</span></pre>
+<p><strong>Example</strong>: Slicing a file. Try it!</p>
+<div class="example">
+<input type="file" id="file4" name="file4"> Read bytes:
+<span class="readBytesButtons">
+<button data-startbyte="0" data-endbyte="4">1-5</button>
+<button data-startbyte="5" data-endbyte="14">6-15</button>
+<button data-startbyte="6" data-endbyte="7">7-8</button>
+<button>entire file</button>
+</span>
+<div id="byte_range"></div>
+<div id="byte_content"></div>
+</div>
+<h3 id="toc-monitoring-progress">Monitoring the progress of a read</h3>
+<p>One of the nice things that we get for free when using async event handling
+is the ability to monitor the progress of the file read; useful for large files,
+catching errors, and figuring out when a read is complete.</p>
+<p>The <code>onloadstart</code> and <code>onprogress</code> events can be used
+to monitor the progress of a read.</p>
+<p>The example below demonstrates displaying a progress bar to monitor the status of a read.
+To see the progress indicator in action, try a large file or one from a remote drive.</p>
+<pre class="prettyprint"><span class="tag">&lt;style&gt;</span><span class="pln">
+  </span><span class="pun">#</span><span class="pln">progress_bar </span><span class="pun">{</span><span class="pln">
+    </span><span class="kwd">margin</span><span class="pun">:</span><span class="pln"> </span><span class="lit">10px</span><span class="pln"> </span><span class="lit">0</span><span class="pun">;</span><span class="pln">
+    </span><span class="kwd">padding</span><span class="pun">:</span><span class="pln"> </span><span class="lit">3px</span><span class="pun">;</span><span class="pln">
+    </span><span class="kwd">border</span><span class="pun">:</span><span class="pln"> </span><span class="lit">1px</span><span class="pln"> solid </span><span class="lit">#000</span><span class="pun">;</span><span class="pln">
+    </span><span class="kwd">font-size</span><span class="pun">:</span><span class="pln"> </span><span class="lit">14px</span><span class="pun">;</span><span class="pln">
+    </span><span class="kwd">clear</span><span class="pun">:</span><span class="pln"> both</span><span class="pun">;</span><span class="pln">
+    </span><span class="kwd">opacity</span><span class="pun">:</span><span class="pln"> </span><span class="lit">0</span><span class="pun">;</span><span class="pln">
+    </span><span class="kwd">-moz-transition</span><span class="pun">:</span><span class="pln"> opacity </span><span class="lit">1s</span><span class="pln"> linear</span><span class="pun">;</span><span class="pln">
+    </span><span class="kwd">-o-transition</span><span class="pun">:</span><span class="pln"> opacity </span><span class="lit">1s</span><span class="pln"> linear</span><span class="pun">;</span><span class="pln">
+    </span><span class="kwd">-webkit-transition</span><span class="pun">:</span><span class="pln"> opacity </span><span class="lit">1s</span><span class="pln"> linear</span><span class="pun">;</span><span class="pln">
+  </span><span class="pun">}</span><span class="pln">
+  </span><span class="pun">#</span><span class="pln">progress_bar</span><span class="pun">.</span><span class="pln">loading </span><span class="pun">{</span><span class="pln">
+    </span><span class="kwd">opacity</span><span class="pun">:</span><span class="pln"> </span><span class="lit">1.0</span><span class="pun">;</span><span class="pln">
+  </span><span class="pun">}</span><span class="pln">
+  </span><span class="pun">#</span><span class="pln">progress_bar </span><span class="pun">.</span><span class="pln">percent </span><span class="pun">{</span><span class="pln">
+    </span><span class="kwd">background-color</span><span class="pun">:</span><span class="pln"> </span><span class="lit">#99ccff</span><span class="pun">;</span><span class="pln">
+    </span><span class="kwd">height</span><span class="pun">:</span><span class="pln"> auto</span><span class="pun">;</span><span class="pln">
+    </span><span class="kwd">width</span><span class="pun">:</span><span class="pln"> </span><span class="lit">0</span><span class="pun">;</span><span class="pln">
+  </span><span class="pun">}</span><span class="pln">
+</span><span class="tag">&lt;/style&gt;</span><span class="pln">
+
+</span><span class="tag">&lt;input</span><span class="pln"> </span><span class="atn">type</span><span class="pun">=</span><span class="atv">"file"</span><span class="pln"> </span><span class="atn">id</span><span class="pun">=</span><span class="atv">"files"</span><span class="pln"> </span><span class="atn">name</span><span class="pun">=</span><span class="atv">"file"</span><span class="pln"> </span><span class="tag">/&gt;</span><span class="pln">
+</span><span class="tag">&lt;button</span><span class="pln"> </span><span class="atn">onclick</span><span class="pun">=</span><span class="atv">"</span><span class="pln">abortRead</span><span class="pun">();</span><span class="atv">"</span><span class="tag">&gt;</span><span class="pln">Cancel read</span><span class="tag">&lt;/button&gt;</span><span class="pln">
+</span><span class="tag">&lt;div</span><span class="pln"> </span><span class="atn">id</span><span class="pun">=</span><span class="atv">"progress_bar"</span><span class="tag">&gt;&lt;div</span><span class="pln"> </span><span class="atn">class</span><span class="pun">=</span><span class="atv">"percent"</span><span class="tag">&gt;</span><span class="pln">0%</span><span class="tag">&lt;/div&gt;&lt;/div&gt;</span><span class="pln">
+
+</span><span class="tag">&lt;script&gt;</span><span class="pln">
+  </span><span class="kwd">var</span><span class="pln"> reader</span><span class="pun">;</span><span class="pln">
+  </span><span class="kwd">var</span><span class="pln"> progress </span><span class="pun">=</span><span class="pln"> document</span><span class="pun">.</span><span class="pln">querySelector</span><span class="pun">(</span><span class="str">'.percent'</span><span class="pun">);</span><span class="pln">
+
+  </span><span class="kwd">function</span><span class="pln"> abortRead</span><span class="pun">()</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+    reader</span><span class="pun">.</span><span class="pln">abort</span><span class="pun">();</span><span class="pln">
+  </span><span class="pun">}</span><span class="pln">
+
+  </span><span class="kwd">function</span><span class="pln"> errorHandler</span><span class="pun">(</span><span class="pln">evt</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+    </span><span class="kwd">switch</span><span class="pun">(</span><span class="pln">evt</span><span class="pun">.</span><span class="pln">target</span><span class="pun">.</span><span class="pln">error</span><span class="pun">.</span><span class="pln">code</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+      </span><span class="kwd">case</span><span class="pln"> evt</span><span class="pun">.</span><span class="pln">target</span><span class="pun">.</span><span class="pln">error</span><span class="pun">.</span><span class="pln">NOT_FOUND_ERR</span><span class="pun">:</span><span class="pln">
+        alert</span><span class="pun">(</span><span class="str">'File Not Found!'</span><span class="pun">);</span><span class="pln">
+        </span><span class="kwd">break</span><span class="pun">;</span><span class="pln">
+      </span><span class="kwd">case</span><span class="pln"> evt</span><span class="pun">.</span><span class="pln">target</span><span class="pun">.</span><span class="pln">error</span><span class="pun">.</span><span class="pln">NOT_READABLE_ERR</span><span class="pun">:</span><span class="pln">
+        alert</span><span class="pun">(</span><span class="str">'File is not readable'</span><span class="pun">);</span><span class="pln">
+        </span><span class="kwd">break</span><span class="pun">;</span><span class="pln">
+      </span><span class="kwd">case</span><span class="pln"> evt</span><span class="pun">.</span><span class="pln">target</span><span class="pun">.</span><span class="pln">error</span><span class="pun">.</span><span class="pln">ABORT_ERR</span><span class="pun">:</span><span class="pln">
+        </span><span class="kwd">break</span><span class="pun">;</span><span class="pln"> </span><span class="com">// noop</span><span class="pln">
+      </span><span class="kwd">default</span><span class="pun">:</span><span class="pln">
+        alert</span><span class="pun">(</span><span class="str">'An error occurred reading this file.'</span><span class="pun">);</span><span class="pln">
+    </span><span class="pun">};</span><span class="pln">
+  </span><span class="pun">}</span><span class="pln">
+
+  </span><span class="kwd">function</span><span class="pln"> updateProgress</span><span class="pun">(</span><span class="pln">evt</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+    </span><span class="com">// evt is an ProgressEvent.</span><span class="pln">
+    </span><span class="kwd">if</span><span class="pln"> </span><span class="pun">(</span><span class="pln">evt</span><span class="pun">.</span><span class="pln">lengthComputable</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+      </span><span class="kwd">var</span><span class="pln"> percentLoaded </span><span class="pun">=</span><span class="pln"> </span><span class="typ">Math</span><span class="pun">.</span><span class="pln">round</span><span class="pun">((</span><span class="pln">evt</span><span class="pun">.</span><span class="pln">loaded </span><span class="pun">/</span><span class="pln"> evt</span><span class="pun">.</span><span class="pln">total</span><span class="pun">)</span><span class="pln"> </span><span class="pun">*</span><span class="pln"> </span><span class="lit">100</span><span class="pun">);</span><span class="pln">
+      </span><span class="com">// Increase the progress bar length.</span><span class="pln">
+      </span><span class="kwd">if</span><span class="pln"> </span><span class="pun">(</span><span class="pln">percentLoaded </span><span class="pun">&lt;</span><span class="pln"> </span><span class="lit">100</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+        progress</span><span class="pun">.</span><span class="pln">style</span><span class="pun">.</span><span class="pln">width </span><span class="pun">=</span><span class="pln"> percentLoaded </span><span class="pun">+</span><span class="pln"> </span><span class="str">'%'</span><span class="pun">;</span><span class="pln">
+        progress</span><span class="pun">.</span><span class="pln">textContent </span><span class="pun">=</span><span class="pln"> percentLoaded </span><span class="pun">+</span><span class="pln"> </span><span class="str">'%'</span><span class="pun">;</span><span class="pln">
+      </span><span class="pun">}</span><span class="pln">
+    </span><span class="pun">}</span><span class="pln">
+  </span><span class="pun">}</span><span class="pln">
+
+  </span><span class="kwd">function</span><span class="pln"> handleFileSelect</span><span class="pun">(</span><span class="pln">evt</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+    </span><span class="com">// Reset progress indicator on new file selection.</span><span class="pln">
+    progress</span><span class="pun">.</span><span class="pln">style</span><span class="pun">.</span><span class="pln">width </span><span class="pun">=</span><span class="pln"> </span><span class="str">'0%'</span><span class="pun">;</span><span class="pln">
+    progress</span><span class="pun">.</span><span class="pln">textContent </span><span class="pun">=</span><span class="pln"> </span><span class="str">'0%'</span><span class="pun">;</span><span class="pln">
+
+    reader </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">new</span><span class="pln"> </span><span class="typ">FileReader</span><span class="pun">();</span><span class="pln">
+    reader</span><span class="pun">.</span><span class="pln">onerror </span><span class="pun">=</span><span class="pln"> errorHandler</span><span class="pun">;</span><span class="pln">
+    reader</span><span class="pun">.</span><span class="pln">onprogress </span><span class="pun">=</span><span class="pln"> updateProgress</span><span class="pun">;</span><span class="pln">
+    reader</span><span class="pun">.</span><span class="pln">onabort </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">e</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+      alert</span><span class="pun">(</span><span class="str">'File read cancelled'</span><span class="pun">);</span><span class="pln">
+    </span><span class="pun">};</span><span class="pln">
+    reader</span><span class="pun">.</span><span class="pln">onloadstart </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">e</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+      document</span><span class="pun">.</span><span class="pln">getElementById</span><span class="pun">(</span><span class="str">'progress_bar'</span><span class="pun">).</span><span class="pln">className </span><span class="pun">=</span><span class="pln"> </span><span class="str">'loading'</span><span class="pun">;</span><span class="pln">
+    </span><span class="pun">};</span><span class="pln">
+    reader</span><span class="pun">.</span><span class="pln">onload </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">e</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+      </span><span class="com">// Ensure that the progress bar displays 100% at the end.</span><span class="pln">
+      progress</span><span class="pun">.</span><span class="pln">style</span><span class="pun">.</span><span class="pln">width </span><span class="pun">=</span><span class="pln"> </span><span class="str">'100%'</span><span class="pun">;</span><span class="pln">
+      progress</span><span class="pun">.</span><span class="pln">textContent </span><span class="pun">=</span><span class="pln"> </span><span class="str">'100%'</span><span class="pun">;</span><span class="pln">
+      setTimeout</span><span class="pun">(</span><span class="str">"document.getElementById('progress_bar').className='';"</span><span class="pun">,</span><span class="pln"> </span><span class="lit">2000</span><span class="pun">);</span><span class="pln">
+    </span><span class="pun">}</span><span class="pln">
+
+    </span><span class="com">// Read in the image file as a binary string.</span><span class="pln">
+    reader</span><span class="pun">.</span><span class="pln">readAsBinaryString</span><span class="pun">(</span><span class="pln">evt</span><span class="pun">.</span><span class="pln">target</span><span class="pun">.</span><span class="pln">files</span><span class="pun">[</span><span class="lit">0</span><span class="pun">]);</span><span class="pln">
+  </span><span class="pun">}</span><span class="pln">
+
+  document</span><span class="pun">.</span><span class="pln">getElementById</span><span class="pun">(</span><span class="str">'files'</span><span class="pun">).</span><span class="pln">addEventListener</span><span class="pun">(</span><span class="str">'change'</span><span class="pun">,</span><span class="pln"> handleFileSelect</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">false</span><span class="pun">);</span><span class="pln">
+</span><span class="tag">&lt;/script&gt;</span></pre>
+<p><strong>Example</strong>: Monitoring the progress of a read. Try it!</p>
+<div class="example">
+<input type="file" id="file5" name="file5">
+<button onclick="example5.abortRead();">Cancel read</button>
+<div id="progress_bar"><div class="percent">0%</div></div>
+<p><strong>Tip</strong>: To really see this progress indicator in action, try a large file or a resource on a remote drive.</p>
+</div>
+<h2 id="toc-references">References</h2>
+<ul>
+<li><a href="http://www.w3.org/TR/file-upload/" target="_blank">File</a> API specification</li>
+<li><a href="http://www.w3.org/TR/file-upload/#dfn-filereader" target="_blank">FileReader</a> interface specification</li>
+<li><a href="http://www.w3.org/TR/file-upload/#dfn-Blob" target="_blank">Blob</a> interface specification</li>
+<li><a href="http://www.w3.org/TR/file-upload/#dfn-fileerror" target="_blank">FileError</a> interface specification</li>
+<li><a href="http://www.w3.org/TR/progress-events/#Progress" target="_blank">ProgressEvent</a> specification</li>
+</ul>
+<script>var get=function(id){return document.getElementById(id);}
+var example1=example1||{};example1.handleFileSelect=function(evt){var files=evt.target.files;var output=[];for(var i=0,f;f=files[i];i++){output.push('<li><strong>',escape(f.name),'</strong> (',f.type||'n/a',') - ',f.size,' bytes, last modified: ',f.lastModifiedDate?f.lastModifiedDate.toLocaleDateString():'n/a','</li>');}
+get('file_list').innerHTML='<ul>'+output.join('')+'</ul>';}
+get('files1').addEventListener('change',example1.handleFileSelect,false);var example2=example2||{};example2.onDragOver=function(evt){evt.stopPropagation();evt.preventDefault();evt.dataTransfer.dropEffect='copy';}
+example2.onDragFileDrop=function(evt){evt.stopPropagation();evt.preventDefault();var files=evt.dataTransfer.files;var output=[];for(var i=0,f;f=files[i];i++){output.push('<li><strong>',escape(f.name),'</strong> (',f.type||'n/a',') - ',f.size,' bytes, last modified: ',f.lastModifiedDate?f.lastModifiedDate.toLocaleDateString():'n/a','</li>');}
+get('file_list2').innerHTML='<ul>'+output.join('')+'</ul>';}
+get('drop_zone').addEventListener('dragover',example2.onDragOver,false);get('drop_zone').addEventListener('drop',example2.onDragFileDrop,false);var example3=example3||{};example3.handleFileSelect=function(evt){var files=evt.target.files;for(var i=0,f;f=files[i];i++){if(!f.type.match('image.*')){continue;}
+var reader=new FileReader();reader.onload=(function(theFile){return function(e){var span=document.createElement('span');span.innerHTML=['<img class="thumb" src="',e.target.result,'" title="',escape(theFile.name),'"/>'].join('');get('thumbnails').insertBefore(span,null);};})(f);reader.readAsDataURL(f);}}
+get('files3').addEventListener('change',example3.handleFileSelect,false);var example4=example4||{};example4.readBlob=function(opt_startByte,opt_stopByte){var files=get('file4').files;if(!files.length){alert('Please select a file!');return;}
+var file=files[0];var start=parseInt(opt_startByte)||0;var stop=parseInt(opt_stopByte)||file.size-1;var reader=new FileReader();reader.onloadend=function(evt){if(evt.target.readyState==FileReader.DONE){get('byte_content').textContent=evt.target.result;get('byte_range').textContent=['Read bytes: ',start+1,' - ',stop+1,' of ',file.size,' byte file'].join('');}};reader.readAsBinaryString(file.slice(start,stop+1));};document.querySelector('.readBytesButtons').addEventListener('click',function(evt){if(evt.target.tagName.toLowerCase()=='button'){var startByte=evt.target.getAttribute('data-startbyte');var stopByte=evt.target.getAttribute('data-endbyte');example4.readBlob(startByte,stopByte);}},false);function Example5(id){var reader_;var progress_=document.querySelector('.percent');var self=this;this.abortRead=function(){reader_.abort();};this.errorHandler=function(evt){switch(evt.target.error.code){case evt.target.error.NOT_FOUND_ERR:alert('File Not Found!');break;case evt.target.error.NOT_READABLE_ERR:alert('File is not readable');break;case evt.target.error.ABORT_ERR:break;default:alert('An error occurred reading this file.');};};this.updateProgress=function(evt){if(evt.lengthComputable){var percentLoaded=Math.round((evt.loaded/evt.total)*100);if(percentLoaded<100){progress_.style.width=percentLoaded+'%';progress_.textContent=percentLoaded+'%';}}};this.handleFileSelect=function(evt){progress_.style.width='0%';progress_.textContent='0%';reader_=new FileReader();reader_.onerror=self.errorHandler;reader_.onprogress=self.updateProgress;reader_.onabort=function(e){alert('File read cancelled');};reader_.onloadstart=function(e){get('progress_bar').className='loading';};reader_.onload=function(e){progress_.style.width='100%';progress_.textContent='100%';setTimeout("get('progress_bar').className='';",2000);}
+reader_.readAsBinaryString(evt.target.files[0]);};get(id).addEventListener('change',self.handleFileSelect,false);};var example5=new Example5('file5');</script>
+</section>
+</article>
+<section class="cc pattern-bg-lighter">
+<p>
+Except as otherwise <a href="http://code.google.com/policies.html#restrictions">noted</a>, the content of this page is licensed under the <a href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 License</a>, and code samples are licensed under the <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache 2.0 License</a>.
+</p>
+</section>
+<section class="disqus pattern-bg-lighter">
+<div id="disqus_thread"><iframe id="dsq1" data-disqus-uid="1" allowtransparency="true" frameborder="0" role="application" style="width: 100%; border: none; overflow: hidden; height: 6167px; " width="100%" src="./Reading local files in JavaScript - HTML5 Rocks_files/saved_resource.html" scrolling="no" horizontalscrolling="no" verticalscrolling="no"></iframe><iframe id="dsq3" data-disqus-uid="3" allowtransparency="true" frameborder="0" role="application" style="width: 100%; border: none; overflow: hidden; display: none; " width="100%" src="./Reading local files in JavaScript - HTML5 Rocks_files/client.html"></iframe><iframe id="dsq-indicator-north" data-disqus-uid="-indicator-north" allowtransparency="true" frameborder="0" role="application" style="width: 620px; border: none; overflow: hidden; top: 0px; position: fixed; height: 29px; display: none; " scrolling="no"></iframe><iframe id="dsq-indicator-south" data-disqus-uid="-indicator-south" allowtransparency="true" frameborder="0" role="application" style="width: 620px; border: none; overflow: hidden; bottom: 0px; position: fixed; height: 29px; display: none; " scrolling="no"></iframe></div>
+<noscript>
+&lt;p class="center"&gt;
+&lt;strong&gt;
+&lt;a href="http://disqus.com/?ref_noscript"&gt;Please enable JavaScript to view the comments powered by Disqus.&lt;/a&gt;
+&lt;/strong&gt;
+&lt;/p&gt;
+</noscript>
+<script>function _prettyPrint(){if(typeof customPrettyPrintLanguage!='undefined'){customPrettyPrintLanguage();}
+prettyPrint();}</script>
+<script async="" src="./Reading local files in JavaScript - HTML5 Rocks_files/plusone.js" gapi_processed="true"></script>
+<script async="" src="./Reading local files in JavaScript - HTML5 Rocks_files/prettify.min.js.pagespeed.jm.JSZAUYYnh2.js" onload="_prettyPrint()"></script>
+<script async="" src="./Reading local files in JavaScript - HTML5 Rocks_files/widgets.js"></script>
+<script>var disqus_shortname='html5rocks';var disqus_identifier='http://www.html5rocks.com/tutorials/file/dndfiles/';var disqus_url='http://www.html5rocks.com/tutorials/file/dndfiles/';var disqus_developer=0;var disqus_config=function(){var funky_language_code_mapping={'de':'de_inf','es':'es_ES','pt':'pt_EU','sr':'sr_CYRL','sv':'sv_SE','zh':'zh_HANT'};this.language=funky_language_code_mapping['en']||'en';};window.addEventListener('load',function(e){var c=document.createElement('script');c.type='text/javascript';c.src='http://'+disqus_shortname+'.disqus.com/count.js';var dsq=document.createElement('script');dsq.type='text/javascript';dsq.src='http://'+disqus_shortname+'.disqus.com/embed.js';var s=document.getElementsByTagName('script')[0],sp=s.parentNode;sp.insertBefore(c,s);sp.insertBefore(dsq,s);},false);var externLinks=document.querySelectorAll('article.tutorial a[href^="http"]:not([target])');for(var i=0,a;a=externLinks[i];++i){a.target='_blank';}</script>
+</section>
+</div>
+<script>(function(){$('#features_show a').click(function(){$('#search_hide').click();if($(this).hasClass('current')){$('.subheader.features').hide();$(this).removeClass('current');$('.watermark').css('top','30px');$('#features_show a').focus();}else{$('.main nav .current').removeClass('current');$(this).addClass('current');$('.subheader.features').show();$('.watermark').css('top','100px');$('#features').focus();}
+if(/#features$/.test(this.href))return false;});$('#features_hide').click(function(){$('#features_show').removeClass('current');$('.subheader.features').hide();$('.watermark').css('top','30px');$('#features_show a').focus();});if(window.applicationCache){window.applicationCache.addEventListener('updateready',function(e){if(window.applicationCache.status==window.applicationCache.UPDATEREADY){window.applicationCache.swapCache();if(confirm('A new version of this site is available. Load it?')){window.location.reload();}}},false);}
+window.isCompatible=function(){return!!(window.File)&&!!(window.FileReader)&&!!(window.FileList)&&!!(window.Blob);};if(isCompatible()===false){document.getElementById('notcompatible').className='';}else if(isCompatible()===true){document.getElementById('compatible').className='';}
+if(/^\?utm_/.test(document.location.search)&&window.history.replaceState){window.history.replaceState({},'',document.location.href.replace(/\?utm_.*/,''));}
+if($(window).width()<'1200'&&$(window).width()>'1000'&&$('.toc').length){var top=$('.toc').offset().top-50;$(window).scroll(function(event){var y=$(this).scrollTop();if(y>=top){$('.toc').addClass('fixed').removeClass('bottom');}else{$('.toc').removeClass('fixed').removeClass('bottom');}});}})();</script>
+<script>var _gaq=_gaq||[];_gaq.push(['_setAccount','UA-15028909-1']);_gaq.push(['_setSiteSpeedSampleRate',50]);_gaq.push(['_trackPageview']);(function(){var ga=document.createElement('script');ga.type='text/javascript';ga.async=true;ga.src=('https:'==document.location.protocol?'https://ssl':'http://www')+'.google-analytics.com/ga.js';var s=document.getElementsByTagName('script')[0];s.parentNode.insertBefore(ga,s);})();</script>
+<script defer="" src="./Reading local files in JavaScript - HTML5 Rocks_files/app.min.js.pagespeed.ce.IlL62AP3Y-.js"></script>
+<script defer="" src="./Reading local files in JavaScript - HTML5 Rocks_files/search.min.js.pagespeed.ce.hdMERthVbk.js"></script>
+<script defer="" src="./Reading local files in JavaScript - HTML5 Rocks_files/3rdpartyinit.min.js.pagespeed.ce.CGINL0KvzE.js"></script>
+<script type="text/javascript">(function(){function g(){var ifr=0;var rpi='';if(window.mod_pagespeed_prefetch_start){rpi+='&nrp='+window.mod_pagespeed_num_resources_prefetched;rpi+='&htmlAt=';rpi+=(window.mod_pagespeed_start-window.mod_pagespeed_prefetch_start);}if(window.parent != window){ifr=1}new Image().src='http://1-ps.googleusercontent.com/beacon?org=60_1_vn&ets=load:'+(Number(new Date())-window.mod_pagespeed_start)+'&ifr='+ifr+''+rpi+'&ft=300&url='+encodeURIComponent('http://www.html5rocks.com/en/tutorials/file/dndfiles/');window.mod_pagespeed_loaded=true;};var f=window.addEventListener;if(f){f('load',g,false);}else{f=window.attachEvent;if(f){f('onload',g);}}})();</script>
+
+</body></html>

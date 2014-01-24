@@ -1,0 +1,3 @@
+﻿3/17/2010 Added Video support by invoking HandbarkeCLI.exe
+
+3/17/2010 Fixed bug with encoder working directory.

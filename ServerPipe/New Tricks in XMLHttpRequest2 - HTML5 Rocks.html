@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<!-- saved from url=(0049)http://www.html5rocks.com/en/tutorials/file/xhr2/ -->
+<html lang="en" dir="ltr" itemscope="" itemtype="http://schema.org/Article" class=" js flexbox canvas canvastext webgl no-touch geolocation postmessage websqldatabase indexeddb hashchange history draganddrop websockets rgba hsla multiplebgs backgroundsize borderimage borderradius boxshadow textshadow opacity cssanimations csscolumns cssgradients cssreflections csstransforms csstransforms3d csstransitions fontface generatedcontent video audio localstorage sessionstorage webworkers applicationcache svg inlinesvg smil svgclippaths adownload webaudio blobconstructor no-battery contenteditable cors csscalc mediaqueries no-regions cssfilters classlist details datalistelem no-track filesystem filereader fullscreen no-gamepads no-getusermedia xhr2 performance raf quotamanagement no-stylescoped webintents websocketsbinary todataurljpeg todataurlwebp webp"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><script type="text/javascript" src="./New Tricks in XMLHttpRequest2 - HTML5 Rocks_files/count.js"></script><script type="text/javascript" src="./New Tricks in XMLHttpRequest2 - HTML5 Rocks_files/embed.js"></script><script src="./New Tricks in XMLHttpRequest2 - HTML5 Rocks_files/cb=gapi.loaded_0" async=""></script><script type="text/javascript" async="" src="./New Tricks in XMLHttpRequest2 - HTML5 Rocks_files/ga.js"></script><script type="text/javascript">window.mod_pagespeed_start = Number(new Date());</script>
+<meta charset="utf-8">
+<meta name="description" content="A resource for developers looking to put HTML5 to use today, including information on specific features and when to use them in your apps.">
+<meta name="keywords" content="html5,html 5,html5 demos,html5 examples,javascript,css3,notifications,geolocation,web workers,apppcache,file api,filereader,indexeddb,offline,audio,video,drag and drop,chrome,sse,mobile">
+<meta itemprop="name" content="HTML5 Rocks - New Tricks in XMLHttpRequest2">
+<meta itemprop="description" content="There has been a slew of improvements to our old friend &lt;code&gt;XMLHttpRequest&lt;/code&gt; for working with different types of data. This tutorial covers the new hotness.">
+<meta itemprop="image" content="/static/images/html5rocks-logo-wings.png">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+<title>New Tricks in XMLHttpRequest2 - HTML5 Rocks</title>
+<link rel="shortcut icon" href="http://www.html5rocks.com/favicon.ico">
+<link rel="alternate" type="application/rss+xml" title="HTML5 Rocks RSS" href="http://feeds.feedburner.com/html5rocks">
+<link rel="publisher" href="https://plus.google.com/111395306401981598462">
+<link rel="stylesheet" media="all" href="http://1-ps.googleusercontent.com/x/s.html5rocks-hrd.appspot.com/www.html5rocks.com/static/css/W.base.min.css.pagespeed.cf.1PjgdMKa8Z.css">
+<link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,400italic,600,800|Source+Code+Pro" rel="stylesheet">
+<link rel="apple-touch-icon" href="http://1-ps.googleusercontent.com/x/s.html5rocks-hrd.appspot.com/www.html5rocks.com/static/images/identity/HTML5_Badge_64.png.pagespeed.ce.S0LMUsq9YG.png" width="64" height="64">
+<link rel="apple-touch-icon-precomposed" href="http://1-ps.googleusercontent.com/x/s.html5rocks-hrd.appspot.com/www.html5rocks.com/static/images/identity/HTML5_Badge_64.png.pagespeed.ce.S0LMUsq9YG.png" width="64" height="64">
+<script src="./New Tricks in XMLHttpRequest2 - HTML5 Rocks_files/modernizr.custom.82437.js.pagespeed.jm.H7yOhhnYd0.js"></script>
+<script src="./New Tricks in XMLHttpRequest2 - HTML5 Rocks_files/jquery.min.js"></script>
+<script defer="" src="./New Tricks in XMLHttpRequest2 - HTML5 Rocks_files/jquery.scrollTo-min.js.pagespeed.jm.Hz5PYAgnCz.js"></script>
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5-els.js"></script>
+  <![endif]-->
+<style>figure{-webkit-margin-start:0;-webkit-margin-end:0}figure img{border:1px solid #ccc}.example{padding:10px;border:1px solid #ccc}.button{height:30px;width:96px;vertical-align:middle}.button::-webkit-file-upload-button,.button::-moz-file-upload-button{visibility:hidden}.button:before{content:"Select a file";display:inline-block;background:-webkit-gradient(linear,0% 40%,0% 70%,from(#f9f9f9),to(#e3e3e3));background:-webkit-linear-gradient(#f9f9f9 40%,#e3e3e3 70%);background:-moz-linear-gradient(#f9f9f9 40%,#e3e3e3 70%);background:-ms-linear-gradient(#f9f9f9 40%,#e3e3e3 70%);background:-o-linear-gradient(#f9f9f9 40%,#e3e3e3 70%);background:linear-gradient(#f9f9f9 40%,#e3e3e3 70%);border:1px solid #999;border-radius:3px;padding:5px 8px;outline:none;white-space:nowrap;-webkit-user-select:none;user-select:none;cursor:pointer;text-shadow:1px 1px #fff;font-weight:700;font-size:10pt}.button:hover:before{border-color:#000}.button:active:before{background:-webkit-gradient(linear,0% 40%,0% 70%,from(#e3e3e3),to(#f9f9f9));background:-webkit-linear-gradient(#e3e3e3 40%,#f9f9f9 70%);background:-moz-linear-gradient(#e3e3e3 40%,#f9f9f9 70%);background:-ms-linear-gradient(#e3e3e3 40%,#f9f9f9 70%);background:-o-linear-gradient(#e3e3e3 40%,#f9f9f9 70%);background:linear-gradient(#e3e3e3 40%,#f9f9f9 70%)}#afile{width:120px}#afile:before{content:"Select a BIG file"}</style>
+<script type="text/javascript" async="" src="./New Tricks in XMLHttpRequest2 - HTML5 Rocks_files/count(1).js"></script></head>
+<body data-href="tutorials-file-xhr2" onload="" class="pattern-bg" data-twttr-rendered="true"><noscript>&lt;meta HTTP-EQUIV="refresh" content="0;url='http://www.html5rocks.com/en/tutorials/file/xhr2/?ModPagespeed=noscript'" /&gt;&lt;style&gt;&lt;!--table,div,span,font,p{display:none} --&gt;&lt;/style&gt;&lt;div style="display:block"&gt;Please click &lt;a href="http://www.html5rocks.com/en/tutorials/file/xhr2/?ModPagespeed=noscript"&gt;here&lt;/a&gt; if you are not redirected within a few seconds.&lt;/div&gt;</noscript>
+<header class="main">
+<a id="home_horns" href="http://www.html5rocks.com/en/"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAyCAYAAABGQBuoAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6NEU2NTFGRTQwNjE0MTFFMTg0RjdERTE0MzFDQTlGQjQiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6NEU2NTFGRTUwNjE0MTFFMTg0RjdERTE0MzFDQTlGQjQiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo4MUQyMTY2QjA2MTMxMUUxODRGN0RFMTQzMUNBOUZCNCIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo4MUQyMTY2QzA2MTMxMUUxODRGN0RFMTQzMUNBOUZCNCIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PgNr19cAAAJFSURBVHja7FfrUcMwDE56/U/YIGxQJsBMQJmg6QTQCRomKBukGzBCywTpBikTpEwQJE4CxbFTOzF3cIfudM7Jsb5I1itRJKhpmhlw1XzTDjiJQhAqAq6JM+CcQUIBzEmhErJPkFAAHWUIpoOe0aFIT85nplEgQrfCUgjRGmTLIBbQ/X0FBTE+N5NABsxofYrj+ISMzygIBWClXwOwpvyo6K7QxwXLcN920DWK8JK3wCkpewBOSIaUeecBPKb0la2SIWSP+lktSVUrKiUA1aSaDpViTUyh2yebGCzBkMP6cwS+gpC7hnVJoZiFuGRWfgvKcY1gRV+fyO+DAS5oZeUnzapkVB2Rfjb0CC7j/ndAQixSB8uXcz9o7bnSlJQfe5SjRfewdxjinSklz7JHOdJ+bKm40eRzWleGTF1oFZQznQOkc8GcmZklADjRCq7xIgml7MVYGSgyShuIKGwVvZfbZIYPK6WSss8Sz7BXer0KCkJ66s5MFQLEVG37QPKByguXKU/2AuXg88oUTeeAJKGCVNtPheLKZLVLy3wGfgO+s+xjlr9iSfceM33vwfT+j48tsenCRIkepxzo7092LlG050HWgXY+harx+YWinGiR1w8IvL/RmoyklW3qcAEwdS6dkjGXzIffab2Mu7S3WTfkH63WKwIijHERTxlbw9aCppJB7U6SEvJMvLvjKBPNvxVFPonGc9MGaz41dOXtYIsFuRhF5OiCTWneZ4EXgEdz8gbgyXvD7ZMyNxM/g0aA/3J9lj4EGABt/PzEJtkxBQAAAABJRU5ErkJggg==" alt="HTML5 Rocks" width="24" height="50"></a>
+<h1 id="title">
+<a href="http://www.html5rocks.com/en/" title="HTML5 Rocks">HTML5 Rocks</a>
+</h1>
+<nav>
+<ul>
+<li><a class="home" href="http://www.html5rocks.com/en/" rel="home">Home</a></li>
+<li><a href="http://www.html5rocks.com/en/tutorials/" class="tutorials">Posts &amp; Tutorials</a></li>
+<li id="features_show"><a href="http://www.html5rocks.com/en/tutorials/file/xhr2/#features">HTML5 Features</a></li>
+<li><a href="http://www.html5rocks.com/en/slides" class="slides">Slides</a></li>
+<li><a href="http://www.html5rocks.com/en/resources" class="resources">Resources</a></li>
+<li><a class="why" href="http://www.html5rocks.com/en/why">Why HTML5?</a></li>
+<li><a href="http://www.html5rocks.com/en/profiles" class="profiles">Who We Are</a></li>
+<li><a href="https://github.com/html5rocks/www.html5rocks.com/blob/master/CONTRIBUTING.md" target="_blank">Contribute</a></li>
+<li id="search_show">
+<a href="http://www.html5rocks.com/en/tutorials/file/xhr2/#search_form">
+Search
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAYAAAAfSC3RAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6RjM0OTMyOUNEN0FEMTFFMEJDMEZDMjAwMjNDNjc0MDciIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6RjM0OTMyOUREN0FEMTFFMEJDMEZDMjAwMjNDNjc0MDciPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDpFNzMzOTM2MUQ3OTkxMUUwQkMwRkMyMDAyM0M2NzQwNyIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDpFNzMzOTM2MkQ3OTkxMUUwQkMwRkMyMDAyM0M2NzQwNyIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/Pj/umaQAAACdSURBVHjanFLbDQMhDAtMwAiM0lFuBEa4DW4ERmk7ASPQDRghTSSfRKvAPSz5J45D5ODJADM/hE/+RRUuNIKKaGzCDUNSNyhbpgixCIOhZ+jrSIiTjfTl5v/qang55z40xlsYvCEEugqEcbSqplutcBrCiZNw0ugU+zm0cQWreY7OVHC7DDN39WVmCmcDyZdNMBbzGx3AiYnu4CvAALKABcbyDrXxAAAAAElFTkSuQmCC" width="14" height="14" alt="">
+</a>
+</li>
+</ul>
+</nav>
+<div class="subheader search" style="display: none;" id="search_form">
+<div class="search">
+<form action="http://www.html5rocks.com/en/search" id="cse-search-box" role="search">
+<img id="search_hide" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB0AAAAdCAYAAABWk2cPAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6RjM0OTMyQTREN0FEMTFFMEJDMEZDMjAwMjNDNjc0MDciIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6RjM0OTMyQTVEN0FEMTFFMEJDMEZDMjAwMjNDNjc0MDciPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDpGMzQ5MzJBMkQ3QUQxMUUwQkMwRkMyMDAyM0M2NzQwNyIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDpGMzQ5MzJBM0Q3QUQxMUUwQkMwRkMyMDAyM0M2NzQwNyIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/Ps3igWgAAAFzSURBVHjazJfPSsNAEMZ3EygoBAoepD0VBA+Cp76AvoCvkWfK0+gLeBI8FISc2lMhsFBBCPGbMKGrZP/qNh342LKdzI/Z7OxOpPCwruvmGEgX0OWIywH6hBopZeOKJx2wJYYraCb87QvaA74NggJG2dwEwsbgH4AfnFAAKbOV+D+rAd4boQmAo+BMAxaJgGQrjn+EYiJPCNTBuZ7ptWXTrKHCM3DB/mM2Y46QTL+HcoPzM7SDSkg5gBW0gB4NPi30lnHR55ZgJQeqLBnrwNISizjzAWqzjQP8G7hxxOuhPu/LBA4F9s9kjqW1gZcRwH6JaSOtA7f+rZatCgT+PBxOaVlkllRCTzxWPB8EbSOAtKRbHkPBbeYoeBNweEZFgBVBm0igiAQ3kxyDUmtLFgbHB+jV8zUMB/6L4f8dtTFSu9ru/tie+LQv74D2G0nQD7rdE5dnzZxjnWJCJQTXHP9MGrPJWtDJmu3knxUIePJb5luAAQDWPZwf40bkcAAAAABJRU5ErkJggg==" width="29" height="29" alt="">
+<label><span>Search:</span><input type="search" name="q" id="q" autocomplete="off" placeholder="HTML5 Rocks"></label>
+</form>
+</div>
+</div>
+<div class="subheader features" style="display: none;" id="features" tabindex="0">
+<div class="features">
+<img id="features_hide" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB0AAAAdCAYAAABWk2cPAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6RjM0OTMyQTREN0FEMTFFMEJDMEZDMjAwMjNDNjc0MDciIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6RjM0OTMyQTVEN0FEMTFFMEJDMEZDMjAwMjNDNjc0MDciPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDpGMzQ5MzJBMkQ3QUQxMUUwQkMwRkMyMDAyM0M2NzQwNyIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDpGMzQ5MzJBM0Q3QUQxMUUwQkMwRkMyMDAyM0M2NzQwNyIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/Ps3igWgAAAFzSURBVHjazJfPSsNAEMZ3EygoBAoepD0VBA+Cp76AvoCvkWfK0+gLeBI8FISc2lMhsFBBCPGbMKGrZP/qNh342LKdzI/Z7OxOpPCwruvmGEgX0OWIywH6hBopZeOKJx2wJYYraCb87QvaA74NggJG2dwEwsbgH4AfnFAAKbOV+D+rAd4boQmAo+BMAxaJgGQrjn+EYiJPCNTBuZ7ptWXTrKHCM3DB/mM2Y46QTL+HcoPzM7SDSkg5gBW0gB4NPi30lnHR55ZgJQeqLBnrwNISizjzAWqzjQP8G7hxxOuhPu/LBA4F9s9kjqW1gZcRwH6JaSOtA7f+rZatCgT+PBxOaVlkllRCTzxWPB8EbSOAtKRbHkPBbeYoeBNweEZFgBVBm0igiAQ3kxyDUmtLFgbHB+jV8zUMB/6L4f8dtTFSu9ru/tie+LQv74D2G0nQD7rdE5dnzZxjnWJCJQTXHP9MGrPJWtDJmu3knxUIePJb5luAAQDWPZwf40bkcAAAAABJRU5ErkJggg==" width="29" height="29" alt="">
+<h2>Features</h2>
+<ul>
+<li>
+<a href="http://www.html5rocks.com/en/features/offline" class="offline">
+<h3>Offline</h3>
+</a>
+</li>
+<li>
+<a href="http://www.html5rocks.com/en/features/storage" class="storage">
+<h3>Storage</h3>
+</a>
+</li>
+<li>
+<a href="http://www.html5rocks.com/en/features/connectivity" class="connectivity">
+<h3>Connectivity</h3>
+</a>
+</li>
+<li>
+<a href="http://www.html5rocks.com/en/features/file_access" class="file_access">
+<h3>File Access</h3>
+</a>
+</li>
+<li>
+<a href="http://www.html5rocks.com/en/features/semantics" class="semantics">
+<h3>Semantics</h3>
+</a>
+</li>
+<li>
+<a href="http://www.html5rocks.com/en/features/multimedia" class="multimedia">
+<h3>Audio/Video</h3>
+</a>
+</li>
+<li>
+<a href="http://www.html5rocks.com/en/features/graphics" class="graphics">
+<h3>3D/Graphics</h3>
+</a>
+</li>
+<li>
+<a href="http://www.html5rocks.com/en/features/presentation" class="presentation">
+<h3>Presentation</h3>
+</a>
+</li>
+<li>
+<a href="http://www.html5rocks.com/en/features/performance" class="performance">
+<h3>Performance</h3>
+</a>
+</li>
+<li>
+<a href="http://www.html5rocks.com/en/features/nuts_and_bolts" class="nuts_and_bolts">
+<h3>Nuts &amp; Bolts</h3>
+</a>
+</li>
+</ul>
+</div>
+</div>
+</header>
+<a class="watermark" href="http://www.html5rocks.com/"></a>
+<nav class="paginator home">
+<ul class="home">
+<li><a class="next" href="http://www.html5rocks.com/en/mobile">Mobile</a></li>
+</ul>
+<ul class="mobile">
+<li><a class="previous" href="http://www.html5rocks.com/en/">Home</a></li>
+<li><a class="next" href="http://www.html5rocks.com/en/gaming">Gaming</a></li>
+</ul>
+<ul class="gaming">
+<li><a class="previous" href="http://www.html5rocks.com/en/mobile">Mobile</a></li>
+<li><a class="next" href="http://www.html5rocks.com/en/business">Business</a></li>
+</ul>
+<ul class="business">
+<li><a class="previous" href="http://www.html5rocks.com/en/gaming">Gaming</a></li>
+</ul>
+</nav>
+<nav class="paginator features">
+<ul class="offline">
+<li><a class="next" href="http://www.html5rocks.com/en/features/storage">Storage</a></li>
+</ul>
+<ul class="storage">
+<li><a class="previous" href="http://www.html5rocks.com/en/features/offline">Offline</a></li>
+<li><a class="next" href="http://www.html5rocks.com/en/features/connectivity">Connectivity</a></li>
+</ul>
+<ul class="connectivity">
+<li><a class="previous" href="http://www.html5rocks.com/en/features/storage">Storage</a></li>
+<li><a class="next" href="http://www.html5rocks.com/en/features/file_access">File Access</a></li>
+</ul>
+<ul class="file_access">
+<li><a class="previous" href="http://www.html5rocks.com/en/features/connectivity">Connectivity</a></li>
+<li><a class="next" href="http://www.html5rocks.com/en/features/semantics">Semantics</a></li>
+</ul>
+<ul class="semantics">
+<li><a class="previous" href="http://www.html5rocks.com/en/features/file_access">File Access</a></li>
+<li><a class="next" href="http://www.html5rocks.com/en/features/multimedia">Audio/Video</a></li>
+</ul>
+<ul class="multimedia">
+<li><a class="previous" href="http://www.html5rocks.com/en/features/semantics">Semantics</a></li>
+<li><a class="next" href="http://www.html5rocks.com/en/features/graphics">3D/Graphics</a></li>
+</ul>
+<ul class="graphics">
+<li><a class="previous" href="http://www.html5rocks.com/en/features/multimedia">Audio/Video</a></li>
+<li><a class="next" href="http://www.html5rocks.com/en/features/presentation">Presentation</a></li>
+</ul>
+<ul class="presentation">
+<li><a class="previous" href="http://www.html5rocks.com/en/features/graphics">3D/Graphics</a></li>
+<li><a class="next" href="http://www.html5rocks.com/en/features/performance">Performance</a></li>
+</ul>
+<ul class="performance">
+<li><a class="previous" href="http://www.html5rocks.com/en/features/presentation">Presentation</a></li>
+<li><a class="next" href="http://www.html5rocks.com/en/features/nuts_and_bolts">Nuts &amp; Bolts</a></li>
+</ul>
+<ul class="nuts_and_bolts">
+<li><a class="previous" href="http://www.html5rocks.com/en/features/performance">Performance</a></li>
+</ul>
+</nav>
+<div class="outline_nav_toggle deactivated">
+<img class="show" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB8AAAAeCAYAAADU8sWcAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6OTAyRDZFQUJFOEVFMTFFMDg2NkJGNDlCNjE5NENEMzIiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6OTAyRDZFQUNFOEVFMTFFMDg2NkJGNDlCNjE5NENEMzIiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo5MDJENkVBOUU4RUUxMUUwODY2QkY0OUI2MTk0Q0QzMiIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo5MDJENkVBQUU4RUUxMUUwODY2QkY0OUI2MTk0Q0QzMiIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/Pprl4SwAAAIcSURBVHjazFfNasJAEI6ptiIGBCUQbfAWxWu96EUfwAY8tg+gD1A8F+99gfoA9ijoA9he9GKvIt5EMRJyEFKKDQidlaSIyW5iYkgHhiyZzX4zk/nbEOWAJpNJGh4V4DudGYttn8Bz4EGxWJw7OTfkALQBXKPOIwTeASXeXYEDcEMH9kLIG21QYu0IHECRS1+BBeoypAI3rX4F7TMwpcdHF86uEsF9AD6mZ1BAsHQ7CJ7g8WB3wmazia1Wq7imaWHjXSaTUbPZrOpAAQn4EX6B+geuR3Wf9NVisWBGo9HtdruNWckjkci+UCjI5XJ5baMAyoLOMfgLPKq43cPhkJ/NZqwT3yYSie96vT6PRqN7QgCKyHpat/ps4FwuR7VaLdN+5JleryfsdrsrQgDWjICrkFzt1OJTBcbjcZqw5d4ArxIKDec2tJHSoMQ1RiygtKZxqYU+lGWZ8ZJb0+k0RRALNKZJUMvlkvGa2JIkxUngYWxNVNUbYy2KokmeSqUObCWDlKQURbGtfDQVIGEtZxjmx1j3++b6g1ItmUxaypw2HFpPehPxPK96tYzjuC9Sz6f1xm9VqTSWZT0pAOVWsQPHThtQAiW3wPl8XkYG4IAP5RUWH7gDUKdCh5wLjOp7qVQiNZhB4I3FAEdVrhtISw10mDhSoOvjGGUaJE8rXBOXeheg9ukEG+jo/L8uDRe8Lr0B6MD1Xc3vi+KvAAMAMUEG36eXLzcAAAAASUVORK5CYII=" alt="">
+<img class="hide" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB8AAAAeCAYAAADU8sWcAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6OTAyRDZFQUZFOEVFMTFFMDg2NkJGNDlCNjE5NENEMzIiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6OTAyRDZFQjBFOEVFMTFFMDg2NkJGNDlCNjE5NENEMzIiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo5MDJENkVBREU4RUUxMUUwODY2QkY0OUI2MTk0Q0QzMiIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo5MDJENkVBRUU4RUUxMUUwODY2QkY0OUI2MTk0Q0QzMiIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PlXiDkoAAAIdSURBVHjaxFfNasJAEN6sSkUIBOLBFktF0Junek+96wOU3tt76716tw/Q3msfQO8a8GhP3iKIpdJ6MBAIiEWE7shaos1m18SfD4ZFd2a/mc3szqyEBNHtdq/IAJKlsgmDSjufz7dF1pQESG/JcE1ERuL4JtIgTrz4IiekEN0TkVPkH+BEhTjx7jaJGcQlMtQDEiNq/0zX40dOFR/R7lElO9Bgku+ReIWyMxklB/EZGV55iTWbzUL9fl+xbftk9Z8syz+ZTMaKRqMLDrlN5IY48AU/wo6Jey9iINV1/XwwGKhu851OB6XTaVPTtE8PJ2TKU/6LnER9CYnBIh6Px7Fms5mdz+ch3r5GIpFFsVg0EonE1EPtDk7AKttLuyAGgB7og52HWsl51DSWVqvVuhAldjoAdh4qSz5Mt9z1W/d6PdWyrJiftAY7sGd9e+DFjHt6ieFwqAQ5Vxz7LPbK8NFoFIicYy+HRRaJx+NIVVVhUtM00WQy4ephdEQIRQ5RiESyLTC98lyRTCatIItz7G1Muw9XpFKpQOQcewPTQu8afS6XMxVFmfohBjuwZ0XtvF511iKFQuED7uttiEEf7DxUdGe2N1haUCCgUIg6IFhY6pv1vEa7U18lFSBQUhHtbstHbyYkl968tsd7Za2PW7vhaH9VPQQxs2/fQyP5j5j3aIA6X9nBo+GBEBtBnkulLZ2AxHrz/Vw6xEPxV4ABAB9p/+75XTbuAAAAAElFTkSuQmCC" alt="">
+<nav class="outline features">
+<h3>HTML5 Features</h3>
+<ul>
+<li class="offline">
+<a href="http://www.html5rocks.com/en/features/offline" class="section_title offline">Offline</a>
+<ul>
+<li><a href="http://www.html5rocks.com/en/features/offline#intro">Intro</a></li>
+<li><a href="http://www.html5rocks.com/en/features/offline#support">Browser Support</a></li>
+<li><a href="http://www.html5rocks.com/en/features/offline#updates">What’s New</a></li>
+<li><a href="http://www.html5rocks.com/en/features/offline#demos">Demos</a></li>
+<li><a href="http://www.html5rocks.com/en/features/offline#in_the_wild">In the Wild</a></li>
+<li><a href="http://www.html5rocks.com/en/features/offline#resources">Resources</a></li>
+</ul>
+</li>
+<li class="storage">
+<a href="http://www.html5rocks.com/en/features/storage" class="section_title storage">Storage</a>
+<ul>
+<li><a href="http://www.html5rocks.com/en/features/storage#intro">Intro</a></li>
+<li><a href="http://www.html5rocks.com/en/features/storage#support">Browser Support</a></li>
+<li><a href="http://www.html5rocks.com/en/features/storage#updates">What’s New</a></li>
+<li><a href="http://www.html5rocks.com/en/features/storage#demos">Demos</a></li>
+<li><a href="http://www.html5rocks.com/en/features/storage#in_the_wild">In the Wild</a></li>
+<li><a href="http://www.html5rocks.com/en/features/storage#resources">Resources</a></li>
+</ul>
+</li>
+<li class="connectivity">
+<a href="http://www.html5rocks.com/en/features/connectivity" class="section_title connectivity">Connectivity</a>
+<ul>
+<li><a href="http://www.html5rocks.com/en/features/connectivity#intro">Intro</a></li>
+<li><a href="http://www.html5rocks.com/en/features/connectivity#support">Browser Support</a></li>
+<li><a href="http://www.html5rocks.com/en/features/connectivity#updates">What’s New</a></li>
+<li><a href="http://www.html5rocks.com/en/features/connectivity#demos">Demos</a></li>
+<li><a href="http://www.html5rocks.com/en/features/connectivity#in_the_wild">In the Wild</a></li>
+<li><a href="http://www.html5rocks.com/en/features/connectivity#resources">Resources</a></li>
+</ul>
+</li>
+<li class="file_access">
+<a href="http://www.html5rocks.com/en/features/file_access" class="section_title file_access">File Access</a>
+<ul>
+<li><a href="http://www.html5rocks.com/en/features/file_access#intro">Intro</a></li>
+<li><a href="http://www.html5rocks.com/en/features/file_access#support">Browser Support</a></li>
+<li><a href="http://www.html5rocks.com/en/features/file_access#updates">What’s New</a></li>
+<li><a href="http://www.html5rocks.com/en/features/file_access#demos">Demos</a></li>
+<li><a href="http://www.html5rocks.com/en/features/file_access#in_the_wild">In the Wild</a></li>
+<li><a href="http://www.html5rocks.com/en/features/file_access#resources">Resources</a></li>
+</ul>
+</li>
+<li class="semantics">
+<a href="http://www.html5rocks.com/en/features/semantics" class="section_title semantics">Semantics</a>
+<ul>
+<li><a href="http://www.html5rocks.com/en/features/semantics#intro">Intro</a></li>
+<li><a href="http://www.html5rocks.com/en/features/semantics#support">Browser Support</a></li>
+<li><a href="http://www.html5rocks.com/en/features/semantics#updates">What’s New</a></li>
+<li><a href="http://www.html5rocks.com/en/features/semantics#demos">Demos</a></li>
+<li><a href="http://www.html5rocks.com/en/features/semantics#in_the_wild">In the Wild</a></li>
+<li><a href="http://www.html5rocks.com/en/features/semantics#resources">Resources</a></li>
+</ul>
+</li>
+<li class="multimedia">
+<a href="http://www.html5rocks.com/en/features/multimedia" class="section_title multimedia">Audio/Video</a>
+<ul>
+<li><a href="http://www.html5rocks.com/en/features/multimedia#intro">Intro</a></li>
+<li><a href="http://www.html5rocks.com/en/features/multimedia#support">Browser Support</a></li>
+<li><a href="http://www.html5rocks.com/en/features/multimedia#updates">What’s New</a></li>
+<li><a href="http://www.html5rocks.com/en/features/multimedia#demos">Demos</a></li>
+<li><a href="http://www.html5rocks.com/en/features/multimedia#in_the_wild">In the Wild</a></li>
+<li><a href="http://www.html5rocks.com/en/features/multimedia#resources">Resources</a></li>
+</ul>
+</li>
+<li class="graphics">
+<a href="http://www.html5rocks.com/en/features/graphics" class="section_title graphics">3D/Graphics</a>
+<ul>
+<li><a href="http://www.html5rocks.com/en/features/graphics#intro">Intro</a></li>
+<li><a href="http://www.html5rocks.com/en/features/graphics#support">Browser Support</a></li>
+<li><a href="http://www.html5rocks.com/en/features/graphics#updates">What’s New</a></li>
+<li><a href="http://www.html5rocks.com/en/features/graphics#demos">Demos</a></li>
+<li><a href="http://www.html5rocks.com/en/features/graphics#in_the_wild">In the Wild</a></li>
+<li><a href="http://www.html5rocks.com/en/features/graphics#resources">Resources</a></li>
+</ul>
+</li>
+<li class="presentation">
+<a href="http://www.html5rocks.com/en/features/presentation" class="section_title presentation">Presentation</a>
+<ul>
+<li><a href="http://www.html5rocks.com/en/features/presentation#intro">Intro</a></li>
+<li><a href="http://www.html5rocks.com/en/features/presentation#support">Browser Support</a></li>
+<li><a href="http://www.html5rocks.com/en/features/presentation#updates">What’s New</a></li>
+<li><a href="http://www.html5rocks.com/en/features/presentation#demos">Demos</a></li>
+<li><a href="http://www.html5rocks.com/en/features/presentation#in_the_wild">In the Wild</a></li>
+<li><a href="http://www.html5rocks.com/en/features/presentation#resources">Resources</a></li>
+</ul>
+</li>
+<li class="performance">
+<a href="http://www.html5rocks.com/en/features/performance" class="section_title performance">Performance</a>
+<ul>
+<li><a href="http://www.html5rocks.com/en/features/performance#intro">Intro</a></li>
+<li><a href="http://www.html5rocks.com/en/features/performance#updates">What’s New</a></li>
+<li><a href="http://www.html5rocks.com/en/features/performance#themes">Themes</a></li>
+<li><a href="http://www.html5rocks.com/en/features/performance#technologies">Technologies</a></li>
+<li><a href="http://www.html5rocks.com/en/features/performance#techniques">Techniques</a></li>
+<li><a href="http://www.html5rocks.com/en/features/performance#tools">Tools</a></li>
+<li><a href="http://www.html5rocks.com/en/features/performance#further_reading">Further Reading</a></li>
+</ul>
+</li>
+<li class="nuts_and_bolts">
+<a href="http://www.html5rocks.com/en/features/nuts_and_bolts" class="section_title nuts_and_bolts">Nuts &amp; Bolts</a>
+<ul>
+<li><a href="http://www.html5rocks.com/en/features/nuts_and_bolts#intro">Intro</a></li>
+<li><a href="http://www.html5rocks.com/en/features/nuts_and_bolts#support">Browser Support</a></li>
+<li><a href="http://www.html5rocks.com/en/features/nuts_and_bolts#updates">What’s New</a></li>
+<li><a href="http://www.html5rocks.com/en/features/nuts_and_bolts#demos">Demos</a></li>
+<li><a href="http://www.html5rocks.com/en/features/nuts_and_bolts#in_the_wild">In the Wild</a></li>
+<li><a href="http://www.html5rocks.com/en/features/nuts_and_bolts#resources">Resources</a></li>
+</ul>
+</li>
+</ul>
+</nav>
+</div>
+<div class="page current loaded" id="tutorials-file-xhr2">
+<header class="tutorial clearfix pattern-bg-lighter">
+<hgroup>
+<h1>HTML5 Rocks</h1>
+<h2><a href="http://www.html5rocks.com/en/tutorials/">Tutorials</a></h2>
+</hgroup>
+<section>
+<h1>New Tricks in XMLHttpRequest2</h1>
+<section class="byline">
+<a href="http://www.html5rocks.com/profiles/#ericbidelman"><img src="data:image/jpeg;base64,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" itemprop="photo" alt="Eric Bidelman" title="Eric Bidelman"></a>
+<hgroup>
+<h2>
+By <strong><a href="http://www.html5rocks.com/profiles/#ericbidelman">Eric Bidelman</a></strong>
+</h2>
+</hgroup>
+<div class="date">
+<time pubdate="">Published <strong>May 27, 2011</strong></time>
+<time class="updated">Updated <strong>Aug. 21, 2012</strong></time>
+</div>
+</section>
+<aside id="html5badge">
+<a href="http://www.w3.org/html/logo/">
+<img src="data:image/png;base64,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" alt="This article is powered by HTML5 Performance &amp; Integration" title="This article is powered by HTML5 Performance &amp; Integration">
+</a>
+</aside>
+<section class="browser_support">
+<h2>Supported browsers:</h2>
+<span class="browsers">
+<span class="browser opera supported">
+<span class="browser_name">Opera</span>
+<span class="support">
+supported
+</span>
+</span>
+<span class="browser ie supported">
+<span class="browser_name">IE</span>
+<span class="support">
+supported
+</span>
+</span>
+<span class="browser safari supported">
+<span class="browser_name">Safari</span>
+<span class="support">
+supported
+</span>
+</span>
+<span class="browser ff supported">
+<span class="browser_name">Firefox</span>
+<span class="support">
+supported
+</span>
+</span>
+<span class="browser chrome supported">
+<span class="browser_name">Chrome</span>
+<span class="support">
+supported
+</span>
+</span>
+</span>
+<div class="compatible-block">
+<p id="notcompatible" class="hidden">
+Your browser may not support all of the functionality in this article.
+</p>
+<p id="compatible" class="">
+Your browser appears to support all of the functionality in this article.
+</p>
+</div>
+</section>
+<a href="http://www.html5rocks.com/en/tutorials/file/xhr2/#disqus_thread" data-disqus-identifier="http://www.html5rocks.com/tutorials/file/xhr2/" class="disqus_comments">41 Comments and 26 Reactions</a>
+</section>
+<span class="share preview" onmouseover="thirdParty.load(this);"><img src="./New Tricks in XMLHttpRequest2 - HTML5 Rocks_files/share.png"></span><span class="share">
+<ul>
+<li class="googleplus"><div style="height: 20px; width: 90px; display: inline-block; text-indent: 0px; margin: 0px; padding: 0px; background-color: transparent; border-style: none; float: none; line-height: normal; font-size: 1px; vertical-align: baseline; background-position: initial initial; background-repeat: initial initial; " id="___plusone_0"><iframe allowtransparency="true" frameborder="0" hspace="0" marginheight="0" marginwidth="0" scrolling="no" style="position: static; top: 0px; width: 90px; margin: 0px; border-style: none; left: 0px; visibility: visible; height: 20px; " tabindex="0" vspace="0" width="100%" id="I0_1351892046038" name="I0_1351892046038" src="./New Tricks in XMLHttpRequest2 - HTML5 Rocks_files/fastbutton.html" title="+1"></iframe></div></li>
+<li class="facebook" data-url="http://www.html5rocks.com/tutorials/file/xhr2/"></li>
+<li class="twitter"><iframe allowtransparency="true" frameborder="0" scrolling="no" src="./New Tricks in XMLHttpRequest2 - HTML5 Rocks_files/tweet_button.1351848862.html" class="twitter-share-button twitter-count-horizontal" style="width: 107px; height: 20px; " title="Twitter Tweet Button" data-twttr-rendered="true"></iframe></li>
+</ul>
+</span>
+</header>
+<article class="tutorial pattern-bg-lighter">
+<div class="outline_nav_toggle">
+<img class="show" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB8AAAAeCAYAAADU8sWcAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6OTAyRDZFQUJFOEVFMTFFMDg2NkJGNDlCNjE5NENEMzIiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6OTAyRDZFQUNFOEVFMTFFMDg2NkJGNDlCNjE5NENEMzIiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo5MDJENkVBOUU4RUUxMUUwODY2QkY0OUI2MTk0Q0QzMiIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo5MDJENkVBQUU4RUUxMUUwODY2QkY0OUI2MTk0Q0QzMiIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/Pprl4SwAAAIcSURBVHjazFfNasJAEI6ptiIGBCUQbfAWxWu96EUfwAY8tg+gD1A8F+99gfoA9ijoA9he9GKvIt5EMRJyEFKKDQidlaSIyW5iYkgHhiyZzX4zk/nbEOWAJpNJGh4V4DudGYttn8Bz4EGxWJw7OTfkALQBXKPOIwTeASXeXYEDcEMH9kLIG21QYu0IHECRS1+BBeoypAI3rX4F7TMwpcdHF86uEsF9AD6mZ1BAsHQ7CJ7g8WB3wmazia1Wq7imaWHjXSaTUbPZrOpAAQn4EX6B+geuR3Wf9NVisWBGo9HtdruNWckjkci+UCjI5XJ5baMAyoLOMfgLPKq43cPhkJ/NZqwT3yYSie96vT6PRqN7QgCKyHpat/ps4FwuR7VaLdN+5JleryfsdrsrQgDWjICrkFzt1OJTBcbjcZqw5d4ArxIKDec2tJHSoMQ1RiygtKZxqYU+lGWZ8ZJb0+k0RRALNKZJUMvlkvGa2JIkxUngYWxNVNUbYy2KokmeSqUObCWDlKQURbGtfDQVIGEtZxjmx1j3++b6g1ItmUxaypw2HFpPehPxPK96tYzjuC9Sz6f1xm9VqTSWZT0pAOVWsQPHThtQAiW3wPl8XkYG4IAP5RUWH7gDUKdCh5wLjOp7qVQiNZhB4I3FAEdVrhtISw10mDhSoOvjGGUaJE8rXBOXeheg9ukEG+jo/L8uDRe8Lr0B6MD1Xc3vi+KvAAMAMUEG36eXLzcAAAAASUVORK5CYII=">
+<img class="hide" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB8AAAAeCAYAAADU8sWcAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6OTAyRDZFQUZFOEVFMTFFMDg2NkJGNDlCNjE5NENEMzIiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6OTAyRDZFQjBFOEVFMTFFMDg2NkJGNDlCNjE5NENEMzIiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo5MDJENkVBREU4RUUxMUUwODY2QkY0OUI2MTk0Q0QzMiIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo5MDJENkVBRUU4RUUxMUUwODY2QkY0OUI2MTk0Q0QzMiIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PlXiDkoAAAIdSURBVHjaxFfNasJAEN6sSkUIBOLBFktF0Junek+96wOU3tt76716tw/Q3msfQO8a8GhP3iKIpdJ6MBAIiEWE7shaos1m18SfD4ZFd2a/mc3szqyEBNHtdq/IAJKlsgmDSjufz7dF1pQESG/JcE1ERuL4JtIgTrz4IiekEN0TkVPkH+BEhTjx7jaJGcQlMtQDEiNq/0zX40dOFR/R7lElO9Bgku+ReIWyMxklB/EZGV55iTWbzUL9fl+xbftk9Z8syz+ZTMaKRqMLDrlN5IY48AU/wo6Jey9iINV1/XwwGKhu851OB6XTaVPTtE8PJ2TKU/6LnER9CYnBIh6Px7Fms5mdz+ch3r5GIpFFsVg0EonE1EPtDk7AKttLuyAGgB7og52HWsl51DSWVqvVuhAldjoAdh4qSz5Mt9z1W/d6PdWyrJiftAY7sGd9e+DFjHt6ieFwqAQ5Vxz7LPbK8NFoFIicYy+HRRaJx+NIVVVhUtM00WQy4ephdEQIRQ5RiESyLTC98lyRTCatIItz7G1Muw9XpFKpQOQcewPTQu8afS6XMxVFmfohBjuwZ0XtvF511iKFQuED7uttiEEf7DxUdGe2N1haUCCgUIg6IFhY6pv1vEa7U18lFSBQUhHtbstHbyYkl968tsd7Za2PW7vhaH9VPQQxs2/fQyP5j5j3aIA6X9nBo+GBEBtBnkulLZ2AxHrz/Vw6xEPxV4ABAB9p/+75XTbuAAAAAElFTkSuQmCC">
+<nav class="outline toc pattern-bg-lighter">
+<h3>Table of Contents</h3>
+<ul><li><a href="http://www.html5rocks.com/en/tutorials/file/xhr2/#toc-introduction" onclick="$.scrollTo(&quot;#toc-introduction&quot;, 800, {offset: {top: -35}})">Introduction</a></li><li><a href="http://www.html5rocks.com/en/tutorials/file/xhr2/#toc-bin-data" onclick="$.scrollTo(&quot;#toc-bin-data&quot;, 800, {offset: {top: -35}})">Fetching data</a><ul><li><a href="http://www.html5rocks.com/en/tutorials/file/xhr2/#toc-response" onclick="$.scrollTo(&quot;#toc-response&quot;, 800, {offset: {top: -35}})">Specifying a response format</a><ul><li><a href="http://www.html5rocks.com/en/tutorials/file/xhr2/#toc-reponseTypeArrayBuffer" onclick="$.scrollTo(&quot;#toc-reponseTypeArrayBuffer&quot;, 800, {offset: {top: -35}})">ArrayBuffer responses</a></li><li><a href="http://www.html5rocks.com/en/tutorials/file/xhr2/#toc-reponseTypeBlob" onclick="$.scrollTo(&quot;#toc-reponseTypeBlob&quot;, 800, {offset: {top: -35}})">Blob responses</a></li></ul></li></ul></li><li><a href="http://www.html5rocks.com/en/tutorials/file/xhr2/#toc-sending" onclick="$.scrollTo(&quot;#toc-sending&quot;, 800, {offset: {top: -35}})">Sending data</a><ul><li><a href="http://www.html5rocks.com/en/tutorials/file/xhr2/#toc-send-string" onclick="$.scrollTo(&quot;#toc-send-string&quot;, 800, {offset: {top: -35}})">Sending string data: xhr.send(DOMString)</a></li><li><a href="http://www.html5rocks.com/en/tutorials/file/xhr2/#toc-send-formdata" onclick="$.scrollTo(&quot;#toc-send-formdata&quot;, 800, {offset: {top: -35}})">Submitting forms: xhr.send(FormData)</a></li><li><a href="http://www.html5rocks.com/en/tutorials/file/xhr2/#toc-send-blob" onclick="$.scrollTo(&quot;#toc-send-blob&quot;, 800, {offset: {top: -35}})">Uploading a file or blob: xhr.send(Blob)</a></li><li><a href="http://www.html5rocks.com/en/tutorials/file/xhr2/#toc-send-arraybuffer" onclick="$.scrollTo(&quot;#toc-send-arraybuffer&quot;, 800, {offset: {top: -35}})">Uploading a chunk of bytes: xhr.send(ArrayBuffer)</a></li></ul></li><li><a href="http://www.html5rocks.com/en/tutorials/file/xhr2/#toc-cors" onclick="$.scrollTo(&quot;#toc-cors&quot;, 800, {offset: {top: -35}})">Cross Origin Resource Sharing (CORS)</a><ul><li><a href="http://www.html5rocks.com/en/tutorials/file/xhr2/#toc-enable-cors" onclick="$.scrollTo(&quot;#toc-enable-cors&quot;, 800, {offset: {top: -35}})">Enabling CORS requests</a></li><li><a href="http://www.html5rocks.com/en/tutorials/file/xhr2/#toc-request-cors" onclick="$.scrollTo(&quot;#toc-request-cors&quot;, 800, {offset: {top: -35}})">Making a cross-domain request</a></li></ul></li><li><a href="http://www.html5rocks.com/en/tutorials/file/xhr2/#toc-examples" onclick="$.scrollTo(&quot;#toc-examples&quot;, 800, {offset: {top: -35}})">Practical examples</a><ul><li><a href="http://www.html5rocks.com/en/tutorials/file/xhr2/#toc-example-savingimages" onclick="$.scrollTo(&quot;#toc-example-savingimages&quot;, 800, {offset: {top: -35}})">Download + save files to the HTML5 file system</a></li><li><a href="http://www.html5rocks.com/en/tutorials/file/xhr2/#toc-example-slicingfiles" onclick="$.scrollTo(&quot;#toc-example-slicingfiles&quot;, 800, {offset: {top: -35}})">Slicing a file and uploading each portion</a></li></ul></li><li><a href="http://www.html5rocks.com/en/tutorials/file/xhr2/#toc-references" onclick="$.scrollTo(&quot;#toc-references&quot;, 800, {offset: {top: -35}})">References</a></li></ul>
+<h3>Localizations</h3>
+<p>This article is additionally available in the following languages:</p>
+<ul>
+<li><a href="http://www.html5rocks.com/zh/tutorials/file/xhr2/">中文 (简体)</a></li>
+<li><a href="http://www.html5rocks.com/de/tutorials/file/xhr2/">Deutsch</a></li>
+<li><a href="http://www.html5rocks.com/pt/tutorials/file/xhr2/">Português (Brasil)</a></li>
+<li><a href="http://www.html5rocks.com/es/tutorials/file/xhr2/">Español</a></li>
+<li><a href="http://www.html5rocks.com/ru/tutorials/file/xhr2/">Pусский</a></li>
+<li><a href="http://www.html5rocks.com/ja/tutorials/file/xhr2/">日本語</a></li>
+</ul>
+</nav>
+</div>
+<section>
+<h2 id="toc-introduction">Introduction</h2>
+<p>One of the unsung heros in the HTML5 universe is <code>XMLHttpRequest</code>.
+Strictly speaking XHR2 isn't HTML5. However, it's part of the incremental improvements
+browser vendors are making to the core platform. I'm including XHR2 in our new bag of
+goodies because it plays such an integral part in today's complex web apps.</p>
+<p>Turns out our old friend got a huge makeover but many folks
+are unaware of its new features. <a href="http://dev.w3.org/2006/webapi/XMLHttpRequest-2/" target="_blank">XMLHttpRequest Level 2</a>
+introduces a slew of new capabilities which put an end to crazy hacks in our web apps;
+things like cross-origin requests, uploading progress events,
+and support for uploading/downloading binary data. These allow AJAX
+to work in concert with many of the bleeding edge HTML5 APIs such as <a href="http://www.html5rocks.com/tutorials/file/filesystem/">File System API</a>,
+<a href="http://chromium.googlecode.com/svn/trunk/samples/audio/specification/specification.html" target="_blank">Web Audio API</a>,
+and WebGL.</p>
+<p>This tutorial highlights some of the new features in <code>XMLHttpRequest</code>,
+especially those that can be used for <a href="http://www.html5rocks.com/tutorials/file/dndfiles/">working with files</a>.</p>
+<h2 id="toc-bin-data">Fetching data</h2>
+<p>Fetching a file as a binary blob has been painful with XHR. Technically,
+it wasn't even possible. One trick that has been well documented involves
+overriding the mime type with a user-defined charset as seen below.</p>
+<p id="toc-old-download">The old way to fetch an image:</p>
+<pre class="prettyprint"><span class="kwd">var</span><span class="pln"> xhr </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">new</span><span class="pln"> </span><span class="typ">XMLHttpRequest</span><span class="pun">();</span><span class="pln">
+xhr</span><span class="pun">.</span><span class="pln">open</span><span class="pun">(</span><span class="str">'GET'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'/path/to/image.png'</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">true</span><span class="pun">);</span><span class="pln">
+
+</span><span class="com">// Hack to pass bytes through unprocessed.</span><span class="pln">
+</span><b><span class="pln">xhr</span><span class="pun">.</span><span class="pln">overrideMimeType</span><span class="pun">(</span><span class="str">'text/plain; charset=x-user-defined'</span><span class="pun">);</span></b><span class="pln">
+
+xhr</span><span class="pun">.</span><span class="pln">onreadystatechange </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">e</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+  </span><span class="kwd">if</span><span class="pln"> </span><span class="pun">(</span><span class="kwd">this</span><span class="pun">.</span><span class="pln">readyState </span><span class="pun">==</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="pun">&amp;&amp;</span><span class="pln"> </span><span class="kwd">this</span><span class="pun">.</span><span class="pln">status </span><span class="pun">==</span><span class="pln"> </span><span class="lit">200</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+    </span><span class="kwd">var</span><span class="pln"> binStr </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">this</span><span class="pun">.</span><span class="pln">responseText</span><span class="pun">;</span><span class="pln">
+    </span><span class="kwd">for</span><span class="pln"> </span><span class="pun">(</span><span class="kwd">var</span><span class="pln"> i </span><span class="pun">=</span><span class="pln"> </span><span class="lit">0</span><span class="pun">,</span><span class="pln"> len </span><span class="pun">=</span><span class="pln"> binStr</span><span class="pun">.</span><span class="pln">length</span><span class="pun">;</span><span class="pln"> i </span><span class="pun">&lt;</span><span class="pln"> len</span><span class="pun">;</span><span class="pln"> </span><span class="pun">++</span><span class="pln">i</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+      </span><b><span class="kwd">var</span><span class="pln"> c </span><span class="pun">=</span><span class="pln"> binStr</span><span class="pun">.</span><span class="pln">charCodeAt</span><span class="pun">(</span><span class="pln">i</span><span class="pun">);</span></b><span class="pln">
+      </span><b><span class="com">//String.fromCharCode(c &amp; 0xff);</span></b><span class="pln">
+      </span><b><span class="kwd">var</span><span class="pln"> </span><span class="kwd">byte</span><span class="pln"> </span><span class="pun">=</span><span class="pln"> c </span><span class="pun">&amp;</span><span class="pln"> </span><span class="lit">0xff</span><span class="pun">;</span><span class="pln">  </span><span class="com">// byte at offset i</span></b><span class="pln">
+    </span><span class="pun">}</span><span class="pln">
+  </span><span class="pun">}</span><span class="pln">
+</span><span class="pun">};</span><span class="pln">
+
+xhr</span><span class="pun">.</span><span class="pln">send</span><span class="pun">();</span></pre>
+<p>While this works, what you actually get back in the <code>responseText</code>
+is not a binary blob. It is a binary string representing the image file.
+We're tricking the server into passing the data back, unprocessed.
+Even though this little gem works, I'm going to call it black magic and advise
+against it. Anytime you resort to character code hacks and string manipulation
+for coercing data into a desirable format, that's a problem.</p>
+<h3 id="toc-response">Specifying a response format</h3>
+<p>In the previous example, we downloaded the image as a binary "file"
+by overriding the server's mime type and processing the response text as a binary string.
+Instead, let's leverage <code>XMLHttpRequest</code>'s new
+<code>responseType</code> and <code>response</code> properties to inform
+the browser what format we want the data returned as.</p>
+<dl>
+<dt>xhr.<strong>responseType</strong></dt><dt>
+</dt><dd>Before sending a request, set the <code>xhr.responseType</code>
+to "text", "arraybuffer", "blob", or "document", depending on your data needs.
+Note, setting <code>xhr.responseType = ''</code> (or omitting) will default
+the response to "text".</dd>
+<dt>xhr.<strong>response</strong></dt>
+<dd>After a successful request, the xhr's response property will
+contain the requested data as a <code>DOMString</code>, <code>ArrayBuffer</code>,
+<code>Blob</code>, or <code>Document</code> (depending on what was set for
+<code>responseType</code>.)</dd>
+</dl>
+<p>With this new awesomeness, we can rework the previous example, but this time,
+fetch the image as an <code>Blob</code> instead of a string:</p>
+<pre class="prettyprint"><span class="kwd">var</span><span class="pln"> xhr </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">new</span><span class="pln"> </span><span class="typ">XMLHttpRequest</span><span class="pun">();</span><span class="pln">
+xhr</span><span class="pun">.</span><span class="pln">open</span><span class="pun">(</span><span class="str">'GET'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'/path/to/image.png'</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">true</span><span class="pun">);</span><span class="pln">
+</span><b><span class="pln">xhr</span><span class="pun">.</span><span class="pln">responseType </span><span class="pun">=</span><span class="pln"> </span><span class="str">'blob'</span><span class="pun">;</span></b><span class="pln">
+
+</span><b><span class="pln">xhr</span><span class="pun">.</span><span class="pln">onload</span></b><span class="pln"> </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">e</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+  </span><span class="kwd">if</span><span class="pln"> </span><span class="pun">(</span><span class="kwd">this</span><span class="pun">.</span><span class="pln">status </span><span class="pun">==</span><span class="pln"> </span><span class="lit">200</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+    </span><span class="com">// Note: .response instead of .responseText</span><span class="pln">
+    </span><span class="kwd">var</span><span class="pln"> blob </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">new</span><span class="pln"> </span><span class="typ">Blob</span><span class="pun">([</span><span class="kwd">this</span><span class="pun">.</span><span class="pln">response</span><span class="pun">],</span><span class="pln"> </span><span class="pun">{</span><span class="pln">type</span><span class="pun">:</span><span class="pln"> </span><span class="str">'image/png'</span><span class="pun">});</span><span class="pln">
+    </span><span class="pun">...</span><span class="pln">
+  </span><span class="pun">}</span><span class="pln">
+</span><span class="pun">};</span><span class="pln">
+
+xhr</span><span class="pun">.</span><span class="pln">send</span><span class="pun">();</span></pre>
+<p>Much nicer!</p>
+<h4 id="toc-reponseTypeArrayBuffer">ArrayBuffer responses</h4>
+<p>An <a href="https://developer.mozilla.org/en/JavaScript_typed_arrays/ArrayBuffer" target="_blank"><code>ArrayBuffer</code></a>
+is a generic fixed-length container for binary data. They are super handy if you
+need a generalized buffer of raw data, but the real power behind these guys is that
+you can create "views" of the underlying data using <a href="https://developer.mozilla.org/en/JavaScript_typed_arrays" target="_blank">JavaScript typed arrays</a>.
+In fact, multiple views can be created from a single <code>ArrayBuffer</code> source.
+For example, you could create an 8-bit integer array that shares the same <code>ArrayBuffer</code>
+as an existing 32-bit integer array from the same data. The underlying data
+remains the same, we just create different representations of it.</p>
+<p>As an example, the following fetches our same image as an <code>ArrayBuffer</code>,
+but this time, creates an unsigned 8-bit integer array from that data buffer:</p>
+<pre class="prettyprint"><span class="kwd">var</span><span class="pln"> xhr </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">new</span><span class="pln"> </span><span class="typ">XMLHttpRequest</span><span class="pun">();</span><span class="pln">
+xhr</span><span class="pun">.</span><span class="pln">open</span><span class="pun">(</span><span class="str">'GET'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'/path/to/image.png'</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">true</span><span class="pun">);</span><span class="pln">
+</span><b><span class="pln">xhr</span><span class="pun">.</span><span class="pln">responseType </span><span class="pun">=</span><span class="pln"> </span><span class="str">'arraybuffer'</span><span class="pun">;</span></b><span class="pln">
+
+</span><b><span class="pln">xhr</span><span class="pun">.</span><span class="pln">onload</span></b><span class="pln"> </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">e</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+  </span><span class="kwd">var</span><span class="pln"> uInt8Array </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">new</span><span class="pln"> </span><b><span class="typ">Uint8Array</span></b><span class="pun">(</span><b><span class="kwd">this</span><span class="pun">.</span><span class="pln">response</span></b><span class="pun">);</span><span class="pln"> </span><span class="com">// this.response == uInt8Array.buffer</span><span class="pln">
+  </span><span class="com">// var byte3 = uInt8Array[4]; // byte at offset 4</span><span class="pln">
+  </span><span class="pun">...</span><span class="pln">
+</span><span class="pun">};</span><span class="pln">
+
+xhr</span><span class="pun">.</span><span class="pln">send</span><span class="pun">();</span></pre>
+<h4 id="toc-reponseTypeBlob">Blob responses</h4>
+<p>If you want to work directly with a <a href="https://developer.mozilla.org/en/DOM/Blob" target="_blank"><code>Blob</code></a> and/or
+don't need to manipulate any of the file's bytes, use <code>xhr.responseType='blob'</code>:</p>
+<pre class="prettyprint"><span class="pln">window</span><span class="pun">.</span><span class="pln">URL </span><span class="pun">=</span><span class="pln"> window</span><span class="pun">.</span><span class="pln">URL </span><span class="pun">||</span><span class="pln"> window</span><span class="pun">.</span><span class="pln">webkitURL</span><span class="pun">;</span><span class="pln">  </span><span class="com">// Take care of vendor prefixes.</span><span class="pln">
+
+</span><span class="kwd">var</span><span class="pln"> xhr </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">new</span><span class="pln"> </span><span class="typ">XMLHttpRequest</span><span class="pun">();</span><span class="pln">
+xhr</span><span class="pun">.</span><span class="pln">open</span><span class="pun">(</span><span class="str">'GET'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'/path/to/image.png'</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">true</span><span class="pun">);</span><span class="pln">
+</span><b><span class="pln">xhr</span><span class="pun">.</span><span class="pln">responseType </span><span class="pun">=</span><span class="pln"> </span><span class="str">'blob'</span><span class="pun">;</span></b><span class="pln">
+
+</span><b><span class="pln">xhr</span><span class="pun">.</span><span class="pln">onload</span></b><span class="pln"> </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">e</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+  </span><span class="kwd">if</span><span class="pln"> </span><span class="pun">(</span><span class="kwd">this</span><span class="pun">.</span><span class="pln">status </span><span class="pun">==</span><span class="pln"> </span><span class="lit">200</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+    </span><span class="kwd">var</span><span class="pln"> blob </span><span class="pun">=</span><span class="pln"> </span><b><span class="kwd">this</span><span class="pun">.</span><span class="pln">response</span></b><span class="pun">;</span><span class="pln">
+
+    </span><span class="kwd">var</span><span class="pln"> img </span><span class="pun">=</span><span class="pln"> document</span><span class="pun">.</span><span class="pln">createElement</span><span class="pun">(</span><span class="str">'img'</span><span class="pun">);</span><span class="pln">
+    img</span><span class="pun">.</span><span class="pln">onload </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">e</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+      </span><b><span class="pln">window</span><span class="pun">.</span><span class="pln">URL</span><span class="pun">.</span><span class="pln">revokeObjectURL</span><span class="pun">(</span><span class="pln">img</span><span class="pun">.</span><span class="pln">src</span><span class="pun">);</span></b><span class="pln"> </span><span class="com">// Clean up after yourself.</span><span class="pln">
+    </span><span class="pun">};</span><span class="pln">
+    img</span><span class="pun">.</span><span class="pln">src </span><span class="pun">=</span><span class="pln"> </span><b><span class="pln">window</span><span class="pun">.</span><span class="pln">URL</span><span class="pun">.</span><span class="pln">createObjectURL</span><span class="pun">(</span><span class="pln">blob</span><span class="pun">);</span></b><span class="pln">
+    document</span><span class="pun">.</span><span class="pln">body</span><span class="pun">.</span><span class="pln">appendChild</span><span class="pun">(</span><span class="pln">img</span><span class="pun">);</span><span class="pln">
+    </span><span class="pun">...</span><span class="pln">
+  </span><span class="pun">}</span><span class="pln">
+</span><span class="pun">};</span><span class="pln">
+
+xhr</span><span class="pun">.</span><span class="pln">send</span><span class="pun">();</span></pre>
+<p>A <code>Blob</code> can be used in a number of places, including saving
+it to <a href="http://www.html5rocks.com/tutorials/indexeddb/todo/">indexedDB</a>, writing it to the HTML5 <a href="http://www.html5rocks.com/tutorials/file/filesystem/">File System</a>,
+or <a href="http://www.html5rocks.com/tutorials/workers/basics/#toc-inlineworkers-bloburis">creating an Blob URL</a>, as seen
+in this example.</p>
+<h2 id="toc-sending">Sending data</h2>
+<p>Being able to <a href="http://www.html5rocks.com/en/tutorials/file/xhr2/#toc-response">download data in different formats</a> is great, but it doesn't
+get us anywhere if we can't send these rich formats back to home base (the server).
+<code>XMLHttpRequest</code> has limited us to sending <code>DOMString</code>
+or <code>Document</code> (XML) data for some time. Not anymore. A revamped <code>send()</code>
+method has been overridden to accept any of the following types:
+<code>DOMString</code>, <code>Document</code>, <code>FormData</code>, <code>Blob</code>,
+<code>File</code>, <code>ArrayBuffer</code>. The examples in the rest of this
+section demonstrate sending data using each type.</p>
+<h3 id="toc-send-string">Sending string data: xhr.send(DOMString)</h3>
+<pre class="prettyprint" style="display:inline-block;margin-right:10px;vertical-align:top"><span class="kwd">function</span><span class="pln"> sendText</span><span class="pun">(</span><span class="pln">txt</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+  </span><span class="kwd">var</span><span class="pln"> xhr </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">new</span><span class="pln"> </span><span class="typ">XMLHttpRequest</span><span class="pun">();</span><span class="pln">
+  xhr</span><span class="pun">.</span><span class="pln">open</span><span class="pun">(</span><span class="str">'POST'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'/server'</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">true</span><span class="pun">);</span><span class="pln">
+  xhr</span><span class="pun">.</span><span class="pln">onload </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">e</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+    </span><span class="kwd">if</span><span class="pln"> </span><span class="pun">(</span><span class="kwd">this</span><span class="pun">.</span><span class="pln">status </span><span class="pun">==</span><span class="pln"> </span><span class="lit">200</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+      console</span><span class="pun">.</span><span class="pln">log</span><span class="pun">(</span><b><span class="kwd">this</span><span class="pun">.</span><span class="pln">responseText</span></b><span class="pun">);</span><span class="pln">
+    </span><span class="pun">}</span><span class="pln">
+  </span><span class="pun">};</span><span class="pln">
+
+  xhr</span><span class="pun">.</span><span class="pln">send</span><span class="pun">(</span><span class="pln">txt</span><span class="pun">);</span><span class="pln">
+</span><span class="pun">}</span><span class="pln">
+
+sendText</span><span class="pun">(</span><b><span class="str">'test string'</span></b><span class="pun">);</span></pre>
+<pre class="prettyprint" style="display:inline-block"><span class="kwd">function</span><span class="pln"> sendTextNew</span><span class="pun">(</span><span class="pln">txt</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+  </span><span class="kwd">var</span><span class="pln"> xhr </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">new</span><span class="pln"> </span><span class="typ">XMLHttpRequest</span><span class="pun">();</span><span class="pln">
+  xhr</span><span class="pun">.</span><span class="pln">open</span><span class="pun">(</span><span class="str">'POST'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'/server'</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">true</span><span class="pun">);</span><span class="pln">
+  </span><b><span class="pln">xhr</span><span class="pun">.</span><span class="pln">responseType </span><span class="pun">=</span><span class="pln"> </span><span class="str">'text'</span><span class="pun">;</span></b><span class="pln">
+  xhr</span><span class="pun">.</span><span class="pln">onload </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">e</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+    </span><span class="kwd">if</span><span class="pln"> </span><span class="pun">(</span><span class="kwd">this</span><span class="pun">.</span><span class="pln">status </span><span class="pun">==</span><span class="pln"> </span><span class="lit">200</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+      console</span><span class="pun">.</span><span class="pln">log</span><span class="pun">(</span><b><span class="kwd">this</span><span class="pun">.</span><span class="pln">response</span></b><span class="pun">);</span><span class="pln">
+    </span><span class="pun">}</span><span class="pln">
+  </span><span class="pun">};</span><span class="pln">
+  xhr</span><span class="pun">.</span><span class="pln">send</span><span class="pun">(</span><span class="pln">txt</span><span class="pun">);</span><span class="pln">
+</span><span class="pun">}</span><span class="pln">
+
+sendTextNew</span><span class="pun">(</span><b><span class="str">'test string'</span></b><span class="pun">);</span></pre>
+<p>There's nothing new here, though the right snippet is slightly different.
+It sets <code>responseType='text'</code> for comparison. Again, omitting that line
+yields the same results.</p>
+<h3 id="toc-send-formdata">Submitting forms: xhr.send(FormData)</h3>
+<p>Many people are probably accustomed to using <a href="http://jquery.malsup.com/form/" target="_blank">jQuery plugins</a>
+or other libraries to handle AJAX form submissions. Instead, we can use <a href="https://developer.mozilla.org/en/XMLHttpRequest/FormData" target="_blank"><code>FormData</code></a>,
+another new data type conceived for XHR2. <code>FormData</code>
+is convenient for creating an HTML <code>&lt;form&gt;</code> on-the-fly, in JavaScript.
+That form can then be submitted using AJAX:</p>
+<pre class="prettyprint"><span class="kwd">function</span><span class="pln"> sendForm</span><span class="pun">()</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+  </span><span class="kwd">var</span><span class="pln"> formData </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">new</span><span class="pln"> </span><b><span class="typ">FormData</span></b><span class="pun">();</span><span class="pln">
+  </span><b><span class="pln">formData</span><span class="pun">.</span><span class="pln">append</span></b><span class="pun">(</span><span class="str">'username'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'johndoe'</span><span class="pun">);</span><span class="pln">
+  </span><b><span class="pln">formData</span><span class="pun">.</span><span class="pln">append</span></b><span class="pun">(</span><span class="str">'id'</span><span class="pun">,</span><span class="pln"> </span><span class="lit">123456</span><span class="pun">);</span><span class="pln">
+
+  </span><span class="kwd">var</span><span class="pln"> xhr </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">new</span><span class="pln"> </span><span class="typ">XMLHttpRequest</span><span class="pun">();</span><span class="pln">
+  xhr</span><span class="pun">.</span><span class="pln">open</span><span class="pun">(</span><span class="str">'POST'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'/server'</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">true</span><span class="pun">);</span><span class="pln">
+  xhr</span><span class="pun">.</span><span class="pln">onload </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">e</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln"> </span><span class="pun">...</span><span class="pln"> </span><span class="pun">};</span><span class="pln">
+
+  xhr</span><span class="pun">.</span><span class="pln">send</span><span class="pun">(</span><b><span class="pln">formData</span></b><span class="pun">);</span><span class="pln">
+</span><span class="pun">}</span></pre>
+<p>Essentially, we're just dynamically creating a <code>&lt;form&gt;</code> and tacking on
+<code>&lt;input&gt;</code> values to it by calling the append method.</p>
+<p>Of course, you don't need to create a <code>&lt;form&gt;</code> from scratch.
+<code>FormData</code> objects can be initialized from and existing <code>HTMLFormElement</code>
+on the page. For example:</p>
+<pre class="prettyprint"><span class="tag">&lt;form</span><span class="pln"> </span><span class="atn">id</span><span class="pun">=</span><span class="atv">"myform"</span><span class="pln"> </span><span class="atn">name</span><span class="pun">=</span><span class="atv">"myform"</span><span class="pln"> </span><span class="atn">action</span><span class="pun">=</span><span class="atv">"/server"</span><span class="tag">&gt;</span><span class="pln">
+  </span><span class="tag">&lt;input</span><span class="pln"> </span><span class="atn">type</span><span class="pun">=</span><span class="atv">"text"</span><span class="pln"> </span><span class="atn">name</span><span class="pun">=</span><span class="atv">"username"</span><span class="pln"> </span><span class="atn">value</span><span class="pun">=</span><span class="atv">"johndoe"</span><span class="tag">&gt;</span><span class="pln">
+  </span><span class="tag">&lt;input</span><span class="pln"> </span><span class="atn">type</span><span class="pun">=</span><span class="atv">"number"</span><span class="pln"> </span><span class="atn">name</span><span class="pun">=</span><span class="atv">"id"</span><span class="pln"> </span><span class="atn">value</span><span class="pun">=</span><span class="atv">"123456"</span><span class="tag">&gt;</span><span class="pln">
+  </span><span class="tag">&lt;input</span><span class="pln"> </span><span class="atn">type</span><span class="pun">=</span><span class="atv">"submit"</span><span class="pln"> </span><span class="atn">onclick</span><span class="pun">=</span><span class="atv">"</span><b><span class="kwd">return</span><span class="pln"> sendForm</span><span class="pun">(</span><span class="kwd">this</span><span class="pun">.</span><span class="pln">form</span><span class="pun">);</span></b><span class="atv">"</span><span class="tag">&gt;</span><span class="pln">
+</span><span class="tag">&lt;/form&gt;</span></pre>
+<pre class="prettyprint"><span class="kwd">function</span><span class="pln"> sendForm</span><span class="pun">(</span><span class="pln">form</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+  </span><span class="kwd">var</span><span class="pln"> formData </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">new</span><span class="pln"> </span><b><span class="typ">FormData</span></b><span class="pun">(</span><span class="pln">form</span><span class="pun">);</span><span class="pln">
+
+  </span><b><span class="pln">formData</span><span class="pun">.</span><span class="pln">append</span></b><span class="pun">(</span><span class="str">'secret_token'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'1234567890'</span><span class="pun">);</span><span class="pln"> </span><span class="com">// Append extra data before send.</span><span class="pln">
+
+  </span><span class="kwd">var</span><span class="pln"> xhr </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">new</span><span class="pln"> </span><span class="typ">XMLHttpRequest</span><span class="pun">();</span><span class="pln">
+  xhr</span><span class="pun">.</span><span class="pln">open</span><span class="pun">(</span><span class="str">'POST'</span><span class="pun">,</span><span class="pln"> form</span><span class="pun">.</span><span class="pln">action</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">true</span><span class="pun">);</span><span class="pln">
+  xhr</span><span class="pun">.</span><span class="pln">onload </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">e</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln"> </span><span class="pun">...</span><span class="pln"> </span><span class="pun">};</span><span class="pln">
+
+  xhr</span><span class="pun">.</span><span class="pln">send</span><span class="pun">(</span><b><span class="pln">formData</span></b><span class="pun">);</span><span class="pln">
+
+  </span><span class="kwd">return</span><span class="pln"> </span><span class="kwd">false</span><span class="pun">;</span><span class="pln"> </span><span class="com">// Prevent page from submitting.</span><span class="pln">
+</span><span class="pun">}</span></pre>
+<p>An HTML form can include file uploads (e.g. <code>&lt;input type="file"&gt;</code>)
+and <code>FormData</code> can handle that too. Simply append the file(s) and the browser will
+construct a <code>multipart/form-data</code> request when <code>send()</code> is called:</p>
+<pre class="prettyprint"><span class="kwd">function</span><span class="pln"> uploadFiles</span><span class="pun">(</span><span class="pln">url</span><span class="pun">,</span><span class="pln"> files</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+  </span><span class="kwd">var</span><span class="pln"> formData </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">new</span><span class="pln"> </span><b><span class="typ">FormData</span></b><span class="pun">();</span><span class="pln">
+
+  </span><span class="kwd">for</span><span class="pln"> </span><span class="pun">(</span><span class="kwd">var</span><span class="pln"> i </span><span class="pun">=</span><span class="pln"> </span><span class="lit">0</span><span class="pun">,</span><span class="pln"> file</span><span class="pun">;</span><span class="pln"> file </span><span class="pun">=</span><span class="pln"> files</span><span class="pun">[</span><span class="pln">i</span><span class="pun">];</span><span class="pln"> </span><span class="pun">++</span><span class="pln">i</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+    </span><b><span class="pln">formData</span><span class="pun">.</span><span class="pln">append</span><span class="pun">(</span><span class="pln">file</span><span class="pun">.</span><span class="pln">name</span><span class="pun">,</span><span class="pln"> file</span><span class="pun">);</span></b><span class="pln">
+  </span><span class="pun">}</span><span class="pln">
+
+  </span><span class="kwd">var</span><span class="pln"> xhr </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">new</span><span class="pln"> </span><span class="typ">XMLHttpRequest</span><span class="pun">();</span><span class="pln">
+  xhr</span><span class="pun">.</span><span class="pln">open</span><span class="pun">(</span><span class="str">'POST'</span><span class="pun">,</span><span class="pln"> url</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">true</span><span class="pun">);</span><span class="pln">
+  xhr</span><span class="pun">.</span><span class="pln">onload </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">e</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln"> </span><span class="pun">...</span><span class="pln"> </span><span class="pun">};</span><span class="pln">
+
+  xhr</span><span class="pun">.</span><span class="pln">send</span><span class="pun">(</span><b><span class="pln">formData</span></b><span class="pun">);</span><span class="pln">  </span><span class="com">// multipart/form-data</span><span class="pln">
+</span><span class="pun">}</span><span class="pln">
+
+document</span><span class="pun">.</span><span class="pln">querySelector</span><span class="pun">(</span><span class="str">'input[type="file"]'</span><span class="pun">).</span><span class="pln">addEventListener</span><span class="pun">(</span><span class="str">'change'</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">e</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+  uploadFiles</span><span class="pun">(</span><span class="str">'/server'</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">this</span><span class="pun">.</span><span class="pln">files</span><span class="pun">);</span><span class="pln">
+</span><span class="pun">},</span><span class="pln"> </span><span class="kwd">false</span><span class="pun">);</span></pre>
+<h3 id="toc-send-blob">Uploading a file or blob: xhr.send(Blob)</h3>
+<p>We can also send <code>File</code> or <code>Blob</code> data using XHR.
+Keep in mind all <code>File</code>s are <code>Blob</code>s, so either works here.</p>
+<p>This example creates a new text file from scratch using the <code>Blob()</code> constructor
+and uploads that <code>Blob</code> to the server. The code also sets up a handler
+to inform the user of the upload's progress:</p>
+<pre class="prettyprint"><span class="tag">&lt;progress</span><span class="pln"> </span><span class="atn">min</span><span class="pun">=</span><span class="atv">"0"</span><span class="pln"> </span><span class="atn">max</span><span class="pun">=</span><span class="atv">"100"</span><span class="pln"> </span><span class="atn">value</span><span class="pun">=</span><span class="atv">"0"</span><span class="tag">&gt;</span><span class="pln">0% complete</span><span class="tag">&lt;/progress&gt;</span></pre>
+<pre class="prettyprint"><span class="kwd">function</span><span class="pln"> upload</span><span class="pun">(</span><span class="pln">blobOrFile</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+  </span><span class="kwd">var</span><span class="pln"> xhr </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">new</span><span class="pln"> </span><span class="typ">XMLHttpRequest</span><span class="pun">();</span><span class="pln">
+  xhr</span><span class="pun">.</span><span class="pln">open</span><span class="pun">(</span><span class="str">'POST'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'/server'</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">true</span><span class="pun">);</span><span class="pln">
+  xhr</span><span class="pun">.</span><span class="pln">onload </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">e</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln"> </span><span class="pun">...</span><span class="pln"> </span><span class="pun">};</span><span class="pln">
+
+  </span><span class="com">// Listen to the upload progress.</span><span class="pln">
+  </span><span class="kwd">var</span><span class="pln"> progressBar </span><span class="pun">=</span><span class="pln"> document</span><span class="pun">.</span><span class="pln">querySelector</span><span class="pun">(</span><span class="str">'progress'</span><span class="pun">);</span><span class="pln">
+  </span><b><span class="pln">xhr</span><span class="pun">.</span><span class="pln">upload</span><span class="pun">.</span><span class="pln">onprogress</span></b><span class="pln"> </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">e</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+    </span><span class="kwd">if</span><span class="pln"> </span><span class="pun">(</span><span class="pln">e</span><span class="pun">.</span><span class="pln">lengthComputable</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+      progressBar</span><span class="pun">.</span><span class="pln">value </span><span class="pun">=</span><span class="pln"> </span><span class="pun">(</span><span class="pln">e</span><span class="pun">.</span><span class="pln">loaded </span><span class="pun">/</span><span class="pln"> e</span><span class="pun">.</span><span class="pln">total</span><span class="pun">)</span><span class="pln"> </span><span class="pun">*</span><span class="pln"> </span><span class="lit">100</span><span class="pun">;</span><span class="pln">
+      progressBar</span><span class="pun">.</span><span class="pln">textContent </span><span class="pun">=</span><span class="pln"> progressBar</span><span class="pun">.</span><span class="pln">value</span><span class="pun">;</span><span class="pln"> </span><span class="com">// Fallback for unsupported browsers.</span><span class="pln">
+    </span><span class="pun">}</span><span class="pln">
+  </span><span class="pun">};</span><span class="pln">
+
+  xhr</span><span class="pun">.</span><span class="pln">send</span><span class="pun">(</span><b><span class="pln">blobOrFile</span></b><span class="pun">);</span><span class="pln">
+</span><span class="pun">}</span><span class="pln">
+
+upload</span><span class="pun">(</span><b><span class="kwd">new</span><span class="pln"> </span><span class="typ">Blob</span><span class="pun">([</span><span class="str">'hello world'</span><span class="pun">],</span><span class="pln"> </span><span class="pun">{</span><span class="pln">type</span><span class="pun">:</span><span class="pln"> </span><span class="str">'text/plain'</span><span class="pun">})</span></b><span class="pun">);</span></pre>
+<h3 id="toc-send-arraybuffer">Uploading a chunk of bytes: xhr.send(ArrayBuffer)</h3>
+<p>Last but not least, we can send <code>ArrayBuffer</code>s as the XHR's payload.</p>
+<pre class="prettyprint"><span class="kwd">function</span><span class="pln"> sendArrayBuffer</span><span class="pun">()</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+  </span><span class="kwd">var</span><span class="pln"> xhr </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">new</span><span class="pln"> </span><span class="typ">XMLHttpRequest</span><span class="pun">();</span><span class="pln">
+  xhr</span><span class="pun">.</span><span class="pln">open</span><span class="pun">(</span><span class="str">'POST'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'/server'</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">true</span><span class="pun">);</span><span class="pln">
+  xhr</span><span class="pun">.</span><span class="pln">onload </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">e</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln"> </span><span class="pun">...</span><span class="pln"> </span><span class="pun">};</span><span class="pln">
+
+  </span><b><span class="kwd">var</span><span class="pln"> uInt8Array </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">new</span><span class="pln"> </span><b><span class="typ">Uint8Array</span></b><span class="pun">([</span><span class="lit">1</span><span class="pun">,</span><span class="pln"> </span><span class="lit">2</span><span class="pun">,</span><span class="pln"> </span><span class="lit">3</span><span class="pun">]);</span></b><span class="pln">
+
+  xhr</span><span class="pun">.</span><span class="pln">send</span><span class="pun">(</span><b><span class="pln">uInt8Array</span><span class="pun">.</span><span class="pln">buffer</span></b><span class="pun">);</span><span class="pln">
+</span><span class="pun">}</span></pre>
+<h2 id="toc-cors">Cross Origin Resource Sharing (CORS)</h2>
+<p><a href="http://dev.w3.org/2006/waf/access-control/" target="_blank">CORS</a> allows web applications
+on one domain to make cross domain AJAX requests to another domain.
+It's dead simple to enable, only requiring a single response header to be sent by the server.</p>
+<h3 id="toc-enable-cors">Enabling CORS requests</h3>
+<p>Let's say your application lives on <code>example.com</code> and you
+want to pull data from <code>www.example2.com</code>. Normally if you
+tried to make this type of AJAX call, the request would fail and the browser
+would throw an origin mismatch error. With CORS, <code>www.example2.com</code>
+can choose to allow requests from <code>example.com</code> by simply adding a header:</p>
+<pre class="prettyprint"><span class="typ">Access</span><span class="pun">-</span><span class="typ">Control</span><span class="pun">-</span><span class="typ">Allow</span><span class="pun">-</span><span class="typ">Origin</span><span class="pun">:</span><span class="pln"> http</span><span class="pun">:</span><span class="com">//example.com</span></pre>
+<p><code>Access-Control-Allow-Origin</code> can be added to a single resource
+under a site or across the entire domain. To allow <i>any</i> domain to make
+a request to you, set:
+</p><pre class="prettyprint"><span class="typ">Access</span><span class="pun">-</span><span class="typ">Control</span><span class="pun">-</span><span class="typ">Allow</span><span class="pun">-</span><span class="typ">Origin</span><span class="pun">:</span><span class="pln"> </span><b><span class="pun">*</span></b>
+</pre>
+<p>In fact, this site (html5rocks.com) has enabled CORS on all of its pages. Fire up
+the Developer Tools and you'll see the <code>Access-Control-Allow-Origin</code>
+in our response:</p>
+<figure>
+<script>(function(){var d=null,e=window,f=document,g="documentElement",h="scrollTop",k="prototype",l="body",m="getAttribute",n="",p="1",q="data",r="img",s="load",t="number",u="on",v="onload",w="pagespeed_lazy_position",x="pagespeed_lazy_replaced_functions",y="pagespeed_lazy_src",z="position",A="relative",B="scroll",C="src";e.pagespeed=e.pagespeed||{};var D=e.pagespeed,E=function(a){this.a=[];this.i=0;this.b=!1;this.o=a;this.c=d;this.g=0;this.h=200;this.f=!1};
+E[k].s=function(){var a=0;typeof e.pageYOffset==t?a=e.pageYOffset:f[l]&&f[l][h]?a=f[l][h]:f[g]&&f[g][h]&&(a=f[g][h]);var b=e.innerHeight||f[g].clientHeight||f[l].clientHeight;return{top:a,bottom:a+b,height:b}};E[k].n=function(a){var b=a[m](w);if(b)return parseInt(b,0);var b=a.offsetTop,c=a.offsetParent;c&&(b+=this.n(c));b=Math.max(b,0);a.setAttribute(w,b);return b};E[k].r=function(a){var b=this.n(a);return{top:b,bottom:b+a.offsetHeight}};
+E[k].q=function(a,b){if(a.currentStyle)return a.currentStyle[b];if(f.defaultView&&f.defaultView.getComputedStyle){var c=f.defaultView.getComputedStyle(a,d);if(c)return c.getPropertyValue(b)}return a.style&&a.style[b]?a.style[b]:n};E[k].p=function(a){if(this.q(a,z)==A)return!0;if(!this.f&&(0==a.offsetHeight||0==a.offsetWidth))return!1;var b=this.s(),c=a.getBoundingClientRect();c?(a=c.top-b.height,b=c.bottom):(c=this.r(a),a=c.top-b.bottom,b=c.bottom-b.top);return a<=this.i&&0<=b+this.i};
+E[k].m=function(a){this.l(a);var b=this;e.setTimeout(function(){var c=a[m](y);if(c!=d)if((b.b||b.p(a))&&a.src.indexOf(-1!=b.o)){var j=a.parentNode,F=a.nextSibling;j&&j.removeChild(a);a.getAttribute=a.j;a.removeAttribute(v);a.removeAttribute(y);a.removeAttribute(x);a.src=c;j&&j.insertBefore(a,F)}else b.a.push(a)},0)};E[k].loadIfVisible=E[k].m;E[k].u=function(){this.b=!0;this.d()};E[k].loadAllImages=E[k].u;E[k].d=function(){var a=this.a,b=a.length;this.a=[];for(var c=0;c<b;++c)this.m(a[c])};
+E[k].e=function(a,b){return a.a?a.a(b)!=d:a[m](b)!=d};E[k].v=function(){for(var a=f.getElementsByTagName(r),b=0;b<a.length;++b){var c=a[b];this.e(c,y)&&this.l(c)}};E[k].overrideAttributeFunctions=E[k].v;E[k].l=function(a){var b=this;this.e(a,x)||(a.j=a[m],a.getAttribute=function(a){a.toLowerCase()==C&&b.e(this,y)&&(a=y);return this.j(a)},a.setAttribute(x,p))};
+D.k=function(a,b,c){if(a.addEventListener)a.addEventListener(b,c,!1);else if(a.attachEvent)a.attachEvent(u+b,c);else{var j=a[u+b];a[u+b]=function(){c.call(this);j&&j.call(this)}}};D.t=function(a,b){var c=new E(b);D.lazyLoadImages=c;0!=b.indexOf(q)&&((new Image).src=b);D.k(e,s,function(){c.f=!0;e.setTimeout(function(){c.b=a;c.d()},200)});a||D.k(e,B,function(){if(!c.c){var a=c.h;(new Date).getTime()-c.g>c.h&&(a=0);c.c=e.setTimeout(function(){c.g=(new Date).getTime();c.d();c.c=d},a)}})};
+D.lazyLoadInit=D.t;})();
+
+pagespeed.lazyLoadInit(false, "//1-ps.googleusercontent.com/h/www.gstatic.com/psa/static/1.gif");
+</script><img pagespeed_lazy_src="http://1-ps.googleusercontent.com/x/s.html5rocks-hrd.appspot.com/www.html5rocks.com/en/tutorials/file/xhr2/access_control_header.png.pagespeed.ce.QPR4kHOZ9r.png" alt="Access-Control-Allow-Origin header on html5rocks.com" title="Access-Control-Allow-Origin header on html5rocks.com" width="705" height="411" src="./New Tricks in XMLHttpRequest2 - HTML5 Rocks_files/1.gif" onload="pagespeed.lazyLoadImages.loadIfVisible(this);" pagespeed_lazy_replaced_functions="1">
+<figcaption><code>Access-Control-Allow-Origin</code> header on html5rocks.com</figcaption>
+</figure>
+<p>Enabling cross-origin requests is easy, so please, please, please
+<a href="http://enable-cors.org/" target="_blank">enable CORS</a> if your data is public!</p>
+<h3 id="toc-request-cors">Making a cross-domain request</h3>
+<p>If the server endpoint has enabled CORS, making the cross-origin request
+is no different than a normal <code>XMLHttpRequest</code> request. For example,
+here is a request <code>example.com</code> can now make to
+<code>www.example2.com</code>:</p>
+<pre class="prettyprint"><span class="kwd">var</span><span class="pln"> xhr </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">new</span><span class="pln"> </span><span class="typ">XMLHttpRequest</span><span class="pun">();</span><span class="pln">
+xhr</span><span class="pun">.</span><span class="pln">open</span><span class="pun">(</span><span class="str">'GET'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'http://www.example2.com/hello.json'</span><span class="pun">);</span><span class="pln">
+xhr</span><span class="pun">.</span><span class="pln">onload </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">e</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+  </span><span class="kwd">var</span><span class="pln"> data </span><span class="pun">=</span><span class="pln"> JSON</span><span class="pun">.</span><span class="pln">parse</span><span class="pun">(</span><b><span class="kwd">this</span><span class="pun">.</span><span class="pln">response</span></b><span class="pun">);</span><span class="pln">
+  </span><span class="pun">...</span><span class="pln">
+</span><span class="pun">}</span><span class="pln">
+xhr</span><span class="pun">.</span><span class="pln">send</span><span class="pun">();</span></pre>
+<h2 id="toc-examples">Practical examples</h2>
+<h3 id="toc-example-savingimages">Download + save files to the HTML5 file system</h3>
+<p>Let's say you have an image gallery and want to fetch a bunch
+of images then save them locally using the <a href="http://www.html5rocks.com/tutorials/file/filesystem/">HTML5 File System</a>.
+One way to accomplish this would be to request images as <code>Blob</code>s
+and write them out using <code>FileWriter</code>:</p>
+<pre class="prettyprint"><span class="pln">window</span><span class="pun">.</span><span class="pln">requestFileSystem  </span><span class="pun">=</span><span class="pln"> window</span><span class="pun">.</span><span class="pln">requestFileSystem </span><span class="pun">||</span><span class="pln"> window</span><span class="pun">.</span><span class="pln">webkitRequestFileSystem</span><span class="pun">;</span><span class="pln">
+
+</span><span class="kwd">function</span><span class="pln"> onError</span><span class="pun">(</span><span class="pln">e</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+  console</span><span class="pun">.</span><span class="pln">log</span><span class="pun">(</span><span class="str">'Error'</span><span class="pun">,</span><span class="pln"> e</span><span class="pun">);</span><span class="pln">
+</span><span class="pun">}</span><span class="pln">
+
+</span><span class="kwd">var</span><span class="pln"> xhr </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">new</span><span class="pln"> </span><span class="typ">XMLHttpRequest</span><span class="pun">();</span><span class="pln">
+xhr</span><span class="pun">.</span><span class="pln">open</span><span class="pun">(</span><span class="str">'GET'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'/path/to/image.png'</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">true</span><span class="pun">);</span><span class="pln">
+</span><b><span class="pln">xhr</span><span class="pun">.</span><span class="pln">responseType </span><span class="pun">=</span><span class="pln"> </span><span class="str">'blob'</span><span class="pun">;</span></b><span class="pln">
+
+</span><b><span class="pln">xhr</span><span class="pun">.</span><span class="pln">onload</span></b><span class="pln"> </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">e</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+
+  </span><b><span class="pln">window</span><span class="pun">.</span><span class="pln">requestFileSystem</span></b><span class="pun">(</span><span class="pln">TEMPORARY</span><span class="pun">,</span><span class="pln"> </span><span class="lit">1024</span><span class="pln"> </span><span class="pun">*</span><span class="pln"> </span><span class="lit">1024</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">fs</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+    fs</span><span class="pun">.</span><span class="pln">root</span><span class="pun">.</span><span class="pln">getFile</span><span class="pun">(</span><span class="str">'image.png'</span><span class="pun">,</span><span class="pln"> </span><span class="pun">{</span><span class="pln">create</span><span class="pun">:</span><span class="pln"> </span><span class="kwd">true</span><span class="pun">},</span><span class="pln"> </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">fileEntry</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+      fileEntry</span><span class="pun">.</span><span class="pln">createWriter</span><span class="pun">(</span><span class="kwd">function</span><span class="pun">(</span><span class="pln">writer</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+
+        writer</span><span class="pun">.</span><span class="pln">onwrite </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">e</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln"> </span><span class="pun">...</span><span class="pln"> </span><span class="pun">};</span><span class="pln">
+        writer</span><span class="pun">.</span><span class="pln">onerror </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">e</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln"> </span><span class="pun">...</span><span class="pln"> </span><span class="pun">};</span><span class="pln">
+
+        </span><span class="kwd">var</span><span class="pln"> blob </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">new</span><span class="pln"> </span><span class="typ">Blob</span><span class="pun">([</span><b><span class="pln">xhr</span><span class="pun">.</span><span class="pln">response</span></b><span class="pun">],</span><span class="pln"> </span><span class="pun">{</span><span class="pln">type</span><span class="pun">:</span><span class="pln"> </span><span class="str">'image/png'</span><span class="pun">});</span><span class="pln">
+
+        </span><b><span class="pln">writer</span><span class="pun">.</span><span class="pln">write</span></b><span class="pun">(</span><span class="pln">blob</span><span class="pun">);</span><span class="pln">
+
+      </span><span class="pun">},</span><span class="pln"> onError</span><span class="pun">);</span><span class="pln">
+    </span><span class="pun">},</span><span class="pln"> onError</span><span class="pun">);</span><span class="pln">
+  </span><span class="pun">},</span><span class="pln"> onError</span><span class="pun">);</span><span class="pln">
+</span><span class="pun">};</span><span class="pln">
+
+xhr</span><span class="pun">.</span><span class="pln">send</span><span class="pun">();</span></pre>
+<p><strong>Note:</strong> to use this code, see <a href="http://www.html5rocks.com/tutorials/file/filesystem/#toc-support">browser support &amp; storage limitations</a>
+in the "<a href="http://www.html5rocks.com/tutorials/file/filesystem/">Exploring the FileSystem APIs</a>" tutorial.</p>
+<h3 id="toc-example-slicingfiles">Slicing a file and uploading each portion</h3>
+<p>Using the <a href="http://www.html5rocks.com/tutorials/file/dndfiles/">File APIs</a>, we can minimize
+the work to upload a large file. The technique is to slice the upload into multiple chunks,
+spawn an XHR for each portion, and put the file together on the server. This is
+similar to how GMail uploads large attachments so quickly. Such a technique could also be
+used to get around Google App Engine's 32MB http request limit.</p>
+<pre class="prettyprint"><span class="kwd">function</span><span class="pln"> upload</span><span class="pun">(</span><span class="pln">blobOrFile</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+  </span><span class="kwd">var</span><span class="pln"> xhr </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">new</span><span class="pln"> </span><span class="typ">XMLHttpRequest</span><span class="pun">();</span><span class="pln">
+  xhr</span><span class="pun">.</span><span class="pln">open</span><span class="pun">(</span><span class="str">'POST'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'/server'</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">true</span><span class="pun">);</span><span class="pln">
+  xhr</span><span class="pun">.</span><span class="pln">onload </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">e</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln"> </span><span class="pun">...</span><span class="pln"> </span><span class="pun">};</span><span class="pln">
+  xhr</span><span class="pun">.</span><span class="pln">send</span><span class="pun">(</span><span class="pln">blobOrFile</span><span class="pun">);</span><span class="pln">
+</span><span class="pun">}</span><span class="pln">
+
+document</span><span class="pun">.</span><span class="pln">querySelector</span><span class="pun">(</span><span class="str">'input[type="file"]'</span><span class="pun">).</span><span class="pln">addEventListener</span><span class="pun">(</span><span class="str">'change'</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">e</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+  </span><span class="kwd">var</span><span class="pln"> blob </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">this</span><span class="pun">.</span><span class="pln">files</span><span class="pun">[</span><span class="lit">0</span><span class="pun">];</span><span class="pln">
+
+  </span><span class="kwd">const</span><span class="pln"> BYTES_PER_CHUNK </span><span class="pun">=</span><span class="pln"> </span><span class="lit">1024</span><span class="pln"> </span><span class="pun">*</span><span class="pln"> </span><span class="lit">1024</span><span class="pun">;</span><span class="pln"> </span><span class="com">// 1MB chunk sizes.</span><span class="pln">
+  </span><span class="kwd">const</span><span class="pln"> SIZE </span><span class="pun">=</span><span class="pln"> blob</span><span class="pun">.</span><span class="pln">size</span><span class="pun">;</span><span class="pln">
+
+  </span><span class="kwd">var</span><span class="pln"> start </span><span class="pun">=</span><span class="pln"> </span><span class="lit">0</span><span class="pun">;</span><span class="pln">
+  </span><span class="kwd">var</span><span class="pln"> </span><span class="kwd">end</span><span class="pln"> </span><span class="pun">=</span><span class="pln"> BYTES_PER_CHUNK</span><span class="pun">;</span><span class="pln">
+
+  </span><span class="kwd">while</span><span class="pun">(</span><span class="pln">start </span><span class="pun">&lt;</span><span class="pln"> SIZE</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+    upload</span><span class="pun">(</span><span class="pln">blob</span><span class="pun">.</span><span class="pln">slice</span><span class="pun">(</span><span class="pln">start</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">end</span><span class="pun">));</span><span class="pln">
+
+    start </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">end</span><span class="pun">;</span><span class="pln">
+    </span><span class="kwd">end</span><span class="pln"> </span><span class="pun">=</span><span class="pln"> start </span><span class="pun">+</span><span class="pln"> BYTES_PER_CHUNK</span><span class="pun">;</span><span class="pln">
+  </span><span class="pun">}</span><span class="pln">
+</span><span class="pun">},</span><span class="pln"> </span><span class="kwd">false</span><span class="pun">);</span><span class="pln">
+
+</span><span class="pun">})();</span></pre>
+<p>What is not shown here is the code to reconstruct the file on the server.</p>
+<p><strong>Try it!</strong></p>
+<div class="example">
+#bytes/chunk: <input type="number" min="1048576" value="1048576" id="numChunks">
+<input type="file" id="afile" class="button">
+<div id="bars"></div>
+</div>
+<h2 id="toc-references">References</h2>
+<ul>
+<li><a href="http://dev.w3.org/2006/webapi/XMLHttpRequest-2/" target="_blank">XMLHttpRequest Level 2</a> specification</li>
+<li><a href="http://dev.w3.org/2006/waf/access-control/" target="_blank">Cross Origin Resource Sharing (CORS)</a> specification</li>
+<li><a href="http://www.w3.org/TR/file-upload/" target="_blank">File API</a> specification</li>
+<li><a href="http://dev.w3.org/2009/dap/file-system/pub/FileSystem/" target="_blank">FileSystem API</a> specification</li>
+</ul>
+<script type="text/javascript" pagespeed_no_defer="">pagespeed.lazyLoadImages.overrideAttributeFunctions();</script><script>(function(){var progress=document.querySelector('progress');var bars=document.querySelector('#bars');var uploaders=[];function upload(blobOrFile){var progress=document.createElement('progress');progress.min=0;progress.max=1;progress.value=0;bars.appendChild(progress);var xhr=new XMLHttpRequest();xhr.open('POST','/echoserver',true);xhr.onload=function(e){progress.value=1;uploaders.pop();if(!uploaders.length){bars.appendChild(document.createElement('br'));bars.appendChild(document.createTextNode('DONEZO :)'));}};xhr.upload.onprogress=function(e){if(e.lengthComputable){progress.value=e.loaded/e.total;progress.textContent=parseFloat(progress.value)*100;}};uploaders.push(xhr);xhr.send(blobOrFile);}
+document.querySelector('#afile').addEventListener('change',function(){var blob=this.files[0];const BYTES_PER_CHUNK=parseInt(document.querySelector('#numChunks').value);const SIZE=blob.size;const NUM_CHUNKS=Math.max(Math.floor(SIZE/BYTES_PER_CHUNK),1);bars.innerHTML='';bars.innerHTML='Sending <b>'+NUM_CHUNKS+'</b> chunks:<br>';var start=0;var end=BYTES_PER_CHUNK;while(start<SIZE){upload(blob.slice(start,end));start=end;end=start+BYTES_PER_CHUNK;}},false);})();</script>
+</section>
+</article>
+<section class="cc pattern-bg-lighter">
+<p>
+Except as otherwise <a href="http://code.google.com/policies.html#restrictions">noted</a>, the content of this page is licensed under the <a href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 License</a>, and code samples are licensed under the <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache 2.0 License</a>.
+</p>
+</section>
+<section class="disqus pattern-bg-lighter">
+<div id="disqus_thread"><iframe id="dsq1" data-disqus-uid="1" allowtransparency="true" frameborder="0" role="application" style="width: 100%; border: none; overflow: hidden; height: 5974px; " width="100%" src="./New Tricks in XMLHttpRequest2 - HTML5 Rocks_files/saved_resource.html" scrolling="no" horizontalscrolling="no" verticalscrolling="no"></iframe><iframe id="dsq3" data-disqus-uid="3" allowtransparency="true" frameborder="0" role="application" style="width: 100%; border: none; overflow: hidden; display: none; " width="100%" src="./New Tricks in XMLHttpRequest2 - HTML5 Rocks_files/client.html"></iframe><iframe id="dsq-indicator-north" data-disqus-uid="-indicator-north" allowtransparency="true" frameborder="0" role="application" style="width: 620px; border: none; overflow: hidden; top: 0px; position: fixed; height: 29px; display: none; " scrolling="no"></iframe><iframe id="dsq-indicator-south" data-disqus-uid="-indicator-south" allowtransparency="true" frameborder="0" role="application" style="width: 620px; border: none; overflow: hidden; bottom: 0px; position: fixed; height: 29px; display: none; " scrolling="no"></iframe></div>
+<noscript>
+&lt;p class="center"&gt;
+&lt;strong&gt;
+&lt;a href="http://disqus.com/?ref_noscript"&gt;Please enable JavaScript to view the comments powered by Disqus.&lt;/a&gt;
+&lt;/strong&gt;
+&lt;/p&gt;
+</noscript>
+<script>function _prettyPrint(){if(typeof customPrettyPrintLanguage!='undefined'){customPrettyPrintLanguage();}
+prettyPrint();}</script>
+<script async="" src="./New Tricks in XMLHttpRequest2 - HTML5 Rocks_files/plusone.js" gapi_processed="true"></script>
+<script async="" src="./New Tricks in XMLHttpRequest2 - HTML5 Rocks_files/prettify.min.js.pagespeed.jm.JSZAUYYnh2.js" onload="_prettyPrint()"></script>
+<script async="" src="./New Tricks in XMLHttpRequest2 - HTML5 Rocks_files/widgets.js"></script>
+<script>var disqus_shortname='html5rocks';var disqus_identifier='http://www.html5rocks.com/tutorials/file/xhr2/';var disqus_url='http://www.html5rocks.com/tutorials/file/xhr2/';var disqus_developer=0;var disqus_config=function(){var funky_language_code_mapping={'de':'de_inf','es':'es_ES','pt':'pt_EU','sr':'sr_CYRL','sv':'sv_SE','zh':'zh_HANT'};this.language=funky_language_code_mapping['en']||'en';};window.addEventListener('load',function(e){var c=document.createElement('script');c.type='text/javascript';c.src='http://'+disqus_shortname+'.disqus.com/count.js';var dsq=document.createElement('script');dsq.type='text/javascript';dsq.src='http://'+disqus_shortname+'.disqus.com/embed.js';var s=document.getElementsByTagName('script')[0],sp=s.parentNode;sp.insertBefore(c,s);sp.insertBefore(dsq,s);},false);var externLinks=document.querySelectorAll('article.tutorial a[href^="http"]:not([target])');for(var i=0,a;a=externLinks[i];++i){a.target='_blank';}</script>
+</section>
+</div>
+<script>(function(){$('#features_show a').click(function(){$('#search_hide').click();if($(this).hasClass('current')){$('.subheader.features').hide();$(this).removeClass('current');$('.watermark').css('top','30px');$('#features_show a').focus();}else{$('.main nav .current').removeClass('current');$(this).addClass('current');$('.subheader.features').show();$('.watermark').css('top','100px');$('#features').focus();}
+if(/#features$/.test(this.href))return false;});$('#features_hide').click(function(){$('#features_show').removeClass('current');$('.subheader.features').hide();$('.watermark').css('top','30px');$('#features_show a').focus();});if(window.applicationCache){window.applicationCache.addEventListener('updateready',function(e){if(window.applicationCache.status==window.applicationCache.UPDATEREADY){window.applicationCache.swapCache();if(confirm('A new version of this site is available. Load it?')){window.location.reload();}}},false);}
+window.isCompatible=function(){var xhr=new XMLHttpRequest();return'responseType'in xhr&&'response'in xhr&&'withCredentials'in xhr;};if(isCompatible()===false){document.getElementById('notcompatible').className='';}else if(isCompatible()===true){document.getElementById('compatible').className='';}
+if(/^\?utm_/.test(document.location.search)&&window.history.replaceState){window.history.replaceState({},'',document.location.href.replace(/\?utm_.*/,''));}
+if($(window).width()<'1200'&&$(window).width()>'1000'&&$('.toc').length){var top=$('.toc').offset().top-50;$(window).scroll(function(event){var y=$(this).scrollTop();if(y>=top){$('.toc').addClass('fixed').removeClass('bottom');}else{$('.toc').removeClass('fixed').removeClass('bottom');}});}})();</script>
+<script>var _gaq=_gaq||[];_gaq.push(['_setAccount','UA-15028909-1']);_gaq.push(['_setSiteSpeedSampleRate',50]);_gaq.push(['_trackPageview']);(function(){var ga=document.createElement('script');ga.type='text/javascript';ga.async=true;ga.src=('https:'==document.location.protocol?'https://ssl':'http://www')+'.google-analytics.com/ga.js';var s=document.getElementsByTagName('script')[0];s.parentNode.insertBefore(ga,s);})();</script>
+<script defer="" src="./New Tricks in XMLHttpRequest2 - HTML5 Rocks_files/app.min.js.pagespeed.ce.IlL62AP3Y-.js"></script>
+<script defer="" src="./New Tricks in XMLHttpRequest2 - HTML5 Rocks_files/search.min.js.pagespeed.ce.hdMERthVbk.js"></script>
+<script defer="" src="./New Tricks in XMLHttpRequest2 - HTML5 Rocks_files/3rdpartyinit.min.js.pagespeed.ce.CGINL0KvzE.js"></script>
+<script type="text/javascript">(function(){function g(){var ifr=0;var rpi='';if(window.mod_pagespeed_prefetch_start){rpi+='&nrp='+window.mod_pagespeed_num_resources_prefetched;rpi+='&htmlAt=';rpi+=(window.mod_pagespeed_start-window.mod_pagespeed_prefetch_start);}if(window.parent != window){ifr=1}new Image().src='http://1-ps.googleusercontent.com/beacon?org=60_1_vn&ets=load:'+(Number(new Date())-window.mod_pagespeed_start)+'&ifr='+ifr+''+rpi+'&ft=349&url='+encodeURIComponent('http://www.html5rocks.com/en/tutorials/file/xhr2/');window.mod_pagespeed_loaded=true;};var f=window.addEventListener;if(f){f('load',g,false);}else{f=window.attachEvent;if(f){f('onload',g);}}})();</script>
+
+</body></html>

@@ -1,0 +1,17 @@
+Yes you can send binary data using XHR. All you need to do is set the appropriate headers and mime-type, and call the sendAsBinary method instead of the simple send method. For example:
+
+var req = new XMLHttpRequest();  
+req.open("POST", url, true);  
+// set headers and mime-type appropriately  
+req.setRequestHeader("Content-Length", 741);  
+req.sendAsBinary(aBody);
+
+
+=============================================
+I recently had the need to send a CSV file from my add-on to a PHP server and was looking for an easier way than constructing a POST request. I discovered that XMLHttpRequest has an API for this called sendAsBinary(). Using the API on the client side was easy, but figuring out how to get the file from PHP was a little tougher, so I thought I would share the information on my blog.
+Sending the data is really straightforward. I already had the CSV file in a variable. So the request looked like this:
+
+var xhr = new XMLHttpRequest();
+xhr.open("POST", "http://example.com/upload.php");
+xhr.overrideMimeType('text/plain; charset=x-user-defined-binary');
+xhr.sendAsBinary(CSV);

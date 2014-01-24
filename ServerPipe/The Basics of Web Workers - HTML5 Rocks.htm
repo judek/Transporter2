@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<!-- saved from url=(0054)http://www.html5rocks.com/en/tutorials/workers/basics/ -->
+<html lang="en" dir="ltr" itemscope="" itemtype="http://schema.org/Article" class=" js flexbox canvas canvastext webgl no-touch geolocation postmessage websqldatabase indexeddb hashchange history draganddrop websockets rgba hsla multiplebgs backgroundsize borderimage borderradius boxshadow textshadow opacity cssanimations csscolumns cssgradients cssreflections csstransforms csstransforms3d csstransitions fontface generatedcontent video audio localstorage sessionstorage webworkers applicationcache svg inlinesvg smil svgclippaths adownload webaudio blobconstructor no-battery contenteditable cors csscalc mediaqueries no-regions cssfilters classlist details datalistelem track filesystem filereader fullscreen no-gamepads getusermedia xhr2 performance raf quotamanagement no-stylescoped webintents websocketsbinary todataurljpeg todataurlwebp webp"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><script type="text/javascript" src="./The Basics of Web Workers - HTML5 Rocks_files/count.js"></script><script type="text/javascript" src="./The Basics of Web Workers - HTML5 Rocks_files/embed.js"></script><script src="./The Basics of Web Workers - HTML5 Rocks_files/cb=gapi.loaded_0" async=""></script><script type="text/javascript" async="" src="./The Basics of Web Workers - HTML5 Rocks_files/ga.js"></script><script type="text/javascript">window.mod_pagespeed_start = Number(new Date());</script>
+<meta charset="utf-8">
+<meta name="description" content="A resource for developers looking to put HTML5 to use today, including information on specific features and when to use them in your apps.">
+<meta name="keywords" content="html5,html 5,html5 demos,html5 examples,javascript,css3,notifications,geolocation,web workers,apppcache,file api,filereader,indexeddb,offline,audio,video,drag and drop,chrome,sse,mobile">
+<meta itemprop="name" content="HTML5 Rocks - The Basics of Web Workers">
+<meta itemprop="description" content="Web Workers are a means of spawning background scripts in your application, giving thread-like message passing for handling computationally intensive tasks.">
+<meta itemprop="image" content="/static/images/html5rocks-logo-wings.png">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+<title>The Basics of Web Workers - HTML5 Rocks</title>
+<link rel="shortcut icon" href="http://www.html5rocks.com/favicon.ico">
+<link rel="alternate" type="application/rss+xml" title="HTML5 Rocks RSS" href="http://feeds.feedburner.com/html5rocks">
+<link rel="publisher" href="https://plus.google.com/111395306401981598462">
+<link rel="stylesheet" media="all" href="http://1-ps.googleusercontent.com/x/s.html5rocks-hrd.appspot.com/www.html5rocks.com/static/css/W.base.min.css.pagespeed.cf.qF5om4h27s.css">
+<link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,400italic,600,800|Source+Code+Pro" rel="stylesheet">
+<link rel="apple-touch-icon" href="http://1-ps.googleusercontent.com/x/s.html5rocks-hrd.appspot.com/www.html5rocks.com/static/images/identity/HTML5_Badge_64.png.pagespeed.ce.S0LMUsq9YG.png" width="64" height="64">
+<link rel="apple-touch-icon-precomposed" href="http://1-ps.googleusercontent.com/x/s.html5rocks-hrd.appspot.com/www.html5rocks.com/static/images/identity/HTML5_Badge_64.png.pagespeed.ce.S0LMUsq9YG.png" width="64" height="64">
+<script src="./The Basics of Web Workers - HTML5 Rocks_files/modernizr.custom.82437.js.pagespeed.jm.H7yOhhnYd0.js"></script>
+<script src="./The Basics of Web Workers - HTML5 Rocks_files/jquery.min.js"></script>
+<script defer="" src="./The Basics of Web Workers - HTML5 Rocks_files/jquery.scrollTo-min.js.pagespeed.jm.Hz5PYAgnCz.js"></script>
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5-els.js"></script>
+  <![endif]-->
+<style>.example{padding:10px;border:1px solid #ccc}</style>
+<script type="text/javascript" async="" src="./The Basics of Web Workers - HTML5 Rocks_files/count(1).js"></script></head>
+<body data-href="tutorials-workers-basics" onload="" class="pattern-bg" data-twttr-rendered="true"><noscript>&lt;meta HTTP-EQUIV="refresh" content="0;url='http://www.html5rocks.com/en/tutorials/workers/basics/?ModPagespeed=noscript'" /&gt;&lt;style&gt;&lt;!--table,div,span,font,p{display:none} --&gt;&lt;/style&gt;&lt;div style="display:block"&gt;Please click &lt;a href="http://www.html5rocks.com/en/tutorials/workers/basics/?ModPagespeed=noscript"&gt;here&lt;/a&gt; if you are not redirected within a few seconds.&lt;/div&gt;</noscript>
+<header class="main">
+<a id="home_horns" href="http://www.html5rocks.com/en/"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAyCAYAAABGQBuoAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6NEU2NTFGRTQwNjE0MTFFMTg0RjdERTE0MzFDQTlGQjQiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6NEU2NTFGRTUwNjE0MTFFMTg0RjdERTE0MzFDQTlGQjQiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo4MUQyMTY2QjA2MTMxMUUxODRGN0RFMTQzMUNBOUZCNCIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo4MUQyMTY2QzA2MTMxMUUxODRGN0RFMTQzMUNBOUZCNCIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PgNr19cAAAJFSURBVHja7FfrUcMwDE56/U/YIGxQJsBMQJmg6QTQCRomKBukGzBCywTpBikTpEwQJE4CxbFTOzF3cIfudM7Jsb5I1itRJKhpmhlw1XzTDjiJQhAqAq6JM+CcQUIBzEmhErJPkFAAHWUIpoOe0aFIT85nplEgQrfCUgjRGmTLIBbQ/X0FBTE+N5NABsxofYrj+ISMzygIBWClXwOwpvyo6K7QxwXLcN920DWK8JK3wCkpewBOSIaUeecBPKb0la2SIWSP+lktSVUrKiUA1aSaDpViTUyh2yebGCzBkMP6cwS+gpC7hnVJoZiFuGRWfgvKcY1gRV+fyO+DAS5oZeUnzapkVB2Rfjb0CC7j/ndAQixSB8uXcz9o7bnSlJQfe5SjRfewdxjinSklz7JHOdJ+bKm40eRzWleGTF1oFZQznQOkc8GcmZklADjRCq7xIgml7MVYGSgyShuIKGwVvZfbZIYPK6WSss8Sz7BXer0KCkJ66s5MFQLEVG37QPKByguXKU/2AuXg88oUTeeAJKGCVNtPheLKZLVLy3wGfgO+s+xjlr9iSfceM33vwfT+j48tsenCRIkepxzo7092LlG050HWgXY+harx+YWinGiR1w8IvL/RmoyklW3qcAEwdS6dkjGXzIffab2Mu7S3WTfkH63WKwIijHERTxlbw9aCppJB7U6SEvJMvLvjKBPNvxVFPonGc9MGaz41dOXtYIsFuRhF5OiCTWneZ4EXgEdz8gbgyXvD7ZMyNxM/g0aA/3J9lj4EGABt/PzEJtkxBQAAAABJRU5ErkJggg==" alt="HTML5 Rocks" width="24" height="50"></a>
+<h1 id="title">
+<a href="http://www.html5rocks.com/en/" title="HTML5 Rocks">HTML5 Rocks</a>
+</h1>
+<nav>
+<ul>
+<li><a class="home" href="http://www.html5rocks.com/en/" rel="home">Home</a></li>
+<li><a href="http://www.html5rocks.com/en/tutorials/" class="tutorials">Posts &amp; Tutorials</a></li>
+<li id="features_show"><a href="http://www.html5rocks.com/en/tutorials/workers/basics/#features">HTML5 Features</a></li>
+<li><a href="http://www.html5rocks.com/en/slides" class="slides">Slides</a></li>
+<li><a href="http://www.html5rocks.com/en/resources" class="resources">Resources</a></li>
+<li><a class="why" href="http://www.html5rocks.com/en/why">Why HTML5?</a></li>
+<li><a href="http://www.html5rocks.com/en/profiles" class="profiles">Who We Are</a></li>
+<li><a href="https://github.com/html5rocks/www.html5rocks.com/blob/master/CONTRIBUTING.md" target="_blank">Contribute</a></li>
+<li id="search_show">
+<a href="http://www.html5rocks.com/en/tutorials/workers/basics/#search_form">
+Search
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAYAAAAfSC3RAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6RjM0OTMyOUNEN0FEMTFFMEJDMEZDMjAwMjNDNjc0MDciIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6RjM0OTMyOUREN0FEMTFFMEJDMEZDMjAwMjNDNjc0MDciPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDpFNzMzOTM2MUQ3OTkxMUUwQkMwRkMyMDAyM0M2NzQwNyIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDpFNzMzOTM2MkQ3OTkxMUUwQkMwRkMyMDAyM0M2NzQwNyIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/Pj/umaQAAACdSURBVHjanFLbDQMhDAtMwAiM0lFuBEa4DW4ERmk7ASPQDRghTSSfRKvAPSz5J45D5ODJADM/hE/+RRUuNIKKaGzCDUNSNyhbpgixCIOhZ+jrSIiTjfTl5v/qang55z40xlsYvCEEugqEcbSqplutcBrCiZNw0ugU+zm0cQWreY7OVHC7DDN39WVmCmcDyZdNMBbzGx3AiYnu4CvAALKABcbyDrXxAAAAAElFTkSuQmCC" width="14" height="14" alt="">
+</a>
+</li>
+</ul>
+</nav>
+<div class="subheader search" style="display: none;" id="search_form">
+<div class="search">
+<form action="http://www.html5rocks.com/en/search" id="cse-search-box" role="search">
+<img id="search_hide" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB0AAAAdCAYAAABWk2cPAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6RjM0OTMyQTREN0FEMTFFMEJDMEZDMjAwMjNDNjc0MDciIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6RjM0OTMyQTVEN0FEMTFFMEJDMEZDMjAwMjNDNjc0MDciPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDpGMzQ5MzJBMkQ3QUQxMUUwQkMwRkMyMDAyM0M2NzQwNyIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDpGMzQ5MzJBM0Q3QUQxMUUwQkMwRkMyMDAyM0M2NzQwNyIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/Ps3igWgAAAFzSURBVHjazJfPSsNAEMZ3EygoBAoepD0VBA+Cp76AvoCvkWfK0+gLeBI8FISc2lMhsFBBCPGbMKGrZP/qNh342LKdzI/Z7OxOpPCwruvmGEgX0OWIywH6hBopZeOKJx2wJYYraCb87QvaA74NggJG2dwEwsbgH4AfnFAAKbOV+D+rAd4boQmAo+BMAxaJgGQrjn+EYiJPCNTBuZ7ptWXTrKHCM3DB/mM2Y46QTL+HcoPzM7SDSkg5gBW0gB4NPi30lnHR55ZgJQeqLBnrwNISizjzAWqzjQP8G7hxxOuhPu/LBA4F9s9kjqW1gZcRwH6JaSOtA7f+rZatCgT+PBxOaVlkllRCTzxWPB8EbSOAtKRbHkPBbeYoeBNweEZFgBVBm0igiAQ3kxyDUmtLFgbHB+jV8zUMB/6L4f8dtTFSu9ru/tie+LQv74D2G0nQD7rdE5dnzZxjnWJCJQTXHP9MGrPJWtDJmu3knxUIePJb5luAAQDWPZwf40bkcAAAAABJRU5ErkJggg==" width="29" height="29" alt="">
+<label><span>Search:</span><input type="search" name="q" id="q" autocomplete="off" placeholder="HTML5 Rocks"></label>
+</form>
+</div>
+</div>
+<div class="subheader features" style="display: none;" id="features" tabindex="0">
+<div class="features">
+<img id="features_hide" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB0AAAAdCAYAAABWk2cPAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6RjM0OTMyQTREN0FEMTFFMEJDMEZDMjAwMjNDNjc0MDciIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6RjM0OTMyQTVEN0FEMTFFMEJDMEZDMjAwMjNDNjc0MDciPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDpGMzQ5MzJBMkQ3QUQxMUUwQkMwRkMyMDAyM0M2NzQwNyIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDpGMzQ5MzJBM0Q3QUQxMUUwQkMwRkMyMDAyM0M2NzQwNyIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/Ps3igWgAAAFzSURBVHjazJfPSsNAEMZ3EygoBAoepD0VBA+Cp76AvoCvkWfK0+gLeBI8FISc2lMhsFBBCPGbMKGrZP/qNh342LKdzI/Z7OxOpPCwruvmGEgX0OWIywH6hBopZeOKJx2wJYYraCb87QvaA74NggJG2dwEwsbgH4AfnFAAKbOV+D+rAd4boQmAo+BMAxaJgGQrjn+EYiJPCNTBuZ7ptWXTrKHCM3DB/mM2Y46QTL+HcoPzM7SDSkg5gBW0gB4NPi30lnHR55ZgJQeqLBnrwNISizjzAWqzjQP8G7hxxOuhPu/LBA4F9s9kjqW1gZcRwH6JaSOtA7f+rZatCgT+PBxOaVlkllRCTzxWPB8EbSOAtKRbHkPBbeYoeBNweEZFgBVBm0igiAQ3kxyDUmtLFgbHB+jV8zUMB/6L4f8dtTFSu9ru/tie+LQv74D2G0nQD7rdE5dnzZxjnWJCJQTXHP9MGrPJWtDJmu3knxUIePJb5luAAQDWPZwf40bkcAAAAABJRU5ErkJggg==" width="29" height="29" alt="">
+<h2>Features</h2>
+<ul>
+<li>
+<a href="http://www.html5rocks.com/en/features/offline" class="offline">
+<h3>Offline</h3>
+</a>
+</li>
+<li>
+<a href="http://www.html5rocks.com/en/features/storage" class="storage">
+<h3>Storage</h3>
+</a>
+</li>
+<li>
+<a href="http://www.html5rocks.com/en/features/connectivity" class="connectivity">
+<h3>Connectivity</h3>
+</a>
+</li>
+<li>
+<a href="http://www.html5rocks.com/en/features/file_access" class="file_access">
+<h3>File Access</h3>
+</a>
+</li>
+<li>
+<a href="http://www.html5rocks.com/en/features/semantics" class="semantics">
+<h3>Semantics</h3>
+</a>
+</li>
+<li>
+<a href="http://www.html5rocks.com/en/features/multimedia" class="multimedia">
+<h3>Audio/Video</h3>
+</a>
+</li>
+<li>
+<a href="http://www.html5rocks.com/en/features/graphics" class="graphics">
+<h3>3D/Graphics</h3>
+</a>
+</li>
+<li>
+<a href="http://www.html5rocks.com/en/features/presentation" class="presentation">
+<h3>Presentation</h3>
+</a>
+</li>
+<li>
+<a href="http://www.html5rocks.com/en/features/performance" class="performance">
+<h3>Performance</h3>
+</a>
+</li>
+<li>
+<a href="http://www.html5rocks.com/en/features/nuts_and_bolts" class="nuts_and_bolts">
+<h3>Nuts &amp; Bolts</h3>
+</a>
+</li>
+</ul>
+</div>
+</div>
+</header>
+<a class="watermark" href="http://www.html5rocks.com/"></a>
+<nav class="paginator home">
+<ul class="home">
+<li><a class="next" href="http://www.html5rocks.com/en/mobile">Mobile</a></li>
+</ul>
+<ul class="mobile">
+<li><a class="previous" href="http://www.html5rocks.com/en/">Home</a></li>
+<li><a class="next" href="http://www.html5rocks.com/en/gaming">Gaming</a></li>
+</ul>
+<ul class="gaming">
+<li><a class="previous" href="http://www.html5rocks.com/en/mobile">Mobile</a></li>
+<li><a class="next" href="http://www.html5rocks.com/en/business">Business</a></li>
+</ul>
+<ul class="business">
+<li><a class="previous" href="http://www.html5rocks.com/en/gaming">Gaming</a></li>
+</ul>
+</nav>
+<nav class="paginator features">
+<ul class="offline">
+<li><a class="next" href="http://www.html5rocks.com/en/features/storage">Storage</a></li>
+</ul>
+<ul class="storage">
+<li><a class="previous" href="http://www.html5rocks.com/en/features/offline">Offline</a></li>
+<li><a class="next" href="http://www.html5rocks.com/en/features/connectivity">Connectivity</a></li>
+</ul>
+<ul class="connectivity">
+<li><a class="previous" href="http://www.html5rocks.com/en/features/storage">Storage</a></li>
+<li><a class="next" href="http://www.html5rocks.com/en/features/file_access">File Access</a></li>
+</ul>
+<ul class="file_access">
+<li><a class="previous" href="http://www.html5rocks.com/en/features/connectivity">Connectivity</a></li>
+<li><a class="next" href="http://www.html5rocks.com/en/features/semantics">Semantics</a></li>
+</ul>
+<ul class="semantics">
+<li><a class="previous" href="http://www.html5rocks.com/en/features/file_access">File Access</a></li>
+<li><a class="next" href="http://www.html5rocks.com/en/features/multimedia">Audio/Video</a></li>
+</ul>
+<ul class="multimedia">
+<li><a class="previous" href="http://www.html5rocks.com/en/features/semantics">Semantics</a></li>
+<li><a class="next" href="http://www.html5rocks.com/en/features/graphics">3D/Graphics</a></li>
+</ul>
+<ul class="graphics">
+<li><a class="previous" href="http://www.html5rocks.com/en/features/multimedia">Audio/Video</a></li>
+<li><a class="next" href="http://www.html5rocks.com/en/features/presentation">Presentation</a></li>
+</ul>
+<ul class="presentation">
+<li><a class="previous" href="http://www.html5rocks.com/en/features/graphics">3D/Graphics</a></li>
+<li><a class="next" href="http://www.html5rocks.com/en/features/performance">Performance</a></li>
+</ul>
+<ul class="performance">
+<li><a class="previous" href="http://www.html5rocks.com/en/features/presentation">Presentation</a></li>
+<li><a class="next" href="http://www.html5rocks.com/en/features/nuts_and_bolts">Nuts &amp; Bolts</a></li>
+</ul>
+<ul class="nuts_and_bolts">
+<li><a class="previous" href="http://www.html5rocks.com/en/features/performance">Performance</a></li>
+</ul>
+</nav>
+<div class="outline_nav_toggle deactivated">
+<img class="show" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB8AAAAeCAYAAADU8sWcAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6OTAyRDZFQUJFOEVFMTFFMDg2NkJGNDlCNjE5NENEMzIiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6OTAyRDZFQUNFOEVFMTFFMDg2NkJGNDlCNjE5NENEMzIiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo5MDJENkVBOUU4RUUxMUUwODY2QkY0OUI2MTk0Q0QzMiIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo5MDJENkVBQUU4RUUxMUUwODY2QkY0OUI2MTk0Q0QzMiIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/Pprl4SwAAAIcSURBVHjazFfNasJAEI6ptiIGBCUQbfAWxWu96EUfwAY8tg+gD1A8F+99gfoA9ijoA9he9GKvIt5EMRJyEFKKDQidlaSIyW5iYkgHhiyZzX4zk/nbEOWAJpNJGh4V4DudGYttn8Bz4EGxWJw7OTfkALQBXKPOIwTeASXeXYEDcEMH9kLIG21QYu0IHECRS1+BBeoypAI3rX4F7TMwpcdHF86uEsF9AD6mZ1BAsHQ7CJ7g8WB3wmazia1Wq7imaWHjXSaTUbPZrOpAAQn4EX6B+geuR3Wf9NVisWBGo9HtdruNWckjkci+UCjI5XJ5baMAyoLOMfgLPKq43cPhkJ/NZqwT3yYSie96vT6PRqN7QgCKyHpat/ps4FwuR7VaLdN+5JleryfsdrsrQgDWjICrkFzt1OJTBcbjcZqw5d4ArxIKDec2tJHSoMQ1RiygtKZxqYU+lGWZ8ZJb0+k0RRALNKZJUMvlkvGa2JIkxUngYWxNVNUbYy2KokmeSqUObCWDlKQURbGtfDQVIGEtZxjmx1j3++b6g1ItmUxaypw2HFpPehPxPK96tYzjuC9Sz6f1xm9VqTSWZT0pAOVWsQPHThtQAiW3wPl8XkYG4IAP5RUWH7gDUKdCh5wLjOp7qVQiNZhB4I3FAEdVrhtISw10mDhSoOvjGGUaJE8rXBOXeheg9ukEG+jo/L8uDRe8Lr0B6MD1Xc3vi+KvAAMAMUEG36eXLzcAAAAASUVORK5CYII=" alt="">
+<img class="hide" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB8AAAAeCAYAAADU8sWcAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6OTAyRDZFQUZFOEVFMTFFMDg2NkJGNDlCNjE5NENEMzIiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6OTAyRDZFQjBFOEVFMTFFMDg2NkJGNDlCNjE5NENEMzIiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo5MDJENkVBREU4RUUxMUUwODY2QkY0OUI2MTk0Q0QzMiIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo5MDJENkVBRUU4RUUxMUUwODY2QkY0OUI2MTk0Q0QzMiIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PlXiDkoAAAIdSURBVHjaxFfNasJAEN6sSkUIBOLBFktF0Junek+96wOU3tt76716tw/Q3msfQO8a8GhP3iKIpdJ6MBAIiEWE7shaos1m18SfD4ZFd2a/mc3szqyEBNHtdq/IAJKlsgmDSjufz7dF1pQESG/JcE1ERuL4JtIgTrz4IiekEN0TkVPkH+BEhTjx7jaJGcQlMtQDEiNq/0zX40dOFR/R7lElO9Bgku+ReIWyMxklB/EZGV55iTWbzUL9fl+xbftk9Z8syz+ZTMaKRqMLDrlN5IY48AU/wo6Jey9iINV1/XwwGKhu851OB6XTaVPTtE8PJ2TKU/6LnER9CYnBIh6Px7Fms5mdz+ch3r5GIpFFsVg0EonE1EPtDk7AKttLuyAGgB7og52HWsl51DSWVqvVuhAldjoAdh4qSz5Mt9z1W/d6PdWyrJiftAY7sGd9e+DFjHt6ieFwqAQ5Vxz7LPbK8NFoFIicYy+HRRaJx+NIVVVhUtM00WQy4ephdEQIRQ5RiESyLTC98lyRTCatIItz7G1Muw9XpFKpQOQcewPTQu8afS6XMxVFmfohBjuwZ0XtvF511iKFQuED7uttiEEf7DxUdGe2N1haUCCgUIg6IFhY6pv1vEa7U18lFSBQUhHtbstHbyYkl968tsd7Za2PW7vhaH9VPQQxs2/fQyP5j5j3aIA6X9nBo+GBEBtBnkulLZ2AxHrz/Vw6xEPxV4ABAB9p/+75XTbuAAAAAElFTkSuQmCC" alt="">
+<nav class="outline features">
+<h3>HTML5 Features</h3>
+<ul>
+<li class="offline">
+<a href="http://www.html5rocks.com/en/features/offline" class="section_title offline">Offline</a>
+<ul>
+<li><a href="http://www.html5rocks.com/en/features/offline#intro">Intro</a></li>
+<li><a href="http://www.html5rocks.com/en/features/offline#support">Browser Support</a></li>
+<li><a href="http://www.html5rocks.com/en/features/offline#updates">What’s New</a></li>
+<li><a href="http://www.html5rocks.com/en/features/offline#demos">Demos</a></li>
+<li><a href="http://www.html5rocks.com/en/features/offline#in_the_wild">In the Wild</a></li>
+<li><a href="http://www.html5rocks.com/en/features/offline#resources">Resources</a></li>
+</ul>
+</li>
+<li class="storage">
+<a href="http://www.html5rocks.com/en/features/storage" class="section_title storage">Storage</a>
+<ul>
+<li><a href="http://www.html5rocks.com/en/features/storage#intro">Intro</a></li>
+<li><a href="http://www.html5rocks.com/en/features/storage#support">Browser Support</a></li>
+<li><a href="http://www.html5rocks.com/en/features/storage#updates">What’s New</a></li>
+<li><a href="http://www.html5rocks.com/en/features/storage#demos">Demos</a></li>
+<li><a href="http://www.html5rocks.com/en/features/storage#in_the_wild">In the Wild</a></li>
+<li><a href="http://www.html5rocks.com/en/features/storage#resources">Resources</a></li>
+</ul>
+</li>
+<li class="connectivity">
+<a href="http://www.html5rocks.com/en/features/connectivity" class="section_title connectivity">Connectivity</a>
+<ul>
+<li><a href="http://www.html5rocks.com/en/features/connectivity#intro">Intro</a></li>
+<li><a href="http://www.html5rocks.com/en/features/connectivity#support">Browser Support</a></li>
+<li><a href="http://www.html5rocks.com/en/features/connectivity#updates">What’s New</a></li>
+<li><a href="http://www.html5rocks.com/en/features/connectivity#demos">Demos</a></li>
+<li><a href="http://www.html5rocks.com/en/features/connectivity#in_the_wild">In the Wild</a></li>
+<li><a href="http://www.html5rocks.com/en/features/connectivity#resources">Resources</a></li>
+</ul>
+</li>
+<li class="file_access">
+<a href="http://www.html5rocks.com/en/features/file_access" class="section_title file_access">File Access</a>
+<ul>
+<li><a href="http://www.html5rocks.com/en/features/file_access#intro">Intro</a></li>
+<li><a href="http://www.html5rocks.com/en/features/file_access#support">Browser Support</a></li>
+<li><a href="http://www.html5rocks.com/en/features/file_access#updates">What’s New</a></li>
+<li><a href="http://www.html5rocks.com/en/features/file_access#demos">Demos</a></li>
+<li><a href="http://www.html5rocks.com/en/features/file_access#in_the_wild">In the Wild</a></li>
+<li><a href="http://www.html5rocks.com/en/features/file_access#resources">Resources</a></li>
+</ul>
+</li>
+<li class="semantics">
+<a href="http://www.html5rocks.com/en/features/semantics" class="section_title semantics">Semantics</a>
+<ul>
+<li><a href="http://www.html5rocks.com/en/features/semantics#intro">Intro</a></li>
+<li><a href="http://www.html5rocks.com/en/features/semantics#support">Browser Support</a></li>
+<li><a href="http://www.html5rocks.com/en/features/semantics#updates">What’s New</a></li>
+<li><a href="http://www.html5rocks.com/en/features/semantics#demos">Demos</a></li>
+<li><a href="http://www.html5rocks.com/en/features/semantics#in_the_wild">In the Wild</a></li>
+<li><a href="http://www.html5rocks.com/en/features/semantics#resources">Resources</a></li>
+</ul>
+</li>
+<li class="multimedia">
+<a href="http://www.html5rocks.com/en/features/multimedia" class="section_title multimedia">Audio/Video</a>
+<ul>
+<li><a href="http://www.html5rocks.com/en/features/multimedia#intro">Intro</a></li>
+<li><a href="http://www.html5rocks.com/en/features/multimedia#support">Browser Support</a></li>
+<li><a href="http://www.html5rocks.com/en/features/multimedia#updates">What’s New</a></li>
+<li><a href="http://www.html5rocks.com/en/features/multimedia#demos">Demos</a></li>
+<li><a href="http://www.html5rocks.com/en/features/multimedia#in_the_wild">In the Wild</a></li>
+<li><a href="http://www.html5rocks.com/en/features/multimedia#resources">Resources</a></li>
+</ul>
+</li>
+<li class="graphics">
+<a href="http://www.html5rocks.com/en/features/graphics" class="section_title graphics">3D/Graphics</a>
+<ul>
+<li><a href="http://www.html5rocks.com/en/features/graphics#intro">Intro</a></li>
+<li><a href="http://www.html5rocks.com/en/features/graphics#support">Browser Support</a></li>
+<li><a href="http://www.html5rocks.com/en/features/graphics#updates">What’s New</a></li>
+<li><a href="http://www.html5rocks.com/en/features/graphics#demos">Demos</a></li>
+<li><a href="http://www.html5rocks.com/en/features/graphics#in_the_wild">In the Wild</a></li>
+<li><a href="http://www.html5rocks.com/en/features/graphics#resources">Resources</a></li>
+</ul>
+</li>
+<li class="presentation">
+<a href="http://www.html5rocks.com/en/features/presentation" class="section_title presentation">Presentation</a>
+<ul>
+<li><a href="http://www.html5rocks.com/en/features/presentation#intro">Intro</a></li>
+<li><a href="http://www.html5rocks.com/en/features/presentation#support">Browser Support</a></li>
+<li><a href="http://www.html5rocks.com/en/features/presentation#updates">What’s New</a></li>
+<li><a href="http://www.html5rocks.com/en/features/presentation#demos">Demos</a></li>
+<li><a href="http://www.html5rocks.com/en/features/presentation#in_the_wild">In the Wild</a></li>
+<li><a href="http://www.html5rocks.com/en/features/presentation#resources">Resources</a></li>
+</ul>
+</li>
+<li class="performance">
+<a href="http://www.html5rocks.com/en/features/performance" class="section_title performance">Performance</a>
+<ul>
+<li><a href="http://www.html5rocks.com/en/features/performance#intro">Intro</a></li>
+<li><a href="http://www.html5rocks.com/en/features/performance#updates">What’s New</a></li>
+<li><a href="http://www.html5rocks.com/en/features/performance#themes">Themes</a></li>
+<li><a href="http://www.html5rocks.com/en/features/performance#technologies">Technologies</a></li>
+<li><a href="http://www.html5rocks.com/en/features/performance#techniques">Techniques</a></li>
+<li><a href="http://www.html5rocks.com/en/features/performance#tools">Tools</a></li>
+<li><a href="http://www.html5rocks.com/en/features/performance#further_reading">Further Reading</a></li>
+</ul>
+</li>
+<li class="nuts_and_bolts">
+<a href="http://www.html5rocks.com/en/features/nuts_and_bolts" class="section_title nuts_and_bolts">Nuts &amp; Bolts</a>
+<ul>
+<li><a href="http://www.html5rocks.com/en/features/nuts_and_bolts#intro">Intro</a></li>
+<li><a href="http://www.html5rocks.com/en/features/nuts_and_bolts#support">Browser Support</a></li>
+<li><a href="http://www.html5rocks.com/en/features/nuts_and_bolts#updates">What’s New</a></li>
+<li><a href="http://www.html5rocks.com/en/features/nuts_and_bolts#demos">Demos</a></li>
+<li><a href="http://www.html5rocks.com/en/features/nuts_and_bolts#in_the_wild">In the Wild</a></li>
+<li><a href="http://www.html5rocks.com/en/features/nuts_and_bolts#resources">Resources</a></li>
+</ul>
+</li>
+</ul>
+</nav>
+</div>
+<div class="page current loaded" id="tutorials-workers-basics">
+<header class="tutorial clearfix pattern-bg-lighter">
+<hgroup>
+<h1>HTML5 Rocks</h1>
+<h2><a href="http://www.html5rocks.com/en/tutorials/">Tutorials</a></h2>
+</hgroup>
+<section>
+<h1>The Basics of Web Workers</h1>
+<section class="byline">
+<a href="http://www.html5rocks.com/profiles/#ericbidelman"><script>(function(){var d=null,e=window,f=document,g="documentElement",h="scrollTop",k="prototype",l="body",m="getAttribute",n="",p="1",q="data",r="img",s="load",t="number",u="on",v="onload",w="pagespeed_lazy_position",x="pagespeed_lazy_replaced_functions",y="pagespeed_lazy_src",z="position",A="relative",B="scroll",C="src";e.pagespeed=e.pagespeed||{};var D=e.pagespeed,E=function(a){this.a=[];this.i=0;this.b=!1;this.o=a;this.c=d;this.g=0;this.h=200;this.f=!1};
+E[k].s=function(){var a=0;typeof e.pageYOffset==t?a=e.pageYOffset:f[l]&&f[l][h]?a=f[l][h]:f[g]&&f[g][h]&&(a=f[g][h]);var b=e.innerHeight||f[g].clientHeight||f[l].clientHeight;return{top:a,bottom:a+b,height:b}};E[k].n=function(a){var b=a[m](w);if(b)return parseInt(b,0);var b=a.offsetTop,c=a.offsetParent;c&&(b+=this.n(c));b=Math.max(b,0);a.setAttribute(w,b);return b};E[k].r=function(a){var b=this.n(a);return{top:b,bottom:b+a.offsetHeight}};
+E[k].q=function(a,b){if(a.currentStyle)return a.currentStyle[b];if(f.defaultView&&f.defaultView.getComputedStyle){var c=f.defaultView.getComputedStyle(a,d);if(c)return c.getPropertyValue(b)}return a.style&&a.style[b]?a.style[b]:n};E[k].p=function(a){if(this.q(a,z)==A)return!0;if(!this.f&&(0==a.offsetHeight||0==a.offsetWidth))return!1;var b=this.s(),c=a.getBoundingClientRect();c?(a=c.top-b.height,b=c.bottom):(c=this.r(a),a=c.top-b.bottom,b=c.bottom-b.top);return a<=this.i&&0<=b+this.i};
+E[k].m=function(a){this.l(a);var b=this;e.setTimeout(function(){var c=a[m](y);if(c!=d)if((b.b||b.p(a))&&a.src.indexOf(-1!=b.o)){var j=a.parentNode,F=a.nextSibling;j&&j.removeChild(a);a.getAttribute=a.j;a.removeAttribute(v);a.removeAttribute(y);a.removeAttribute(x);a.src=c;j&&j.insertBefore(a,F)}else b.a.push(a)},0)};E[k].loadIfVisible=E[k].m;E[k].u=function(){this.b=!0;this.d()};E[k].loadAllImages=E[k].u;E[k].d=function(){var a=this.a,b=a.length;this.a=[];for(var c=0;c<b;++c)this.m(a[c])};
+E[k].e=function(a,b){return a.a?a.a(b)!=d:a[m](b)!=d};E[k].v=function(){for(var a=f.getElementsByTagName(r),b=0;b<a.length;++b){var c=a[b];this.e(c,y)&&this.l(c)}};E[k].overrideAttributeFunctions=E[k].v;E[k].l=function(a){var b=this;this.e(a,x)||(a.j=a[m],a.getAttribute=function(a){a.toLowerCase()==C&&b.e(this,y)&&(a=y);return this.j(a)},a.setAttribute(x,p))};
+D.k=function(a,b,c){if(a.addEventListener)a.addEventListener(b,c,!1);else if(a.attachEvent)a.attachEvent(u+b,c);else{var j=a[u+b];a[u+b]=function(){c.call(this);j&&j.call(this)}}};D.t=function(a,b){var c=new E(b);D.lazyLoadImages=c;0!=b.indexOf(q)&&((new Image).src=b);D.k(e,s,function(){c.f=!0;e.setTimeout(function(){c.b=a;c.d()},200)});a||D.k(e,B,function(){if(!c.c){var a=c.h;(new Date).getTime()-c.g>c.h&&(a=0);c.c=e.setTimeout(function(){c.g=(new Date).getTime();c.d();c.c=d},a)}})};
+D.lazyLoadInit=D.t;})();
+
+pagespeed.lazyLoadInit(false, "//1-ps.googleusercontent.com/h/www.gstatic.com/psa/static/1.gif");
+</script><img itemprop="photo" alt="Eric Bidelman" title="Eric Bidelman" width="75" height="75" src="./The Basics of Web Workers - HTML5 Rocks_files/wericbidelman.75.png.pagespeed.ic.muZg7YPT4M.jpg"></a>
+<hgroup>
+<h2>
+By <strong><a href="http://www.html5rocks.com/profiles/#ericbidelman">Eric Bidelman</a></strong>
+</h2>
+</hgroup>
+<div class="date">
+<time pubdate="">Published <strong>July 26, 2010</strong></time>
+<time class="updated">Updated <strong>Aug. 21, 2012</strong></time>
+</div>
+</section>
+<aside id="html5badge">
+<a href="http://www.w3.org/html/logo/">
+<img width="133" height="64" alt="This article is powered by HTML5 Performance &amp; Integration" title="This article is powered by HTML5 Performance &amp; Integration" src="./The Basics of Web Workers - HTML5 Rocks_files/133x64whtml5-badge-h-performance.png.pagespeed.ic.7XO3466l1J.png">
+</a>
+</aside>
+<section class="browser_support">
+<h2>Supported browsers:</h2>
+<span class="browsers">
+<span class="browser opera supported">
+<span class="browser_name">Opera</span>
+<span class="support">
+supported
+</span>
+</span>
+<span class="browser ie ">
+<span class="browser_name">IE</span>
+<span class="support">
+unsupported
+</span>
+</span>
+<span class="browser safari supported">
+<span class="browser_name">Safari</span>
+<span class="support">
+supported
+</span>
+</span>
+<span class="browser ff supported">
+<span class="browser_name">Firefox</span>
+<span class="support">
+supported
+</span>
+</span>
+<span class="browser chrome supported">
+<span class="browser_name">Chrome</span>
+<span class="support">
+supported
+</span>
+</span>
+</span>
+<div class="compatible-block">
+<p id="notcompatible" class="hidden">
+Your browser may not support all of the functionality in this article.
+</p>
+<p id="compatible" class="">
+Your browser appears to support all of the functionality in this article.
+</p>
+</div>
+</section>
+<a href="http://www.html5rocks.com/en/tutorials/workers/basics/#disqus_thread" data-disqus-identifier="http://www.html5rocks.com/tutorials/workers/basics/" class="disqus_comments">33 Comments and 0 Reactions</a>
+</section>
+<span class="share preview" onmouseover="thirdParty.load(this);"><img src="./The Basics of Web Workers - HTML5 Rocks_files/share.png"></span><span class="share">
+<ul>
+<li class="googleplus"><div style="height: 20px; width: 90px; display: inline-block; text-indent: 0px; margin: 0px; padding: 0px; background-color: transparent; border-style: none; float: none; line-height: normal; font-size: 1px; vertical-align: baseline; background-position: initial initial; background-repeat: initial initial;" id="___plusone_0"><iframe allowtransparency="true" frameborder="0" hspace="0" marginheight="0" marginwidth="0" scrolling="no" style="position: static; top: 0px; width: 90px; margin: 0px; border-style: none; left: 0px; visibility: visible; height: 20px;" tabindex="0" vspace="0" width="100%" id="I0_1352326812054" name="I0_1352326812054" src="./The Basics of Web Workers - HTML5 Rocks_files/fastbutton.htm" title="+1"></iframe></div></li>
+<li class="facebook" data-url="http://www.html5rocks.com/tutorials/workers/basics/"></li>
+<li class="twitter"><iframe allowtransparency="true" frameborder="0" scrolling="no" src="./The Basics of Web Workers - HTML5 Rocks_files/tweet_button.1351848862.htm" class="twitter-share-button twitter-count-horizontal" style="width: 110px; height: 20px;" title="Twitter Tweet Button" data-twttr-rendered="true"></iframe></li>
+</ul>
+</span>
+</header>
+<article class="tutorial pattern-bg-lighter">
+<div class="outline_nav_toggle">
+<img class="show" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB8AAAAeCAYAAADU8sWcAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6OTAyRDZFQUJFOEVFMTFFMDg2NkJGNDlCNjE5NENEMzIiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6OTAyRDZFQUNFOEVFMTFFMDg2NkJGNDlCNjE5NENEMzIiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo5MDJENkVBOUU4RUUxMUUwODY2QkY0OUI2MTk0Q0QzMiIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo5MDJENkVBQUU4RUUxMUUwODY2QkY0OUI2MTk0Q0QzMiIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/Pprl4SwAAAIcSURBVHjazFfNasJAEI6ptiIGBCUQbfAWxWu96EUfwAY8tg+gD1A8F+99gfoA9ijoA9he9GKvIt5EMRJyEFKKDQidlaSIyW5iYkgHhiyZzX4zk/nbEOWAJpNJGh4V4DudGYttn8Bz4EGxWJw7OTfkALQBXKPOIwTeASXeXYEDcEMH9kLIG21QYu0IHECRS1+BBeoypAI3rX4F7TMwpcdHF86uEsF9AD6mZ1BAsHQ7CJ7g8WB3wmazia1Wq7imaWHjXSaTUbPZrOpAAQn4EX6B+geuR3Wf9NVisWBGo9HtdruNWckjkci+UCjI5XJ5baMAyoLOMfgLPKq43cPhkJ/NZqwT3yYSie96vT6PRqN7QgCKyHpat/ps4FwuR7VaLdN+5JleryfsdrsrQgDWjICrkFzt1OJTBcbjcZqw5d4ArxIKDec2tJHSoMQ1RiygtKZxqYU+lGWZ8ZJb0+k0RRALNKZJUMvlkvGa2JIkxUngYWxNVNUbYy2KokmeSqUObCWDlKQURbGtfDQVIGEtZxjmx1j3++b6g1ItmUxaypw2HFpPehPxPK96tYzjuC9Sz6f1xm9VqTSWZT0pAOVWsQPHThtQAiW3wPl8XkYG4IAP5RUWH7gDUKdCh5wLjOp7qVQiNZhB4I3FAEdVrhtISw10mDhSoOvjGGUaJE8rXBOXeheg9ukEG+jo/L8uDRe8Lr0B6MD1Xc3vi+KvAAMAMUEG36eXLzcAAAAASUVORK5CYII=">
+<img class="hide" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB8AAAAeCAYAAADU8sWcAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6OTAyRDZFQUZFOEVFMTFFMDg2NkJGNDlCNjE5NENEMzIiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6OTAyRDZFQjBFOEVFMTFFMDg2NkJGNDlCNjE5NENEMzIiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo5MDJENkVBREU4RUUxMUUwODY2QkY0OUI2MTk0Q0QzMiIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo5MDJENkVBRUU4RUUxMUUwODY2QkY0OUI2MTk0Q0QzMiIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PlXiDkoAAAIdSURBVHjaxFfNasJAEN6sSkUIBOLBFktF0Junek+96wOU3tt76716tw/Q3msfQO8a8GhP3iKIpdJ6MBAIiEWE7shaos1m18SfD4ZFd2a/mc3szqyEBNHtdq/IAJKlsgmDSjufz7dF1pQESG/JcE1ERuL4JtIgTrz4IiekEN0TkVPkH+BEhTjx7jaJGcQlMtQDEiNq/0zX40dOFR/R7lElO9Bgku+ReIWyMxklB/EZGV55iTWbzUL9fl+xbftk9Z8syz+ZTMaKRqMLDrlN5IY48AU/wo6Jey9iINV1/XwwGKhu851OB6XTaVPTtE8PJ2TKU/6LnER9CYnBIh6Px7Fms5mdz+ch3r5GIpFFsVg0EonE1EPtDk7AKttLuyAGgB7og52HWsl51DSWVqvVuhAldjoAdh4qSz5Mt9z1W/d6PdWyrJiftAY7sGd9e+DFjHt6ieFwqAQ5Vxz7LPbK8NFoFIicYy+HRRaJx+NIVVVhUtM00WQy4ephdEQIRQ5RiESyLTC98lyRTCatIItz7G1Muw9XpFKpQOQcewPTQu8afS6XMxVFmfohBjuwZ0XtvF511iKFQuED7uttiEEf7DxUdGe2N1haUCCgUIg6IFhY6pv1vEa7U18lFSBQUhHtbstHbyYkl968tsd7Za2PW7vhaH9VPQQxs2/fQyP5j5j3aIA6X9nBo+GBEBtBnkulLZ2AxHrz/Vw6xEPxV4ABAB9p/+75XTbuAAAAAElFTkSuQmCC">
+<nav class="outline toc pattern-bg-lighter">
+<h3>Table of Contents</h3>
+<ul><li><a href="http://www.html5rocks.com/en/tutorials/workers/basics/#toc-introduction-jsconcurrency" onclick="$.scrollTo(&quot;#toc-introduction-jsconcurrency&quot;, 800, {offset: {top: -35}})">The Problem: JavaScript Concurrency</a></li><li><a href="http://www.html5rocks.com/en/tutorials/workers/basics/#toc-introduction-jsthreading" onclick="$.scrollTo(&quot;#toc-introduction-jsthreading&quot;, 800, {offset: {top: -35}})">Introducing Web Workers: Bring Threading to JavaScript</a><ul><li><a href="http://www.html5rocks.com/en/tutorials/workers/basics/#toc-introduction-types" onclick="$.scrollTo(&quot;#toc-introduction-types&quot;, 800, {offset: {top: -35}})">Types of Web Workers</a></li></ul></li><li><a href="http://www.html5rocks.com/en/tutorials/workers/basics/#toc-gettingstarted" onclick="$.scrollTo(&quot;#toc-gettingstarted&quot;, 800, {offset: {top: -35}})">Getting Started</a><ul><li><a href="http://www.html5rocks.com/en/tutorials/workers/basics/#toc-gettingstarted-workercomm" onclick="$.scrollTo(&quot;#toc-gettingstarted-workercomm&quot;, 800, {offset: {top: -35}})">Communicating with a Worker via Message Passing</a></li></ul></li><li><a href="http://www.html5rocks.com/en/tutorials/workers/basics/#toc-enviornment" onclick="$.scrollTo(&quot;#toc-enviornment&quot;, 800, {offset: {top: -35}})">The Worker Environment</a><ul><li><a href="http://www.html5rocks.com/en/tutorials/workers/basics/#toc-enviornment-scope" onclick="$.scrollTo(&quot;#toc-enviornment-scope&quot;, 800, {offset: {top: -35}})">Worker Scope</a></li><li><a href="http://www.html5rocks.com/en/tutorials/workers/basics/#toc-enviornment-features" onclick="$.scrollTo(&quot;#toc-enviornment-features&quot;, 800, {offset: {top: -35}})">Features Available to Workers</a></li><li><a href="http://www.html5rocks.com/en/tutorials/workers/basics/#toc-enviornment-loadingscripts" onclick="$.scrollTo(&quot;#toc-enviornment-loadingscripts&quot;, 800, {offset: {top: -35}})">Loading External Scripts</a></li><li><a href="http://www.html5rocks.com/en/tutorials/workers/basics/#toc-enviornment-subworkers" onclick="$.scrollTo(&quot;#toc-enviornment-subworkers&quot;, 800, {offset: {top: -35}})">Subworkers</a></li></ul></li><li><a href="http://www.html5rocks.com/en/tutorials/workers/basics/#toc-inlineworkers" onclick="$.scrollTo(&quot;#toc-inlineworkers&quot;, 800, {offset: {top: -35}})">Inline Workers</a><ul><li><a href="http://www.html5rocks.com/en/tutorials/workers/basics/#toc-inlineworkers-bloburis" onclick="$.scrollTo(&quot;#toc-inlineworkers-bloburis&quot;, 800, {offset: {top: -35}})">Blob URLs</a></li><li><a href="http://www.html5rocks.com/en/tutorials/workers/basics/#toc-inlineworkers-example" onclick="$.scrollTo(&quot;#toc-inlineworkers-example&quot;, 800, {offset: {top: -35}})">Full Example</a></li><li><a href="http://www.html5rocks.com/en/tutorials/workers/basics/#toc-inlineworkers-loadingscripts" onclick="$.scrollTo(&quot;#toc-inlineworkers-loadingscripts&quot;, 800, {offset: {top: -35}})">Loading External Scripts</a></li></ul></li><li><a href="http://www.html5rocks.com/en/tutorials/workers/basics/#toc-errors" onclick="$.scrollTo(&quot;#toc-errors&quot;, 800, {offset: {top: -35}})">Handling Errors</a></li><li><a href="http://www.html5rocks.com/en/tutorials/workers/basics/#toc-security" onclick="$.scrollTo(&quot;#toc-security&quot;, 800, {offset: {top: -35}})">A Word on Security</a><ul><li><a href="http://www.html5rocks.com/en/tutorials/workers/basics/#toc-security-local" onclick="$.scrollTo(&quot;#toc-security-local&quot;, 800, {offset: {top: -35}})">Restrictions with Local Access</a></li><li><a href="http://www.html5rocks.com/en/tutorials/workers/basics/#toc-security-origin" onclick="$.scrollTo(&quot;#toc-security-origin&quot;, 800, {offset: {top: -35}})">Same Origin Considerations</a></li></ul></li><li><a href="http://www.html5rocks.com/en/tutorials/workers/basics/#toc-usecases" onclick="$.scrollTo(&quot;#toc-usecases&quot;, 800, {offset: {top: -35}})">Use Cases</a></li><li><a href="http://www.html5rocks.com/en/tutorials/workers/basics/#toc-examples" onclick="$.scrollTo(&quot;#toc-examples&quot;, 800, {offset: {top: -35}})">Demos</a></li><li><a href="http://www.html5rocks.com/en/tutorials/workers/basics/#toc-references" onclick="$.scrollTo(&quot;#toc-references&quot;, 800, {offset: {top: -35}})">References</a></li></ul>
+<h3>Localizations</h3>
+<p>This article is additionally available in the following languages:</p>
+<ul>
+<li><a href="http://www.html5rocks.com/de/tutorials/workers/basics/">Deutsch</a></li>
+<li><a href="http://www.html5rocks.com/pt/tutorials/workers/basics/">Português (Brasil)</a></li>
+<li><a href="http://www.html5rocks.com/es/tutorials/workers/basics/">Español</a></li>
+<li><a href="http://www.html5rocks.com/ru/tutorials/workers/basics/">Pусский</a></li>
+<li><a href="http://www.html5rocks.com/ja/tutorials/workers/basics/">日本語</a></li>
+<li><a href="http://www.html5rocks.com/zh/tutorials/workers/basics/">中文 (简体)</a></li>
+</ul>
+</nav>
+</div>
+<section>
+<h2 id="toc-introduction-jsconcurrency">The Problem: JavaScript Concurrency</h2>
+<p>There are a number of bottlenecks preventing interesting applications from being ported
+(say, from server-heavy implementations) to client-side JavaScript. Some of these include
+browser compatibility, static typing, accessibility, and performance. Fortunately, the latter
+is quickly becoming a thing of the past as browser vendors rapidly improve the speed of their JavaScript engines.</p>
+<p>One thing that's remained a hindrance for JavaScript is actually the language itself. JavaScript is
+a single-threaded environment, meaning multiple scripts cannot run at the same time. As an example, imagine
+a site that needs to handle UI events, query and process large amounts of API data,
+and manipulate the DOM. Pretty common, right? Unfortunately all of that can't be simultaneous
+due to limitations in browsers' JavaScript runtime. Script execution happens within a single thread.</p>
+<p>Developers mimic 'concurrency' by using techniques like
+<code>setTimeout()</code>, <code>setInterval()</code>, <code>XMLHttpRequest</code>, and event handlers.
+Yes, all of these features run asynchronously, but non-blocking doesn't necessarily mean concurrency.
+Asynchronous events are processed after the current executing script has yielded. The good news is
+that HTML5 gives us something better than these hacks!</p>
+<h2 id="toc-introduction-jsthreading">Introducing Web Workers: Bring Threading to JavaScript</h2>
+<p>The <a href="http://www.whatwg.org/specs/web-workers/current-work/" target="_blank">Web Workers</a> specification defines
+an API for spawning background scripts in your web application. Web Workers allow you to do things like
+fire up long-running scripts to handle computationally intensive tasks, but without blocking the UI or other
+scripts to handle user interactions. They're going to help put and end to that nasty 'unresponsive script' dialog
+that we've all come to love:</p>
+<figure class="center">
+<img width="450" height="100" title="Unresponsive script dialog" alt="Unresponsive script dialog" src="./The Basics of Web Workers - HTML5 Rocks_files/450x100wunresponsive_script.gif.pagespeed.ic.ywnUPz4a30.png">
+<figcaption>Common unresponsive script dialog.</figcaption>
+</figure>
+<p>Workers utilize thread-like message passing to achieve parallelism. They're perfect for keeping your
+UI refresh, performant, and responsive for users.</p>
+<h3 id="toc-introduction-types">Types of Web Workers</h3>
+<p>It's worth noting that the <a href="http://www.whatwg.org/specs/web-workers/current-work/" target="_blank">specification</a> discusses
+two kinds of Web Workers, <a href="http://www.whatwg.org/specs/web-workers/current-work/#dedicated-workers-and-the-worker-interface" target="_blank">Dedicated Workers</a>
+and <a href="http://www.whatwg.org/specs/web-workers/current-work/#sharedworker" target="_blank">Shared Workers</a>. This article will
+only cover dedicated workers and I'll refer to them as 'web workers' or 'workers' throughout.</p>
+<h2 id="toc-gettingstarted">Getting Started</h2>
+<p>Web Workers run in an isolated thread. As a result, the code that they execute needs to be contained in a separate file.
+But before we do that, the first thing to do is create a new <code>Worker</code> object in your main page. The
+constructor takes the name of the worker script:</p>
+<pre class="prettyprint"><span class="kwd">var</span><span class="pln"> worker </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">new</span><span class="pln"> </span><span class="typ">Worker</span><span class="pun">(</span><span class="str">'task.js'</span><span class="pun">);</span></pre>
+<p>If the specified file exists, the browser will spawn a new worker thread, which is downloaded asynchronously.
+The worker will not begin until the file has completely downloaded and executed. If the path to your worker returns an 404,
+the worker will fail silently.</p>
+<p>After creating the worker, start it by calling the <code>postMessage()</code> method:</p>
+<pre class="prettyprint"><span class="pln">worker</span><span class="pun">.</span><span class="pln">postMessage</span><span class="pun">();</span><span class="pln"> </span><span class="com">// Start the worker.</span></pre>
+<h3 id="toc-gettingstarted-workercomm">Communicating with a Worker via Message Passing</h3>
+<p>Communication between a work and its parent page is done using an event model and the <code>postMessage()</code>
+method. Depending on your browser/version, <code>postMessage()</code> can accept either a string or JSON object as its single argument.
+The latest versions of the modern browsers support passing a JSON object.</p>
+<p>Below is a example of using a string to pass 'Hello World' to a worker in doWork.js. The worker simply returns
+the message that is passed to it.</p>
+<p>Main script:</p>
+<pre class="prettyprint"><span class="kwd">var</span><span class="pln"> worker </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">new</span><span class="pln"> </span><span class="typ">Worker</span><span class="pun">(</span><span class="str">'doWork.js'</span><span class="pun">);</span><span class="pln">
+
+worker</span><span class="pun">.</span><span class="pln">addEventListener</span><span class="pun">(</span><span class="str">'message'</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">e</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+  console</span><span class="pun">.</span><span class="pln">log</span><span class="pun">(</span><span class="str">'Worker said: '</span><span class="pun">,</span><span class="pln"> e</span><span class="pun">.</span><span class="pln">data</span><span class="pun">);</span><span class="pln">
+</span><span class="pun">},</span><span class="pln"> </span><span class="kwd">false</span><span class="pun">);</span><span class="pln">
+
+worker</span><span class="pun">.</span><span class="pln">postMessage</span><span class="pun">(</span><span class="str">'Hello World'</span><span class="pun">);</span><span class="pln"> </span><span class="com">// Send data to our worker.</span></pre>
+<p>doWork.js (the worker):</p>
+<pre class="prettyprint"><span class="kwd">self</span><span class="pun">.</span><span class="pln">addEventListener</span><span class="pun">(</span><span class="str">'message'</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">e</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+  </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">postMessage</span><span class="pun">(</span><span class="pln">e</span><span class="pun">.</span><span class="pln">data</span><span class="pun">);</span><span class="pln">
+</span><span class="pun">},</span><span class="pln"> </span><span class="kwd">false</span><span class="pun">);</span></pre>
+<p>When <code>postMessage()</code> is called from the main page, our worker handles that message by
+defining an <code>onmessage</code> handler for the <code>message</code> event. The message payload (in this case 'Hello World')
+is accessible in <code>Event.data</code>. Although this particular example isn't very exciting, it demonstrates
+that <code>postMessage()</code> is also your means for passing data back to the main thread. Convenient!</p>
+<p>Messages passed between the main page and workers are copied, not shared. For example, in the next example
+the 'msg' property of the JSON message is accessible in both locations. It appears that the object is
+being passed directly to the worker even though it's running in a separate, dedicated space. In actuality, what is happening
+is that the object is being serialized as it's handed to the worker, and subsequently, de-serialized on the other end. The page and
+worker do not share the same instance, so the end result is that a duplicate is created on each pass. Most browsers implement this feature by automatically JSON encoding/decoding the value on either end.</p>
+<p>The following is a more complex example that passes messages using JSON objects.</p>
+<p>Main script:</p>
+<pre class="prettyprint"><span class="tag">&lt;button</span><span class="pln"> </span><span class="atn">onclick</span><span class="pun">=</span><span class="atv">"</span><span class="pln">sayHI</span><span class="pun">()</span><span class="atv">"</span><span class="tag">&gt;</span><span class="pln">Say HI</span><span class="tag">&lt;/button&gt;</span><span class="pln">
+</span><span class="tag">&lt;button</span><span class="pln"> </span><span class="atn">onclick</span><span class="pun">=</span><span class="atv">"</span><span class="pln">unknownCmd</span><span class="pun">()</span><span class="atv">"</span><span class="tag">&gt;</span><span class="pln">Send unknown command</span><span class="tag">&lt;/button&gt;</span><span class="pln">
+</span><span class="tag">&lt;button</span><span class="pln"> </span><span class="atn">onclick</span><span class="pun">=</span><span class="atv">"</span><span class="pln">stop</span><span class="pun">()</span><span class="atv">"</span><span class="tag">&gt;</span><span class="pln">Stop worker</span><span class="tag">&lt;/button&gt;</span><span class="pln">
+</span><span class="tag">&lt;output</span><span class="pln"> </span><span class="atn">id</span><span class="pun">=</span><span class="atv">"result"</span><span class="tag">&gt;&lt;/output&gt;</span><span class="pln">
+
+</span><span class="tag">&lt;script&gt;</span><span class="pln">
+  </span><span class="kwd">function</span><span class="pln"> sayHI</span><span class="pun">()</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+    worker</span><span class="pun">.</span><span class="pln">postMessage</span><span class="pun">({</span><span class="str">'cmd'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'start'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'msg'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'Hi'</span><span class="pun">});</span><span class="pln">
+  </span><span class="pun">}</span><span class="pln">
+
+  </span><span class="kwd">function</span><span class="pln"> stop</span><span class="pun">()</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+    </span><span class="com">// Calling worker.terminate() from this script would also stop the worker.</span><span class="pln">
+    worker</span><span class="pun">.</span><span class="pln">postMessage</span><span class="pun">({</span><span class="str">'cmd'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'stop'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'msg'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'Bye'</span><span class="pun">});</span><span class="pln">
+  </span><span class="pun">}</span><span class="pln">
+
+  </span><span class="kwd">function</span><span class="pln"> unknownCmd</span><span class="pun">()</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+    worker</span><span class="pun">.</span><span class="pln">postMessage</span><span class="pun">({</span><span class="str">'cmd'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'foobard'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'msg'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'???'</span><span class="pun">});</span><span class="pln">
+  </span><span class="pun">}</span><span class="pln">
+
+  </span><span class="kwd">var</span><span class="pln"> worker </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">new</span><span class="pln"> </span><span class="typ">Worker</span><span class="pun">(</span><span class="str">'doWork2.js'</span><span class="pun">);</span><span class="pln">
+
+  worker</span><span class="pun">.</span><span class="pln">addEventListener</span><span class="pun">(</span><span class="str">'message'</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">e</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+    document</span><span class="pun">.</span><span class="pln">getElementById</span><span class="pun">(</span><span class="str">'result'</span><span class="pun">).</span><span class="pln">textContent </span><span class="pun">=</span><span class="pln"> e</span><span class="pun">.</span><span class="pln">data</span><span class="pun">;</span><span class="pln">
+  </span><span class="pun">},</span><span class="pln"> </span><span class="kwd">false</span><span class="pun">);</span><span class="pln">
+</span><span class="tag">&lt;/script&gt;</span></pre>
+<p>doWork2.js:</p>
+<pre class="prettyprint"><span class="kwd">self</span><span class="pun">.</span><span class="pln">addEventListener</span><span class="pun">(</span><span class="str">'message'</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">e</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+  </span><span class="kwd">var</span><span class="pln"> data </span><span class="pun">=</span><span class="pln"> e</span><span class="pun">.</span><span class="pln">data</span><span class="pun">;</span><span class="pln">
+  </span><span class="kwd">switch</span><span class="pln"> </span><span class="pun">(</span><span class="pln">data</span><span class="pun">.</span><span class="pln">cmd</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+    </span><span class="kwd">case</span><span class="pln"> </span><span class="str">'start'</span><span class="pun">:</span><span class="pln">
+      </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">postMessage</span><span class="pun">(</span><span class="str">'WORKER STARTED: '</span><span class="pln"> </span><span class="pun">+</span><span class="pln"> data</span><span class="pun">.</span><span class="pln">msg</span><span class="pun">);</span><span class="pln">
+      </span><span class="kwd">break</span><span class="pun">;</span><span class="pln">
+    </span><span class="kwd">case</span><span class="pln"> </span><span class="str">'stop'</span><span class="pun">:</span><span class="pln">
+      </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">postMessage</span><span class="pun">(</span><span class="str">'WORKER STOPPED: '</span><span class="pln"> </span><span class="pun">+</span><span class="pln"> data</span><span class="pun">.</span><span class="pln">msg </span><span class="pun">+</span><span class="pln"> </span><span class="str">'. (buttons will no longer work)'</span><span class="pun">);</span><span class="pln">
+      </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">close</span><span class="pun">();</span><span class="pln"> </span><span class="com">// Terminates the worker.</span><span class="pln">
+      </span><span class="kwd">break</span><span class="pun">;</span><span class="pln">
+    </span><span class="kwd">default</span><span class="pun">:</span><span class="pln">
+      </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">postMessage</span><span class="pun">(</span><span class="str">'Unknown command: '</span><span class="pln"> </span><span class="pun">+</span><span class="pln"> data</span><span class="pun">.</span><span class="pln">msg</span><span class="pun">);</span><span class="pln">
+  </span><span class="pun">};</span><span class="pln">
+</span><span class="pun">},</span><span class="pln"> </span><span class="kwd">false</span><span class="pun">);</span></pre>
+<p><strong>Note</strong>: There are two ways to stop a worker: by calling <code>worker.terminate()</code> from the main page
+or by calling <code>self.close()</code> inside of the worker itself.</p>
+<p><strong>Example</strong>: Run this worker!</p>
+<div class="example">
+<button onclick="sayHI()">Say HI</button>
+<button onclick="unknownCmd()">Send unknown command</button>
+<button onclick="stop()">Stop worker</button>
+<output id="result"></output>
+</div>
+<h2 id="toc-enviornment">The Worker Environment</h2>
+<h3 id="toc-enviornment-scope">Worker Scope</h3>
+<p>In the context of a worker, both <code>self</code> and <code>this</code> reference the global scope
+for the worker. Thus, the previous example could also be written as:</p>
+<pre class="prettyprint"><span class="pln">addEventListener</span><span class="pun">(</span><span class="str">'message'</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">e</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+  </span><span class="kwd">var</span><span class="pln"> data </span><span class="pun">=</span><span class="pln"> e</span><span class="pun">.</span><span class="pln">data</span><span class="pun">;</span><span class="pln">
+  </span><span class="kwd">switch</span><span class="pln"> </span><span class="pun">(</span><span class="pln">data</span><span class="pun">.</span><span class="pln">cmd</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+    </span><span class="kwd">case</span><span class="pln"> </span><span class="str">'start'</span><span class="pun">:</span><span class="pln">
+      postMessage</span><span class="pun">(</span><span class="str">'WORKER STARTED: '</span><span class="pln"> </span><span class="pun">+</span><span class="pln"> data</span><span class="pun">.</span><span class="pln">msg</span><span class="pun">);</span><span class="pln">
+      </span><span class="kwd">break</span><span class="pun">;</span><span class="pln">
+    </span><span class="kwd">case</span><span class="pln"> </span><span class="str">'stop'</span><span class="pun">:</span><span class="pln">
+  </span><span class="pun">...</span><span class="pln">
+</span><span class="pun">},</span><span class="pln"> </span><span class="kwd">false</span><span class="pun">);</span></pre>
+<p>Alternatively, you could set the <code>onmessage</code> event handler directly
+(though <code>addEventListener</code> is always encouraged by JavaScript ninjas).</p>
+<pre class="prettyprint"><span class="pln">onmessage </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">e</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+  </span><span class="kwd">var</span><span class="pln"> data </span><span class="pun">=</span><span class="pln"> e</span><span class="pun">.</span><span class="pln">data</span><span class="pun">;</span><span class="pln">
+  </span><span class="pun">...</span><span class="pln">
+</span><span class="pun">};</span></pre>
+<h3 id="toc-enviornment-features">Features Available to Workers</h3>
+<p>Due to their multi-threaded behavior, web workers only has access to a subset of JavaScript's features:</p>
+<ul>
+<li>The <code>navigator</code> object</li>
+<li>The <code>location</code> object (read-only)</li>
+<li><code>XMLHttpRequest</code></li>
+<li><code>setTimeout()/clearTimeout()</code> and <code>setInterval()/clearInterval()</code></li>
+<li>The <a href="http://www.html5rocks.com/tutorials/appcache/beginner/">Application Cache</a></li>
+<li>Importing external scripts using the <code>importScripts()</code> method</li>
+<li><a href="http://www.html5rocks.com/en/tutorials/workers/basics/#toc-enviornment-subworkers">Spawning other web workers</a></li>
+</ul>
+<p>Workers do NOT have access to:</p>
+<ul>
+<li>The DOM (it's not thread-safe)</li>
+<li>The <code>window</code> object</li>
+<li>The <code>document</code> object</li>
+<li>The <code>parent</code> object</li>
+</ul>
+<h3 id="toc-enviornment-loadingscripts">Loading External Scripts</h3>
+<p>You can load external script files or libraries into a worker with the <code>importScripts()</code> function. The method
+takes zero or more strings representing the filenames for the resources to import.</p>
+<p>This example loads <code>script1.js</code> and <code>script2.js</code> into the worker:</p>
+<p>worker.js:</p>
+<pre class="prettyprint"><span class="pln">importScripts</span><span class="pun">(</span><span class="str">'script1.js'</span><span class="pun">);</span><span class="pln">
+importScripts</span><span class="pun">(</span><span class="str">'script2.js'</span><span class="pun">);</span></pre>
+<p>Which can also be written as a single import statement:</p>
+<pre class="prettyprint"><span class="pln">importScripts</span><span class="pun">(</span><span class="str">'script1.js'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'script2.js'</span><span class="pun">);</span></pre>
+<h3 id="toc-enviornment-subworkers">Subworkers</h3>
+<p>Workers have the ability to spawn child workers. This is great for further breaking up large
+tasks at runtime. However, subworkers come with a few caveats:</p>
+<ul>
+<li>Subworkers must be hosted within the same origin as the parent page. </li>
+<li>URIs within subworkers are resolved relative to their parent worker's location (as opposed to the main page).</li>
+</ul>
+<p>Keep in mind most browsers spawn separate processes for each worker. Before you go spawning a worker
+farm, be cautious about hogging too many of the user's system resources. One reason for this is that messages
+passed between main pages and workers are copied, not shared. See <a href="http://www.html5rocks.com/en/tutorials/workers/basics/#toc-gettingstarted-workercomm">Communicating with a Worker via Message Passing</a>.</p>
+<p>For an sample of how to spawn a subworker, see <a href="http://www.whatwg.org/specs/web-workers/current-work/#delegation" target="_blank">the example</a>
+in the specification.</p>
+<h2 id="toc-inlineworkers">Inline Workers</h2>
+<p>What if you want to create your worker script on the fly, or create a self-contained
+page without having to create separate worker files? With <code>Blob()</code>,
+you can "inline" your worker in the same HTML file as your main logic by creating
+a URL handle to the worker code as a string:</p>
+<pre class="prettyprint"><span class="pln">window</span><span class="pun">.</span><span class="pln">URL </span><span class="pun">=</span><span class="pln"> window</span><span class="pun">.</span><span class="pln">URL </span><span class="pun">||</span><span class="pln"> window</span><span class="pun">.</span><span class="pln">webkiURL</span><span class="pun">;</span><span class="pln">
+
+</span><span class="kwd">var</span><span class="pln"> blob </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">new</span><span class="pln"> </span><span class="typ">Blob</span><span class="pun">([</span><span class="str">"onmessage = function(e) { postMessage('msg from worker'); }"</span><span class="pun">]);</span><span class="pln">
+
+</span><span class="com">// Obtain a blob URL reference to our worker 'file'.</span><span class="pln">
+</span><span class="kwd">var</span><span class="pln"> blobURL </span><span class="pun">=</span><span class="pln"> window</span><span class="pun">.</span><span class="pln">URL</span><span class="pun">.</span><span class="pln">createObjectURL</span><span class="pun">(</span><span class="pln">blob</span><span class="pun">);</span><span class="pln">
+
+</span><span class="kwd">var</span><span class="pln"> worker </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">new</span><span class="pln"> </span><span class="typ">Worker</span><span class="pun">(</span><span class="pln">blobURL</span><span class="pun">);</span><span class="pln">
+worker</span><span class="pun">.</span><span class="pln">onmessage </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">e</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+  </span><span class="com">// e.data == 'msg from worker'</span><span class="pln">
+</span><span class="pun">};</span><span class="pln">
+worker</span><span class="pun">.</span><span class="pln">postMessage</span><span class="pun">();</span><span class="pln"> </span><span class="com">// Start the worker.</span></pre>
+<h3 id="toc-inlineworkers-bloburis">Blob URLs</h3>
+<p>The magic comes with the call to <a href="http://dev.w3.org/2006/webapi/FileAPI/#dfn-createObjectURL" target="_blank"><code>window.URL.createObjectURL()</code></a>.
+This method creates a simple URL string which can be used to reference data stored in a
+DOM <code>File</code> or <code>Blob</code> object. For example:</p>
+<pre class="prettyprint"><span class="pln">blob</span><span class="pun">:</span><span class="pln">http</span><span class="pun">:</span><span class="com">//localhost/c745ef73-ece9-46da-8f66-ebes574789b1</span></pre>
+<p>Blob URLs are unique and last for the lifetime of your application (e.g. until the <code>document</code>
+is unloaded). If you're creating many Blob URLs, it's a good idea to release references that are
+no longer needed. You can explicitly release a Blob URLs by passing it to <a href="http://dev.w3.org/2006/webapi/FileAPI/#dfn-revokeObjectURL" target="_blank"><code>window.URL.revokeObjectURL()</code></a>:</p>
+<pre class="prettyprint"><span class="pln">window</span><span class="pun">.</span><span class="pln">URL</span><span class="pun">.</span><span class="pln">revokeObjectURL</span><span class="pun">(</span><span class="pln">blobURL</span><span class="pun">);</span><span class="pln"> </span><span class="com">// window.webkitURL.createObjectURL() in Chrome 10+.</span></pre>
+<p>In Chrome, there's a nice page to view all of the created blob URLs: <code>chrome://blob-internals/</code>.</p>
+<h3 id="toc-inlineworkers-example">Full Example</h3>
+<p>Taking this one step further, we can get clever with how the worker's JS
+code is inlined in our page. This technique uses a <code>&lt;script&gt;</code> tag
+to define the worker:</p>
+<pre class="prettyprint"><span class="dec">&lt;!DOCTYPE html&gt;</span><span class="pln">
+</span><span class="tag">&lt;html&gt;</span><span class="pln">
+</span><span class="tag">&lt;head&gt;</span><span class="pln">
+  </span><span class="tag">&lt;meta</span><span class="pln"> </span><span class="atn">charset</span><span class="pun">=</span><span class="atv">"utf-8"</span><span class="pln"> </span><span class="tag">/&gt;</span><span class="pln">
+</span><span class="tag">&lt;/head&gt;</span><span class="pln">
+</span><span class="tag">&lt;body&gt;</span><span class="pln">
+
+  </span><span class="tag">&lt;div</span><span class="pln"> </span><span class="atn">id</span><span class="pun">=</span><span class="atv">"log"</span><span class="tag">&gt;&lt;/div&gt;</span><span class="pln">
+
+  </span><span class="tag">&lt;script</span><span class="pln"> </span><span class="atn">id</span><span class="pun">=</span><span class="atv">"worker1"</span><span class="pln"> </span><span class="atn">type</span><span class="pun">=</span><span class="atv">"javascript/worker"</span><span class="tag">&gt;</span><span class="pln">
+    </span><span class="com">// This script won't be parsed by JS engines because its type is javascript/worker.</span><span class="pln">
+    self</span><span class="pun">.</span><span class="pln">onmessage </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">e</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+      self</span><span class="pun">.</span><span class="pln">postMessage</span><span class="pun">(</span><span class="str">'msg from worker'</span><span class="pun">);</span><span class="pln">
+    </span><span class="pun">};</span><span class="pln">
+    </span><span class="com">// Rest of your worker code goes here.</span><span class="pln">
+  </span><span class="tag">&lt;/script&gt;</span><span class="pln">
+
+  </span><span class="tag">&lt;script&gt;</span><span class="pln">
+    window</span><span class="pun">.</span><span class="pln">URL </span><span class="pun">=</span><span class="pln"> window</span><span class="pun">.</span><span class="pln">URL </span><span class="pun">||</span><span class="pln"> window</span><span class="pun">.</span><span class="pln">webkiURL</span><span class="pun">;</span><span class="pln">
+
+    </span><span class="kwd">function</span><span class="pln"> log</span><span class="pun">(</span><span class="pln">msg</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+      </span><span class="com">// Use a fragment: browser will only render/reflow once.</span><span class="pln">
+      </span><span class="kwd">var</span><span class="pln"> fragment </span><span class="pun">=</span><span class="pln"> document</span><span class="pun">.</span><span class="pln">createDocumentFragment</span><span class="pun">();</span><span class="pln">
+      fragment</span><span class="pun">.</span><span class="pln">appendChild</span><span class="pun">(</span><span class="pln">document</span><span class="pun">.</span><span class="pln">createTextNode</span><span class="pun">(</span><span class="pln">msg</span><span class="pun">));</span><span class="pln">
+      fragment</span><span class="pun">.</span><span class="pln">appendChild</span><span class="pun">(</span><span class="pln">document</span><span class="pun">.</span><span class="pln">createElement</span><span class="pun">(</span><span class="str">'br'</span><span class="pun">));</span><span class="pln">
+
+      document</span><span class="pun">.</span><span class="pln">querySelector</span><span class="pun">(</span><span class="str">"#log"</span><span class="pun">).</span><span class="pln">appendChild</span><span class="pun">(</span><span class="pln">fragment</span><span class="pun">);</span><span class="pln">
+    </span><span class="pun">}</span><span class="pln">
+
+    </span><span class="kwd">var</span><span class="pln"> blob </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">new</span><span class="pln"> </span><span class="typ">Blob</span><span class="pun">([</span><span class="pln">document</span><span class="pun">.</span><span class="pln">querySelector</span><span class="pun">(</span><span class="str">'#worker1'</span><span class="pun">).</span><span class="pln">textContent</span><span class="pun">]);</span><span class="pln">
+
+    </span><span class="kwd">var</span><span class="pln"> worker </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">new</span><span class="pln"> </span><span class="typ">Worker</span><span class="pun">(</span><span class="pln">window</span><span class="pun">.</span><span class="pln">URL</span><span class="pun">.</span><span class="pln">createObjectURL</span><span class="pun">(</span><span class="pln">blob</span><span class="pun">));</span><span class="pln">
+    worker</span><span class="pun">.</span><span class="pln">onmessage </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">e</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+      log</span><span class="pun">(</span><span class="str">"Received: "</span><span class="pln"> </span><span class="pun">+</span><span class="pln"> e</span><span class="pun">.</span><span class="pln">data</span><span class="pun">);</span><span class="pln">
+    </span><span class="pun">}</span><span class="pln">
+    worker</span><span class="pun">.</span><span class="pln">postMessage</span><span class="pun">();</span><span class="pln"> </span><span class="com">// Start the worker.</span><span class="pln">
+  </span><span class="tag">&lt;/script&gt;</span><span class="pln">
+</span><span class="tag">&lt;/body&gt;</span><span class="pln">
+</span><span class="tag">&lt;/html&gt;</span></pre>
+<p>In my opinion, this new approach is a bit cleaner and more legible.
+It defines a script tag with <var>id="worker1"</var> and
+<var>type='javascript/worker'</var> (so the browser doesn't parse the JS). That code is extracted as a
+string using <code>document.querySelector('#worker1').textContent</code> and passed to
+<code>Blob()</code> to create the file.</p>
+<h3 id="toc-inlineworkers-loadingscripts">Loading External Scripts</h3>
+<p>When using these techniques to inline your worker code,
+<code>importScripts()</code> will only work if you supply an absolute URI. If
+you attempt to pass a relative URI, the browser will complain with a security
+error. The reason being: the worker (now created from a blob URL) will be resolved with a
+<code>blob:</code> prefix, while your app will be running from a different (presumably <code>http://</code>)
+scheme. Hence, the failure will be due to cross origin restrictions.</p>
+<p>One way to utilize <code>importScripts()</code> in an inline worker is to
+"inject" the current url of your main script is running from by passing it
+to the inline worker and constructing the absolute URL manually. This
+will insure the external script is imported from the same origin. Assuming your
+main app is running from http://example.com/index.html:</p>
+<pre class="prettyprint"><span class="pun">...</span><span class="pln">
+</span><span class="pun">&lt;</span><span class="pln">script id</span><span class="pun">=</span><span class="str">"worker2"</span><span class="pln"> type</span><span class="pun">=</span><span class="str">"javascript/worker"</span><span class="pun">&gt;</span><span class="pln">
+</span><span class="kwd">self</span><span class="pun">.</span><span class="pln">onmessage </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">e</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+  </span><span class="kwd">var</span><span class="pln"> data </span><span class="pun">=</span><span class="pln"> e</span><span class="pun">.</span><span class="pln">data</span><span class="pun">;</span><span class="pln">
+
+  </span><span class="kwd">if</span><span class="pln"> </span><span class="pun">(</span><span class="pln">data</span><span class="pun">.</span><span class="pln">url</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+    </span><span class="kwd">var</span><span class="pln"> url </span><span class="pun">=</span><span class="pln"> data</span><span class="pun">.</span><span class="pln">url</span><span class="pun">.</span><span class="pln">href</span><span class="pun">;</span><span class="pln">
+    </span><span class="kwd">var</span><span class="pln"> index </span><span class="pun">=</span><span class="pln"> url</span><span class="pun">.</span><span class="pln">indexOf</span><span class="pun">(</span><span class="str">'index.html'</span><span class="pun">);</span><span class="pln">
+    </span><span class="kwd">if</span><span class="pln"> </span><span class="pun">(</span><span class="pln">index </span><span class="pun">!=</span><span class="pln"> </span><span class="pun">-</span><span class="lit">1</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+      url </span><span class="pun">=</span><span class="pln"> url</span><span class="pun">.</span><span class="pln">substring</span><span class="pun">(</span><span class="lit">0</span><span class="pun">,</span><span class="pln"> index</span><span class="pun">);</span><span class="pln">
+    </span><span class="pun">}</span><span class="pln">
+    importScripts</span><span class="pun">(</span><span class="pln">url </span><span class="pun">+</span><span class="pln"> </span><span class="str">'engine.js'</span><span class="pun">);</span><span class="pln">
+  </span><span class="pun">}</span><span class="pln">
+  </span><span class="pun">...</span><span class="pln">
+</span><span class="pun">};</span><span class="pln">
+</span><span class="pun">&lt;</span><span class="str">/script&gt;
+&lt;script&gt;
+  var worker = new Worker(window.URL.createObjectURL(bb.getBlob()));
+  worker.postMessage(</span><b><span class="str">{url: document.location}</span></b><span class="str">);
+&lt;/</span><span class="pln">script</span><span class="pun">&gt;</span></pre>
+<h2 id="toc-errors">Handling Errors</h2>
+<p>As with any JavaScript logic, you'll want to handle any errors that are thrown in your web workers.
+If an error occurs while a worker is executing, the an <code>ErrorEvent</code> is fired. The interface contains three useful properties for figuring out what went wrong: <code>filename</code> - the name of the worker script
+that caused the error, <code>lineno</code> - the line number where the error occurred, and <code>message</code> - a meaningful
+description of the error. Here is an example of setting up an <code>onerror</code> event handler to print the properties of the error:</p>
+<pre class="prettyprint"><span class="tag">&lt;output</span><span class="pln"> </span><span class="atn">id</span><span class="pun">=</span><span class="atv">"error"</span><span class="pln"> </span><span class="atn">style</span><span class="pun">=</span><span class="atv">"</span><span class="kwd">color</span><span class="pun">:</span><span class="pln"> red</span><span class="pun">;</span><span class="atv">"</span><span class="tag">&gt;&lt;/output&gt;</span><span class="pln">
+</span><span class="tag">&lt;output</span><span class="pln"> </span><span class="atn">id</span><span class="pun">=</span><span class="atv">"result"</span><span class="tag">&gt;&lt;/output&gt;</span><span class="pln">
+
+</span><span class="tag">&lt;script&gt;</span><span class="pln">
+  </span><span class="kwd">function</span><span class="pln"> onError</span><span class="pun">(</span><span class="pln">e</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+    document</span><span class="pun">.</span><span class="pln">getElementById</span><span class="pun">(</span><span class="str">'error'</span><span class="pun">).</span><span class="pln">textContent </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[</span><span class="pln">
+      </span><span class="str">'ERROR: Line '</span><span class="pun">,</span><span class="pln"> e</span><span class="pun">.</span><span class="pln">lineno</span><span class="pun">,</span><span class="pln"> </span><span class="str">' in '</span><span class="pun">,</span><span class="pln"> e</span><span class="pun">.</span><span class="pln">filename</span><span class="pun">,</span><span class="pln"> </span><span class="str">': '</span><span class="pun">,</span><span class="pln"> e</span><span class="pun">.</span><span class="pln">message</span><span class="pun">].</span><span class="pln">join</span><span class="pun">(</span><span class="str">''</span><span class="pun">);</span><span class="pln">
+  </span><span class="pun">}</span><span class="pln">
+
+  </span><span class="kwd">function</span><span class="pln"> onMsg</span><span class="pun">(</span><span class="pln">e</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+    document</span><span class="pun">.</span><span class="pln">getElementById</span><span class="pun">(</span><span class="str">'result'</span><span class="pun">).</span><span class="pln">textContent </span><span class="pun">=</span><span class="pln"> e</span><span class="pun">.</span><span class="pln">data</span><span class="pun">;</span><span class="pln">
+  </span><span class="pun">}</span><span class="pln">
+
+  </span><span class="kwd">var</span><span class="pln"> worker </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">new</span><span class="pln"> </span><span class="typ">Worker</span><span class="pun">(</span><span class="str">'workerWithError.js'</span><span class="pun">);</span><span class="pln">
+  worker</span><span class="pun">.</span><span class="pln">addEventListener</span><span class="pun">(</span><span class="str">'message'</span><span class="pun">,</span><span class="pln"> onMsg</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">false</span><span class="pun">);</span><span class="pln">
+  worker</span><span class="pun">.</span><span class="pln">addEventListener</span><span class="pun">(</span><span class="str">'error'</span><span class="pun">,</span><span class="pln"> onError</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">false</span><span class="pun">);</span><span class="pln">
+  worker</span><span class="pun">.</span><span class="pln">postMessage</span><span class="pun">();</span><span class="pln"> </span><span class="com">// Start worker without a message.</span><span class="pln">
+</span><span class="tag">&lt;/script&gt;</span></pre>
+<p><strong>Example</strong>: workerWithError.js tries to perform 1/x, where x is undefined.</p>
+<div class="example">
+<button onclick="startErrorWorker()">Run it</button>
+<output id="error" style="color:red;"></output>
+<output id="result2"></output>
+</div>
+<p>workerWithError.js:</p>
+<pre class="prettyprint"><span class="kwd">self</span><span class="pun">.</span><span class="pln">addEventListener</span><span class="pun">(</span><span class="str">'message'</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">e</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+  postMessage</span><span class="pun">(</span><span class="lit">1</span><span class="pun">/</span><span class="pln">x</span><span class="pun">);</span><span class="pln"> </span><span class="com">// Intentional error.</span><span class="pln">
+</span><span class="pun">};</span></pre>
+<h2 id="toc-security">A Word on Security</h2>
+<h3 id="toc-security-local">Restrictions with Local Access</h3>
+<p>Due to Google Chrome's security restrictions, workers will not run locally (e.g. from <code>file://</code>) in the latest
+versions of the browser. Instead, they fail silently! To run your app from the <code>file://</code> scheme, run Chrome with the
+<code>--allow-file-access-from-files</code> flag set.
+<strong>NOTE</strong>: It is not recommended to run your primary browser with this flag set. It should only be used for testing purposes
+and not regular browsing.</p>
+<p>Other browsers do not impose the same restriction.</p>
+<h3 id="toc-security-origin">Same Origin Considerations</h3>
+<p>Worker scripts must be external files with the same scheme as their calling page. Thus,
+you cannot load a script from a <code>data:</code> URL or <code>javascript:</code> URL, and an <code>https:</code>
+page cannot start worker scripts that begin with <code>http:</code> URLs.</p>
+<h2 id="toc-usecases">Use Cases</h2>
+<p>So what kind app would utilize web workers? Unfortunately, web workers are still relatively new and
+the majority of samples/tutorials out there involve computing prime numbers. Although that isn't very interesting,
+it's useful for understanding the concepts of web workers. Here are a few more ideas to get your brain churning:</p>
+<ul>
+<li>Prefetching and/or caching data for later use</li>
+<li>Code syntax highlighting or other real-time text formatting</li>
+<li>Spell checker</li>
+<li>Analyzing video or audio data</li>
+<li>Background I/O or polling of webservices</li>
+<li>Processing large arrays or humungous JSON responses</li>
+<li>Image filtering in &lt;canvas&gt;</li>
+<li>Updating many rows of a local web database</li>
+</ul>
+<h2 id="toc-examples">Demos</h2>
+<ul>
+<li>Example from <a href="http://slides.html5rocks.com/#web-workers" target="_blank">HTML5Rocks slides</a></li>
+<li><a href="http://htmlfive.appspot.com/static/tracker1.html" target="_blank">Motion tracker</a></li>
+<li><a href="http://people.mozilla.com/~prouget/demos/worker_and_simulatedannealing/index.xhtml" target="_blank">Simulated Annealing</a></li>
+<li><a href="http://html5demos.com/worker" target="_blank">HTML5demos sample</a></li>
+</ul>
+<h2 id="toc-references">References</h2>
+<ul>
+<li><a href="http://www.whatwg.org/specs/web-workers/current-work/" target="_blank">Web Workers</a> specification</li>
+<li><a href="http://developer.mozilla.org/en/Using_web_workers" target="_blank">"Using web workers"</a> from Mozilla Developer Network</li>
+<li><a href="http://dev.opera.com/articles/view/web-workers-rise-up/" target="_blank">"Web Workers rise up!"</a> from Dev.Opera</li>
+</ul>
+<script type="text/javascript" pagespeed_no_defer="">pagespeed.lazyLoadImages.overrideAttributeFunctions();</script><script>var worker=new Worker('doWork2.js');worker.addEventListener('message',function(e){document.getElementById('result').textContent=e.data;},false);function sayHI(){worker.postMessage({'cmd':'start','msg':'Hi'});}
+function stop(){worker.postMessage({'cmd':'stop','msg':'Bye'});}
+function unknownCmd(){worker.postMessage({'cmd':'foobard','msg':'???'});}
+var worker2=new Worker('workerWithError.js');worker2.addEventListener('message',onMsg,false);worker2.addEventListener('error',onError,false);function startErrorWorker(){worker2.postMessage();}
+function onError(e){document.getElementById('error').textContent=['ERROR: Line ',e.lineno,' in ',e.filename,': ',e.message].join('');}
+function onMsg(e){document.getElementById('result2').textContent=e.data;}</script>
+</section>
+</article>
+<section class="cc pattern-bg-lighter">
+<p>
+Except as otherwise <a href="http://code.google.com/policies.html#restrictions">noted</a>, the content of this page is licensed under the <a href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 License</a>, and code samples are licensed under the <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache 2.0 License</a>.
+</p>
+</section>
+<section class="disqus pattern-bg-lighter">
+<div id="disqus_thread"><iframe id="dsq1" data-disqus-uid="1" allowtransparency="true" frameborder="0" role="application" style="width: 100%; border: none; overflow: hidden; height: 4286px;" width="100%" src="./The Basics of Web Workers - HTML5 Rocks_files/saved_resource.htm" scrolling="no" horizontalscrolling="no" verticalscrolling="no"></iframe><iframe id="dsq3" data-disqus-uid="3" allowtransparency="true" frameborder="0" role="application" style="width: 100%; border: none; overflow: hidden; display: none;" width="100%" src="./The Basics of Web Workers - HTML5 Rocks_files/client.htm"></iframe><iframe id="dsq-indicator-north" data-disqus-uid="-indicator-north" allowtransparency="true" frameborder="0" role="application" style="width: 960px; border: none; overflow: hidden; top: 0px; position: fixed; height: 29px; display: none;" scrolling="no"></iframe><iframe id="dsq-indicator-south" data-disqus-uid="-indicator-south" allowtransparency="true" frameborder="0" role="application" style="width: 960px; border: none; overflow: hidden; bottom: 0px; position: fixed; height: 29px; display: none;" scrolling="no"></iframe></div>
+<noscript>
+&lt;p class="center"&gt;
+&lt;strong&gt;
+&lt;a href="http://disqus.com/?ref_noscript"&gt;Please enable JavaScript to view the comments powered by Disqus.&lt;/a&gt;
+&lt;/strong&gt;
+&lt;/p&gt;
+</noscript>
+<script>function _prettyPrint(){if(typeof customPrettyPrintLanguage!='undefined'){customPrettyPrintLanguage();}
+prettyPrint();}</script>
+<script async="" src="./The Basics of Web Workers - HTML5 Rocks_files/plusone.js" gapi_processed="true"></script>
+<script async="" src="./The Basics of Web Workers - HTML5 Rocks_files/prettify.min.js.pagespeed.jm.JSZAUYYnh2.js" onload="_prettyPrint()"></script>
+<script async="" src="./The Basics of Web Workers - HTML5 Rocks_files/widgets.js"></script>
+<script>var disqus_shortname='html5rocks';var disqus_identifier='http://www.html5rocks.com/tutorials/workers/basics/';var disqus_url='http://www.html5rocks.com/tutorials/workers/basics/';var disqus_developer=0;var disqus_config=function(){var funky_language_code_mapping={'de':'de_inf','es':'es_ES','pt':'pt_EU','sr':'sr_CYRL','sv':'sv_SE','zh':'zh_HANT'};this.language=funky_language_code_mapping['en']||'en';};window.addEventListener('load',function(e){var c=document.createElement('script');c.type='text/javascript';c.src='http://'+disqus_shortname+'.disqus.com/count.js';var dsq=document.createElement('script');dsq.type='text/javascript';dsq.src='http://'+disqus_shortname+'.disqus.com/embed.js';var s=document.getElementsByTagName('script')[0],sp=s.parentNode;sp.insertBefore(c,s);sp.insertBefore(dsq,s);},false);var externLinks=document.querySelectorAll('article.tutorial a[href^="http"]:not([target])');for(var i=0,a;a=externLinks[i];++i){a.target='_blank';}</script>
+</section>
+</div>
+<script>(function(){$('#features_show a').click(function(){$('#search_hide').click();if($(this).hasClass('current')){$('.subheader.features').hide();$(this).removeClass('current');$('.watermark').css('top','30px');$('#features_show a').focus();}else{$('.main nav .current').removeClass('current');$(this).addClass('current');$('.subheader.features').show();$('.watermark').css('top','100px');$('#features').focus();}
+if(/#features$/.test(this.href))return false;});$('#features_hide').click(function(){$('#features_show').removeClass('current');$('.subheader.features').hide();$('.watermark').css('top','30px');$('#features_show a').focus();});if(window.applicationCache){window.applicationCache.addEventListener('updateready',function(e){if(window.applicationCache.status==window.applicationCache.UPDATEREADY){window.applicationCache.swapCache();if(confirm('A new version of this site is available. Load it?')){window.location.reload();}}},false);}
+window.isCompatible=function(){return Modernizr.webworkers;};if(isCompatible()===false){document.getElementById('notcompatible').className='';}else if(isCompatible()===true){document.getElementById('compatible').className='';}
+if(/^\?utm_/.test(document.location.search)&&window.history.replaceState){window.history.replaceState({},'',document.location.href.replace(/\?utm_.*/,''));}
+if($(window).width()<'1200'&&$(window).width()>'1000'&&$('.toc').length){var top=$('.toc').offset().top-50;$(window).scroll(function(event){var y=$(this).scrollTop();if(y>=top){$('.toc').addClass('fixed').removeClass('bottom');}else{$('.toc').removeClass('fixed').removeClass('bottom');}});}})();</script>
+<script>var _gaq=_gaq||[];_gaq.push(['_setAccount','UA-15028909-1']);_gaq.push(['_setSiteSpeedSampleRate',50]);_gaq.push(['_trackPageview']);(function(){var ga=document.createElement('script');ga.type='text/javascript';ga.async=true;ga.src=('https:'==document.location.protocol?'https://ssl':'http://www')+'.google-analytics.com/ga.js';var s=document.getElementsByTagName('script')[0];s.parentNode.insertBefore(ga,s);})();</script>
+<script defer="" src="./The Basics of Web Workers - HTML5 Rocks_files/app.min.js.pagespeed.ce.IlL62AP3Y-.js"></script>
+<script defer="" src="./The Basics of Web Workers - HTML5 Rocks_files/search.min.js.pagespeed.ce.hdMERthVbk.js"></script>
+<script defer="" src="./The Basics of Web Workers - HTML5 Rocks_files/3rdpartyinit.min.js.pagespeed.ce.CGINL0KvzE.js"></script>
+<script type="text/javascript">(function(){function g(){var ifr=0;var rpi='';if(window.mod_pagespeed_prefetch_start){rpi+='&nrp='+window.mod_pagespeed_num_resources_prefetched;rpi+='&htmlAt=';rpi+=(window.mod_pagespeed_start-window.mod_pagespeed_prefetch_start);}if(window.parent != window){ifr=1}new Image().src='http://1-ps.googleusercontent.com/beacon?org=60_1_vn&ets=load:'+(Number(new Date())-window.mod_pagespeed_start)+'&ifr='+ifr+''+rpi+'&ft=501&url='+encodeURIComponent('http://www.html5rocks.com/en/tutorials/workers/basics/');window.mod_pagespeed_loaded=true;};var f=window.addEventListener;if(f){f('load',g,false);}else{f=window.attachEvent;if(f){f('onload',g);}}})();</script>
+
+</body></html>

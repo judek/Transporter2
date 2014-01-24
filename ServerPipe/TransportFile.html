@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+		<html>
+		<head>
+        <script type="text/javascript" src="jquery-1.8.2.js"></script>  
+		<title>File Transporter</title>
+		 <link rel="StyleSheet" href="judek.css" type="text/css" media="screen" />
+		    <style type="text/css">
+                .style1
+                {
+                    width: 100%;
+                }
+                .style2
+                {
+                    width: 119px;
+                }
+            </style>
+		</head>
+		<body>
+
+		
+		
+		<!-- OUTER table-->
+<table cellpadding="0" cellspacing="0" border="0" bordercolor="666666" width="650"><tr><td  VALIGN="TOP">
+
+<!-- SPLIT table-->
+<table cellpadding="0" cellspacing="0" border="0" width="100%">
+<tr><td ALIGN=LEFT VALIGN=TOP width="180">
+
+
+    <br />
+
+
+</td><td  VALIGN=TOP background="picts/background-main.jpg">
+
+<!-- Top Spacer -->
+<!-- <img src="picts/spacer.gif" height="100" width="50" border="0"> -->
+        <div class="title">File Transporter</div><br />
+<div id="divControls"> 
+
+<table class="style1">
+                <tr>
+                    <td class="style2">
+                        File Progress</td>
+                    <td>
+                        <progress min="0" max="100" value="0" id="progress1" style="width:300px;">0% complete</progress><br /></td>
+                </tr>
+                <tr>
+                    <td class="style2">
+                        Overall Progress</td>
+                    <td>
+                        <progress min="0" max="100" value="0" id="progress2" style="width:300px;">0% complete</progress><br /></td>
+                </tr>
+            </table>
+		
+         
+        
+        
+    <input type="file" id="files" name="file" multiple />
+            <br />
+            <br />
+    <br />
+    <span class="readBytesButtons">
+      <!-- <button data-startbyte="0" data-endbyte="4">1-5</button>
+      <button data-startbyte="5" data-endbyte="14">6-15</button>
+      <button data-startbyte="6" data-endbyte="7">7-8</button>-->
+      <button id="buttonUpload">Upload</button>
+    </span>
+                
+    <div id="byte_range"></div>
+    <div id="byte_content"></div>
+    <br /><div id="DebugOutput" class="phonetitle"></div>
+    <br /><div id="ServerRespnse"></div>
+</div>
+<script type="text/javascript">
+
+    $(document).ready(function() {
+        // Check for the various File API support.
+        if (window.File && window.FileReader && window.FileList && window.Blob) {
+            // Great success! All the File APIs are supported.
+        }
+        else {
+
+              $('#divControls').hide();
+
+            alert('The File APIs are not fully supported in this browser.');
+
+        }
+
+
+    });
+
+
+    function sendFiles() {
+
+
+
+        var files = document.getElementById('files').files;
+        if (!files.length) {
+            alert('Please select file(s)');
+            return;
+        }
+
+
+        for (i = 0; i < files.length; i++) {
+
+            if (files[i].size > 0xFFFFFFFF) {
+                alert('File cannot exceed ' + 0xFFFFFFFF + ' bytes');
+                alert(files[i].name + ' is ' + files[i].size + ' bytes');
+                return;
+            }
+        }
+
+
+        var worker = new Worker('transport.js');
+        worker.addEventListener('message', function(e) {
+
+            if (e.data.cmd == 'progress') {
+                var progressBar1 = document.getElementById('progress1');
+                progressBar1.value = (e.data.msg);
+
+                if (files.length == 1) {
+                    var progressBar2 = document.getElementById('progress2');
+                    progressBar2.value = (e.data.msg);
+                }
+            }
+            if (e.data.cmd == 'progress2') {
+                var progressBar2 = document.getElementById('progress2');
+                progressBar2.value = (e.data.msg);
+
+            }
+            if (e.data.cmd == 'msg') {
+                alert(e.data.msg);
+            }
+            if (e.data.cmd == 'gui') {
+                 document.getElementById('DebugOutput').textContent  += e.data.msg;
+            }
+
+            if (e.data.cmd == 'done') {
+                document.getElementById('buttonUpload').disabled = false;
+                document.getElementById('files').disabled = false;
+                document.getElementById('DebugOutput').textContent = e.data.msg;
+                //alert(e.data.msg);
+            }
+
+
+            if (e.data.cmd == 'error') {
+                document.getElementById('buttonUpload').disabled = false;
+                document.getElementById('files').disabled = false;
+                alert(e.data.msg);
+            }
+
+        }, false);
+
+
+        document.getElementById('buttonUpload').disabled = true;
+        document.getElementById('files').disabled = true;
+
+        worker.postMessage(files); // Send data to our worker.
+
+        return;
+
+
+    }
+
+
+
+    //Add click listener to every element under the readBytesButtons class
+    document.querySelector('.readBytesButtons').addEventListener('click', function(evt) {
+
+        //We only care about buttons
+        if (evt.target.tagName.toLowerCase() != 'button')
+            return;
+
+        var progressBar1 = document.getElementById('progress1');
+        progressBar1.value = 0;
+
+        var progressBar2 = document.getElementById('progress2');
+        progressBar2.value = 0;
+
+        sendFiles();
+
+    }, false);
+    
+    
+    
+</script>
+
+
+
+
+
+
+</td></tr></table>
+<!-- SPLIT table -->
+
+
+
+</td></tr></table>
+<!-- OUTER table-->
+		
+		
+		
+		
+		
+
+
+</body>
+		</html>
+		
