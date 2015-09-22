@@ -1,6 +1,8 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransporterClient", "TransporterClient\TransporterClient.csproj", "{713C9A56-C8F8-4D08-B3F6-9DA78CD661E5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MemoryCompressor", "MemoryCompressor\MemoryCompressor.csproj", "{5C122C00-503F-4EED-8F06-59D8035D7FA0}"

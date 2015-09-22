@@ -213,7 +213,8 @@ namespace ServerPipe
 
                     File.Move(sFileName, sNewFileName);
 
-                    AddNotification("Transport Receiver: New file uploaded:" + test);
+                    if (false == File.Exists(newFileInfo.DirectoryName + "\\" + "DO_NOT_NOTIFY" + ".token"))
+                        AddNotification("Transport Receiver: New file uploaded:" + test);
 
                     return 0;
                 }
